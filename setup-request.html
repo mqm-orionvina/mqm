@@ -57,7 +57,11 @@ input:focus, textarea:focus { outline: none; border-color: var(--red); box-shado
 .qt td.x button { border: 0; background: none; font-size: 18px; color: #b5b2ad; cursor: pointer; padding: 10px 6px; }
 .qt td.x button:hover { color: var(--bad); }
 .qt textarea { border-radius: 10px; font-size: 14px; padding: 9px 11px; }
-.qt td.chg textarea { background: #fffaf0; }
+.qt td.chg textarea { background: #fffaf0; overflow: hidden; resize: none; min-height: 44px; }
+.qt td.q { padding: 10px 10px 10px 4px; }
+.qt td.chg { width: 40%; }
+.qtx { font-size: 15px; line-height: 1.45; font-weight: 600; }
+.grp { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--red-soft); color: var(--red); margin-bottom: 4px; }
 .qt td.chg textarea:not(:placeholder-shown) { border-color: #e8a400; background: #fff6dc; }
 .empty { text-align: center; color: var(--muted); padding: 22px 0; font-size: 14px; }
 .tools { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -138,7 +142,60 @@ let sending = false;
 const loadLib = (k, glob) => window[glob] ? Promise.resolve() : new Promise((res, rej) => { const s = document.createElement('script'); s.src = LIB[k]; s.onload = res; s.onerror = () => rej(new Error(k)); document.head.appendChild(s); });
 // Bỏ ký hiệu đầu dòng / đánh số: "- ", "• ", "1. ", "1) ", "a) ", "(2) "
 const clean = s => String(s ?? '').replace(/\s+/g, ' ').trim().replace(/^([-*•●▪◦–]|\(?\d{1,3}[.)]|\(?[a-zA-Z][.)])\s+/, '').trim();
-const linesToRows = txt => String(txt).split(/\r?\n/).map(clean).filter(s => s.length >= 3).map(q => ({ q, c: '' }));
+
+// ---------- Chuyển văn bản mong muốn (Word dài, văn xuôi) thành bộ câu hỏi ngắn để tích Ổn / Có vấn đề ----------
+// 1) Tìm các dòng "Tiêu chí: mô tả…" (Bao bì, Ngoại quan, Cấu trúc / Kết cấu, Hương vị…); mỗi ý trong mô tả thành 1 câu hỏi
+// 2) Viết lại ngắn, theo hướng "đạt" để chọn Ổn = đạt: "gói có đủ khí không" → "Gói đủ khí?"; "có bị nhăn" → "không bị nhăn"
+// 3) Không có dòng tiêu chí: lấy các câu hỏi có sẵn trong văn bản (kết thúc bằng "?" hoặc "… không")
+const CRIT = [['Bao bì', /^(bao bì|đóng gói|package|packaging)$/i], ['Ngoại quan', /^(ngoại quan|hình thức|appearance)$/i],
+  ['Cấu trúc', /^(cấu trúc|kết cấu|texture)$/i], ['Hương vị', /^(hương vị|mùi vị|flavou?r|taste)$/i], ['Màu sắc', /^màu sắc$/i], ['Mùi', /^mùi$/i]];
+const critOf = label => { const l = label.replace(/\s*\([^)]*\)\s*/g, '').trim(); const c = CRIT.find(([, re]) => re.test(l)); return c ? c[0] : ''; };
+// Tách theo dấu phẩy / chấm phẩy, không tách trong ngoặc "(Original, Kimchi…)"
+function splitClauses(s) {
+  const out = []; let depth = 0, buf = '';
+  for (const ch of s) {
+    if (ch === '(') depth++; if (ch === ')') depth = Math.max(0, depth - 1);
+    if ((ch === ',' || ch === ';') && depth === 0) { out.push(buf); buf = ''; } else buf += ch;
+  }
+  out.push(buf);
+  return out.map(x => x.trim().replace(/[.]+$/, '').trim()).filter(Boolean);
+}
+const nWords = s => s.split(/\s+/).filter(Boolean).length;
+const QEND = /\s+(không|chưa|ko)\s*\??$|\?$/i;
+// Ý ngắn chưa hết câu ("miếng khoai có giòn", "có bị đặc") nối với ý sau tới khi gặp "… không"
+function descToQs(desc) {
+  const parts = splitClauses(desc), qs = [];
+  for (let i = 0; i < parts.length; i++) {
+    let p = parts[i];
+    while (!QEND.test(p) && nWords(p) <= 5 && i + 1 < parts.length) p += ', ' + parts[++i];
+    qs.push(p);
+  }
+  // Chỉ 2 ý: ý đạt + ý "có bị …" của cùng thuộc tính (giòn, xốp / đặc, cứng, mềm) → 1 câu
+  if (qs.length === 2 && /^có bị(?=\s|$)/i.test(qs[1])) return [qs[0].replace(QEND, '') + ', ' + qs[1]];
+  return qs;
+}
+// (Chữ tiếng Việt có dấu không khớp \b của JS nên dùng (?=\s|,|$) để chặn cuối từ)
+function toCheck(s) {
+  let t = s.replace(QEND, '').trim();
+  t = t.replace(/(^|\s)có\s+(bị|còn|lẫn)(?=\s|,|$)/gi, '$1không $2').replace(/(^|\s)có\s+(?!thể(\s|$))/gi, '$1').replace(/^\s+/, '');
+  t = t.replace(/\s+/g, ' ').trim();
+  return t ? t[0].toUpperCase() + t.slice(1) + '?' : '';
+}
+function textToRows(items) {
+  items = items.map(s => String(s ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const rows = [];
+  items.forEach(s => {
+    const m = clean(s).match(/^([^:]{2,40}):\s*(.+)$/);
+    const g = m && critOf(m[1]);
+    if (g) descToQs(m[2]).map(toCheck).filter(Boolean).forEach(q => rows.push({ g, q, c: '' }));
+  });
+  if (rows.length) return rows;
+  // Không có dòng tiêu chí: câu hỏi có sẵn trong văn bản
+  items.forEach(s => (s.match(/[^.?!]*\?/g) || []).map(x => x.trim()).filter(x => nWords(x) >= 3 && nWords(x) <= 30)
+    .forEach(x => rows.push({ g: '', q: toCheck(clean(x)), c: '' })));
+  return rows;
+}
+const linesToRows = txt => textToRows(String(txt).split(/\r?\n/));
 
 // Excel: tìm dòng tiêu đề có cột câu hỏi (và cột mong muốn nếu có); không có thì lấy cột nhiều chữ nhất
 const Q_RE = /câu hỏi|question|nội dung|tiêu chí|hạng mục|item|mục đánh giá|질문|항목/i, C_RE = /thay đổi|mong muốn|change|ghi chú|note|요청|변경/i;
@@ -152,7 +209,7 @@ function sheetRows(rows) {
     rows.forEach(r => r.forEach((v, i) => { if (v && isNaN(+v)) w[i] = (w[i] || 0) + v.length; }));
     qc = +Object.keys(w).sort((a, b) => w[b] - w[a])[0];
   }
-  return rows.slice(h + 1).map(r => ({ q: clean(r[qc]), c: cc >= 0 ? String(r[cc] || '').trim() : '' })).filter(r => r.q.length >= 3);
+  return rows.slice(h + 1).map(r => ({ g: '', q: clean(r[qc]), c: cc >= 0 ? String(r[cc] || '').trim() : '' })).filter(r => r.q.length >= 3);
 }
 async function readFile(f) {
   st.info = T('reading'); st.err = false; render();
@@ -160,8 +217,10 @@ async function readFile(f) {
     const ext = f.name.split('.').pop().toLowerCase(); let rows = [];
     if (ext === 'docx') {
       await loadLib('mammoth', 'mammoth');
-      const r = await mammoth.extractRawText({ arrayBuffer: await f.arrayBuffer() });
-      rows = linesToRows(r.value);
+      // Đọc theo đoạn / gạch đầu dòng (giữ nguyên dòng "Bao bì: …" của danh sách)
+      const r = await mammoth.convertToHtml({ arrayBuffer: await f.arrayBuffer() });
+      const doc = new DOMParser().parseFromString(r.value, 'text/html');
+      rows = textToRows([...doc.querySelectorAll('li, p, td, h1, h2, h3, h4')].filter(e => !e.querySelector('li, p')).map(e => e.textContent));
     } else if (['xlsx', 'xls', 'csv'].includes(ext)) {
       await loadLib('xlsx', 'XLSX');
       const wb = XLSX.read(await f.arrayBuffer(), { type: 'array' });
@@ -169,7 +228,7 @@ async function readFile(f) {
     } else if (ext === 'txt') rows = linesToRows(await f.text());
     else throw new Error('.' + ext);
     if (!rows.length) { st.info = T('noQ'); st.err = true; render(); return; }
-    st.rows = st.rows.concat(rows); st.file = f.name; st.info = T('readOk')(rows.length, f.name); st.err = false;
+    st.rows = rows; st.file = f.name; st.info = T('readOk')(rows.length, f.name); st.err = false;
   } catch (e) { st.info = T('readErr') + (e.message || e); st.err = true; }
   save(); render();
 }
@@ -194,11 +253,11 @@ function render() {
       ${st.info ? `<div class="fileinfo ${st.err ? 'err' : ''}">${esc(st.info)}</div>` : ''}
       <details class="paste"><summary>${T('paste')}</summary><textarea id="pasteTx"></textarea><div class="tools"><button class="btn ghost sm" id="pasteGo">${T('pasteBtn')}</button></div></details></section>
     <section class="card"><h2><span class="n">3</span>${T('tableH')}<span class="meta">${T('count')(st.rows.length, nC)}</span></h2>
-      ${st.rows.length ? `<table class="qt"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th><th></th></tr></thead><tbody>
-        ${st.rows.map((r, i) => `<tr><td class="no">${i + 1}</td><td class="q"><textarea rows="2" data-i="${i}" data-k="q">${esc(r.q)}</textarea></td>
-          <td class="chg"><textarea rows="2" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td><td class="x"><button data-del="${i}" aria-label="×">×</button></td></tr>`).join('')}</tbody></table>`
+      ${st.rows.length ? `<table class="qt"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th></tr></thead><tbody>
+        ${st.rows.map((r, i) => `<tr><td class="no">${i + 1}</td><td class="q">${r.g ? `<span class="grp">${esc(r.g)}</span>` : ''}<div class="qtx">${esc(r.q)}</div></td>
+          <td class="chg"><textarea rows="1" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td></tr>`).join('')}</tbody></table>`
         : `<div class="empty">${T('empty')}</div>`}
-      <div class="tools"><button class="btn ghost sm" id="add">${T('add')}</button>${st.rows.length ? `<button class="btn ghost sm" id="clr">${T('clear')}</button>` : ''}</div></section>`;
+      ${st.rows.length ? `<div class="tools"><button class="btn ghost sm" id="clr">${T('clear')}</button></div>` : ''}</section>`;
   bind(); status();
 }
 function missing() { const m = []; if (!st.name.trim()) m.push(T('m_name')); if (!st.team) m.push(T('m_team')); if (!st.rows.some(r => r.q.trim())) m.push(T('m_rows')); return m; }
@@ -217,16 +276,16 @@ function bind() {
   drop.ondragleave = () => drop.classList.remove('over');
   drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) readFile(f); };
   $('#pasteGo').onclick = () => { const rows = linesToRows($('#pasteTx').value); if (!rows.length) return toast(T('noQ')); st.rows = st.rows.concat(rows); st.info = T('readOk')(rows.length, 'text'); st.err = false; save(); render(); };
-  document.querySelectorAll('.qt textarea').forEach(el => el.oninput = () => { st.rows[+el.dataset.i][el.dataset.k] = el.value; save(); status(); });
-  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { st.rows.splice(+b.dataset.del, 1); save(); render(); });
-  $('#add').onclick = () => { st.rows.push({ q: '', c: '' }); save(); render(); const t = document.querySelectorAll('.qt td.q textarea'); if (t.length) t[t.length - 1].focus(); };
+  // Ô "Mong muốn thay đổi" tự giãn theo nội dung (không thanh cuộn)
+  const grow = el => { el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; };
+  document.querySelectorAll('.qt textarea').forEach(el => { grow(el); el.oninput = () => { st.rows[+el.dataset.i][el.dataset.k] = el.value; grow(el); save(); status(); }; });
   const clr = $('#clr'); if (clr) clr.onclick = () => { if (confirm(T('clearAsk'))) { st.rows = []; st.file = ''; st.info = ''; save(); render(); } };
 }
 $('#file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) readFile(f); };
 $('#xlsx').onclick = async () => {
   await loadLib('xlsx', 'XLSX');
-  const ws = XLSX.utils.aoa_to_sheet([['#', I18N.vi.q, I18N.vi.chg], ...st.rows.map((r, i) => [i + 1, r.q, r.c])]);
-  ws['!cols'] = [{ wch: 5 }, { wch: 60 }, { wch: 45 }];
+  const ws = XLSX.utils.aoa_to_sheet([['#', 'Nhóm', I18N.vi.q, I18N.vi.chg], ...st.rows.map((r, i) => [i + 1, r.g || '', r.q, r.c])]);
+  ws['!cols'] = [{ wch: 5 }, { wch: 12 }, { wch: 60 }, { wch: 45 }];
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Cau hoi');
   XLSX.writeFile(wb, `MQM-setup-${st.team || 'team'}-${new Date().toISOString().slice(0, 10)}.xlsx`);
 };
@@ -234,7 +293,7 @@ $('#send').onclick = async () => {
   if (missing().length || sending) return;
   sending = true; status();
   try {
-    const rows = st.rows.map(r => ({ q: r.q.trim(), c: r.c.trim() })).filter(r => r.q);
+    const rows = st.rows.map(r => ({ q: (r.g ? r.g + ' · ' : '') + r.q.trim(), c: r.c.trim() })).filter(r => r.q);
     const r = await fetch(API, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ api: 'sendRequest', k: KEY, data: { name: st.name.trim(), team: st.team, file: st.file, rows } }) }).then(x => x.json());
     if (!r.ok) throw new Error(r.error || '?');
