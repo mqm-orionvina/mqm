@@ -100,6 +100,13 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 .toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; max-width: 90vw; }
 .toast.on { opacity: 1; }
 .empty { text-align: center; color: var(--muted); padding: 26px 10px; }
+/* Câu hỏi của chu kỳ (từ RD / MKT, app setup-request) */
+.cq { border-top: 1px solid var(--line); padding: 12px 0 10px; }
+.cq:first-of-type { border-top: 0; padding-top: 4px; }
+.cq-q { font-size: 14px; line-height: 1.45; margin-bottom: 6px; }
+.cq-c { display: block; color: var(--muted); font-size: 12px; margin: -2px 0 8px; }
+.cq.bad .cq-q b { color: var(--bad); } .cq.fine .cq-q b { color: var(--green, #2e9b4f); }
+.cq textarea { margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -154,7 +161,8 @@ const I18N = {
     comment: a => `Nhận xét ${a.toLowerCase()} (nếu có)`, mqmSub: 'Điểm tổng thể cả mẫu', vsLabel: 'So với đối thủ cùng CAT', note: 'Đề xuất / ghi chú',
     prog: (n, m) => `Đã chấm ${n}/${m} điểm`, save: 'Lưu đánh giá', saving: 'Đang lưu…', saved: id => `Đã lưu đánh giá ${id}`, saveErr: 'Chưa lưu được: ',
     loadErr: e => `Không tải được danh sách mẫu: ${e}. Kiểm tra mạng rồi tải lại trang.`,
-    vs: { 'Tốt hơn': 'Tốt hơn', 'Tương đương': 'Tương đương', 'Kém hơn': 'Kém hơn' }, origin: { 'Đối thủ': 'Đối thủ' }, market: {}, tags: {},
+    vs: { 'Tốt hơn': 'Tốt hơn', 'Tương đương': 'Tương đương', 'Kém hơn': 'Kém hơn' }, origin: { 'Đối thủ': 'Đối thủ' }, market: { North: 'Miền Bắc', South: 'Miền Nam' }, tags: {},
+    cqTitle: 'Câu hỏi của chu kỳ', cqSub: n => `${n} câu từ RD / MKT`, cqWant: 'Mong muốn thay đổi: ', cqDesc: 'Mô tả *', nCq: n => `${n} câu hỏi chu kỳ chưa chọn`,
   },
   ko: {
     step: 'MQM · 1A 단계', title: '샘플 평가', subLogin: '이름, 부서를 입력하고 담당 브랜드를 선택하세요.', subList: '평가할 샘플을 선택하세요. 각자 독립적으로 평가합니다.',
@@ -182,6 +190,7 @@ const I18N = {
     loadErr: e => `샘플 목록을 불러오지 못했습니다: ${e}. 네트워크 확인 후 새로고침하세요.`,
     vs: { 'Tốt hơn': '더 좋음', 'Tương đương': '비슷함', 'Kém hơn': '더 나쁨' }, origin: { 'Đối thủ': '경쟁사' }, market: { North: '북부', South: '남부' },
     tags: { 'Seal yếu': '실링 약함', 'In lệch / mờ': '인쇄 틀어짐 / 흐림', 'Rách': '찢어짐', 'Code date mờ': '날짜 코드 흐림', 'Coating không đều': '코팅 불균일' },
+    cqTitle: '이번 주기 질문', cqSub: n => `RD / MKT 질문 ${n}개`, cqWant: '변경 요청: ', cqDesc: '서술 *', nCq: n => `주기 질문 ${n}개 미선택`,
   },
 };
 let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
@@ -204,6 +213,8 @@ const api = {
 let me = (() => { try { const v = JSON.parse(localStorage.getItem('mqm1a-me')); return v && DEPTS.includes(v.dept) ? v : null; } catch (e) { return null; } })();
 const setMe = v => { me = v; try { v ? localStorage.setItem('mqm1a-me', JSON.stringify(v)) : localStorage.removeItem('mqm1a-me'); } catch (e) {} };
 
+// cq = câu hỏi của chu kỳ (RD / MKT gửi qua app setup-request, lần gửi mới nhất mỗi team): [{id, team, q, c}]
+let cq = [];
 let samples = [], evals = [], loaded = false, loadErr = '', view = 'list', cur = null, ev = null, filt = { show: 'todo', q: '' };
 let draft = { name: me ? me.name : '', dept: me ? me.dept : '', brands: me ? me.brands : [] };   // đang nhập ở màn hình đầu / đổi brand
 const doneBy = id => evals.filter(e => e.sampleId === id);
@@ -268,12 +279,14 @@ function viewList() {
         <div class="st">${m ? `<span class="tag ok">${T('scored')}</span>` : ''}<div>${T('people')(n)}</div></div></button>`; }).join('')
     : `<div class="card empty">${!pool.length ? (samples.length ? T('noMine') : T('noneYet')) : T('allDone')}</div>`}`;
 }
-const anyIssue = () => Object.values(ev.st).includes('issue');
+const anyIssue = () => Object.values(ev.st).includes('issue') || cq.some(q => ev.xq[q.id].st === 'issue');
 // Còn thiếu gì trước khi lưu: mỗi mục phải chọn Ổn / Có vấn đề; có vấn đề thì cần mô tả (hoặc chọn lỗi), nguyên nhân, giải pháp, bộ phận xử lý
 function missing() {
   const keys = (qset() || []).map(x => x[0]), m = [], unset = keys.filter(k => !ev.st[k]).length;
   if (unset) m.push(T('nAttr')(unset));
-  if (keys.some(k => ev.st[k] === 'issue' && !ev.c[k].trim() && !ev.tags[k].length)) m.push(T('nDesc'));
+  const cqUnset = cq.filter(q => !ev.xq[q.id].st).length;
+  if (cqUnset) m.push(T('nCq')(cqUnset));
+  if (keys.some(k => ev.st[k] === 'issue' && !ev.c[k].trim() && !ev.tags[k].length) || cq.some(q => ev.xq[q.id].st === 'issue' && !ev.xq[q.id].d.trim())) m.push(T('nDesc'));
   if (anyIssue()) {
     if (!ev.causeIn.length && !ev.causeOut.length) m.push(T('nCause'));
     if (!ev.solution.trim()) m.push(T('nSol'));
@@ -296,6 +309,11 @@ function viewScore() {
       ${st === 'issue' ? `<div class="chips" data-t="${k}" style="margin-top:10px">${tags.map(t => `<button class="chip sm ${ev.tags[k].includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
         <span class="label">${T('desc')}</span><textarea data-c="${k}" placeholder="${esc(T('descPh'))}">${esc(ev.c[k])}</textarea>` : ''}
       <details class="ref" ${ev[k] ? 'open' : ''}><summary>${T('refScore')}</summary>${scale(k)}</details></div>`; }).join('')}
+    ${cq.length ? `<div class="card attr"><h3>${T('cqTitle')} <span>${T('cqSub')(cq.length)}</span></h3>
+      ${cq.map((q, i) => { const x = ev.xq[q.id]; return `<div class="cq ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}">
+        <div class="cq-q"><span class="tag">${esc(q.team)}</span> <b>${i + 1}.</b> ${esc(q.q)}</div>${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}
+        <div class="seg okis" data-xq="${esc(q.id)}"><button class="${x.st === 'ok' ? 'on ok' : ''}" data-v="ok">✓ ${T('ok')}</button><button class="${x.st === 'issue' ? 'on is' : ''}" data-v="issue">! ${T('issue')}</button></div>
+        ${x.st === 'issue' ? `<span class="label">${T('cqDesc')}</span><textarea data-xd="${esc(q.id)}" placeholder="${esc(T('descPh'))}">${esc(x.d)}</textarea>` : ''}</div>`; }).join('')}</div>` : ''}
     ${anyIssue() ? `<div class="card attr cause"><h3>${T('causeTitle')} <span>${T('causeSub')}</span></h3>
       <span class="label">${T('causeIn')}</span>${pick('causeIn', CAUSE_IN, 'cause')}
       <span class="label" style="margin-top:12px">${T('causeOut')}</span>${pick('causeOut', CAUSE_OUT, 'cause')}
@@ -309,9 +327,9 @@ function viewScore() {
 function bar() {
   const b = $('#bar'), Q = view === 'score' && me && qset();
   if (!Q) { b.hidden = true; return; }
-  const keys = Q.map(x => x[0]), n = keys.filter(k => ev.st[k]).length, m = missing();
+  const keys = Q.map(x => x[0]), n = keys.filter(k => ev.st[k]).length + cq.filter(q => ev.xq[q.id].st).length, m = missing();
   b.hidden = false;
-  b.innerHTML = `<div class="in"><div class="prog">${m.length ? esc(T('need') + m.join(', ')) : T('ready')}<div class="track"><i style="width:${n / keys.length * 100}%"></i></div></div><button class="btn" id="save" ${m.length ? 'disabled' : ''}>${T('save')}</button></div>`;
+  b.innerHTML = `<div class="in"><div class="prog">${m.length ? esc(T('need') + m.join(', ')) : T('ready')}<div class="track"><i style="width:${n / (keys.length + cq.length) * 100}%"></i></div></div><button class="btn" id="save" ${m.length ? 'disabled' : ''}>${T('save')}</button></div>`;
   $('#save').onclick = save;
 }
 function render() {
@@ -375,7 +393,9 @@ function bind() {
     const v = +b.dataset.v; ev[sc.dataset.s] = ev[sc.dataset.s] === v ? null : v; sc.querySelectorAll('button').forEach(x => x.classList.toggle('on', +x.dataset.v === ev[sc.dataset.s])); bar();
   }));
   document.querySelectorAll('[data-st]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.onclick = () => { ev.st[sg.dataset.st] = b.dataset.v; keep(); }));
-  const ao = $('#allOk'); if (ao) ao.onclick = () => { Object.keys(ev.st).forEach(k => { ev.st[k] = 'ok'; }); keep(); };
+  const ao = $('#allOk'); if (ao) ao.onclick = () => { Object.keys(ev.st).forEach(k => { ev.st[k] = 'ok'; }); cq.forEach(q => { ev.xq[q.id].st = 'ok'; }); keep(); };
+  document.querySelectorAll('[data-xq]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.onclick = () => { ev.xq[sg.dataset.xq].st = b.dataset.v; keep(); }));
+  document.querySelectorAll('[data-xd]').forEach(i => i.oninput = () => { ev.xq[i.dataset.xd].d = i.value; bar(); });
   // Lưu giá trị gốc của lỗi (data-tag), không lưu chữ đã dịch
   document.querySelectorAll('[data-t]').forEach(tg => tg.querySelectorAll('button').forEach(b => b.onclick = () => {
     const a = ev.tags[tg.dataset.t], t = b.dataset.tag, i = a.indexOf(t); i >= 0 ? a.splice(i, 1) : a.push(t); b.classList.toggle('on', i < 0); bar();
@@ -392,7 +412,7 @@ function open(id) {
   cur = samples.find(s => s.id === id); if (!cur) return;
   const keys = (qset() || []).map(x => x[0]);
   ev = { sampleId: id, st: Object.fromEntries(keys.map(k => [k, ''])), tags: Object.fromEntries(keys.map(k => [k, []])), c: Object.fromEntries(keys.map(k => [k, ''])),
-    causeIn: [], causeOut: [], solution: '', owners: [], vs: '', note: '' };
+    causeIn: [], causeOut: [], solution: '', owners: [], vs: '', note: '', xq: Object.fromEntries(cq.map(q => [q.id, { st: '', d: '' }])) };
   view = 'score'; render(); scrollTo(0, 0);
 }
 async function save() {
@@ -403,7 +423,8 @@ async function save() {
     const data = { ...ev, name: me.name, dept: me.dept, issue: iss ? 'Y' : 'N',
       tags: Object.fromEntries(keys.map(k => [k, ev.st[k] === 'issue' ? ev.tags[k] : []])), c: Object.fromEntries(keys.map(k => [k, ev.st[k] === 'issue' ? ev.c[k].trim() : ''])),
       causeIn: iss ? ev.causeIn : [], causeOut: iss ? ev.causeOut : [], solution: iss ? ev.solution.trim() : '', owners: iss ? ev.owners : [] };
-    delete data.st;
+    data.extra = cq.map(q => ({ id: q.id, team: q.team, q: q.q, st: ev.xq[q.id].st, d: ev.xq[q.id].d.trim() }));
+    delete data.st; delete data.xq;
     const r = await api.post('saveEval', data);
     if (!r.ok) throw new Error(r.error || '?');
     evals = evals.filter(e => !(e.sampleId === ev.sampleId && String(e.name).toLowerCase() === me.name.toLowerCase()));
@@ -415,9 +436,9 @@ async function save() {
 (async () => {
   render();
   try {
-    const r = await api.get('samples');
+    const [r, qr] = await Promise.all([api.get('samples'), api.get('questions').catch(() => ({}))]);
     if (!r.ok) throw new Error(r.error);
-    samples = r.samples; evals = r.evals; loaded = true;
+    samples = r.samples; evals = r.evals; cq = qr.ok ? qr.questions : []; loaded = true;
   } catch (err) { loadErr = err.message; }
   render();
 })();
