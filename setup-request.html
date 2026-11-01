@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c8102e">
+<title>MQM · Setup câu hỏi</title>
+<style>
+:root {
+  --red: #c8102e; --red-2: #9e0c24; --red-soft: #fdecee; --ink: #1b1b1f; --muted: #6e6e76; --line: #e7e5e2;
+  --page: #f6f4f1; --card: #fff; --green: #2e9b4f; --bad: #d93a2b; --radius: 18px;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif; }
+.hero { background: linear-gradient(135deg, var(--red), var(--red-2)); color: #fff; padding: 20px 18px 62px; }
+.hero .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; max-width: 980px; margin: 0 auto; }
+.hero .brand { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .22em; font-weight: 700; opacity: .9; }
+.hero .brand svg { width: 28px; height: 18px; }
+.hero .txt { max-width: 980px; margin: 0 auto; }
+.hero h1 { margin: 10px 0 4px; font-size: 25px; font-weight: 800; }
+.hero p { margin: 0; opacity: .85; font-size: 13.5px; max-width: 640px; }
+.lang { display: inline-flex; background: rgba(255,255,255,.16); border-radius: 999px; padding: 3px; gap: 2px; }
+.lang button { border: 0; background: none; color: #fff; font: inherit; font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 999px; cursor: pointer; opacity: .8; }
+.lang button.on { background: #fff; color: var(--red); opacity: 1; }
+.wrap { max-width: 980px; margin: -44px auto 0; padding: 0 14px 120px; }
+.card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 18px rgba(0,0,0,.05); }
+.card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 15px; font-weight: 800; }
+.card h2 .n { width: 26px; height: 26px; border-radius: 50%; background: var(--red-soft); color: var(--red); display: grid; place-items: center; font-size: 13px; flex: none; }
+.card h2 .meta { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.label { font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
+.label .req { color: var(--red); }
+input, textarea { width: 100%; font: inherit; font-size: 15px; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
+textarea { resize: vertical; min-height: 44px; line-height: 1.4; }
+input:focus, textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: #f1efec; border-radius: 14px; padding: 4px; gap: 4px; }
+.seg button { border: 0; background: none; padding: 10px 6px; border-radius: 11px; font: inherit; font-weight: 700; color: var(--muted); cursor: pointer; }
+.seg button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+.drop { border: 2px dashed #d9d6d1; background: #faf9f7; border-radius: 16px; padding: 26px 18px; text-align: center; cursor: pointer; transition: background .15s, border-color .15s; }
+.drop.over { background: var(--red-soft); border-color: var(--red); }
+.drop svg { width: 36px; height: 36px; color: var(--red); }
+.drop b { display: block; font-size: 16px; margin-top: 6px; } .drop small { color: var(--muted); }
+.fileinfo { margin-top: 10px; font-size: 13px; padding: 8px 12px; border-radius: 10px; background: #e7f6ec; color: #1d6b36; }
+.fileinfo.err { background: #fdecee; color: var(--bad); }
+.paste { margin-top: 10px; } .paste summary { cursor: pointer; font-size: 13px; color: var(--muted); font-weight: 600; }
+.paste textarea { margin-top: 8px; min-height: 110px; }
+.btn { border: 0; background: var(--red); color: #fff; font: inherit; font-weight: 800; font-size: 15px; padding: 12px 20px; border-radius: 12px; cursor: pointer; }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.ghost { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
+.btn.sm { font-size: 13px; padding: 8px 14px; border-radius: 10px; }
+.qt { width: 100%; border-collapse: separate; border-spacing: 0; }
+.qt th { text-align: left; font-size: 12px; font-weight: 700; color: var(--muted); padding: 8px 8px; background: #f6f5f3; }
+.qt th:first-child { border-radius: 10px 0 0 10px; } .qt th:last-child { border-radius: 0 10px 10px 0; }
+.qt td { padding: 6px 4px; vertical-align: top; border-bottom: 1px solid var(--line); }
+.qt td.no { width: 36px; text-align: center; font-weight: 700; color: var(--muted); padding-top: 16px; font-size: 13px; }
+.qt td.x { width: 36px; text-align: center; }
+.qt td.x button { border: 0; background: none; font-size: 18px; color: #b5b2ad; cursor: pointer; padding: 10px 6px; }
+.qt td.x button:hover { color: var(--bad); }
+.qt textarea { border-radius: 10px; font-size: 14px; padding: 9px 11px; }
+.qt td.chg textarea { background: #fffaf0; }
+.qt td.chg textarea:not(:placeholder-shown) { border-color: #e8a400; background: #fff6dc; }
+.empty { text-align: center; color: var(--muted); padding: 22px 0; font-size: 14px; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.bar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-top: 1px solid var(--line); padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
+.bar .in { max-width: 980px; margin: 0 auto; display: flex; gap: 10px; align-items: center; } .bar .msg { flex: 1; font-size: 12.5px; color: var(--muted); }
+.done { position: fixed; inset: 0; background: rgba(20,20,24,.55); display: none; align-items: center; justify-content: center; z-index: 10; padding: 16px; }
+.done.on { display: flex; }
+.done .sheet { background: #fff; width: 100%; max-width: 440px; border-radius: 22px; padding: 26px 22px; text-align: center; }
+.done .ok { width: 56px; height: 56px; border-radius: 50%; background: #e7f6ec; color: var(--green); display: grid; place-items: center; margin: 0 auto 10px; }
+.done h3 { margin: 0 0 6px; font-size: 19px; } .done p { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+.toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; max-width: 90vw; }
+.toast.on { opacity: 1; }
+@media (max-width: 640px) {
+  .row2 { grid-template-columns: 1fr; }
+  .qt thead { display: none; }
+  .qt tr { display: grid; grid-template-columns: 30px 1fr 30px; grid-template-areas: "no q x" "no c x"; border-bottom: 1px solid var(--line); padding: 6px 0; }
+  .qt td { border: 0; padding: 3px 2px; } .qt td.no { grid-area: no; padding-top: 12px; } .qt td.q { grid-area: q; } .qt td.chg { grid-area: c; } .qt td.x { grid-area: x; }
+}
+</style>
+</head>
+<body>
+<header class="hero" id="hero"></header>
+<main class="wrap" id="app"></main>
+<div class="bar"><div class="in"><span class="msg" id="barMsg"></span><button class="btn ghost sm" id="xlsx"></button><button class="btn" id="send"></button></div></div>
+<div class="done" id="done"><div class="sheet">
+  <div class="ok"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+  <h3 id="doneHead"></h3><p id="doneTxt"></p><button class="btn" id="doneOk"></button>
+</div></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="file" accept=".docx,.xlsx,.xls,.csv,.txt" hidden>
+<script>
+// MQM PC · Bước 1 Setup: RD / MKT thả file mong muốn (Word / Excel) → app chuyển ngay thành bảng câu hỏi,
+// cạnh mỗi câu hỏi có cột "Mong muốn thay đổi" → Gửi: lưu tab Requests trong Google Sheet MQM + email về anh Thái (chủ Apps Script).
+// File chỉ đọc trên trình duyệt; chỉ bảng câu hỏi được gửi đi. Gọi API không kèm tài khoản Google.
+const API = 'https://script.google.com/macros/s/AKfycbySru5DIg7ESEnY11NISONQL9-uEPIaCzUIAil84mjowOEKeoO5jmV0GbDWkrR9rRp2/exec';
+const KEY = '2vz3ylmgwosijd';
+const LIB = { xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', mammoth: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js' };
+const TEAMS = ['RD', 'MKT'];
+const I18N = {
+  vi: {
+    step: 'MQM PC · BƯỚC 1 SETUP', title: 'Bảng câu hỏi đánh giá', sub: 'RD và MKT gửi mong muốn đánh giá: thả file Word hoặc Excel, app chuyển ngay thành bảng câu hỏi. Ghi mong muốn thay đổi cạnh từng câu rồi bấm Gửi.',
+    who: 'Người gửi', name: 'Tên', namePh: 'VD: Nguyễn Văn A', team: 'Team',
+    fileH: 'File mong muốn', drop: 'Thả file vào đây hoặc bấm để chọn', dropSub: 'Word (.docx) · Excel (.xlsx, .xls) · .csv · .txt — file chỉ đọc trên máy này',
+    paste: 'Hoặc dán văn bản (mỗi dòng 1 câu hỏi)', pasteBtn: 'Chuyển thành câu hỏi', reading: 'Đang đọc file…',
+    readOk: (n, f) => `Đã chuyển ${n} câu hỏi từ ${f}. Kiểm tra, sửa hoặc xoá câu không cần.`, readErr: 'Không đọc được file: ', noQ: 'Không tìm thấy câu hỏi nào trong file.',
+    tableH: 'Bảng câu hỏi', count: (n, c) => `${n} câu · ${c} câu có mong muốn thay đổi`,
+    q: 'Câu hỏi', chg: 'Mong muốn thay đổi', chgPh: 'Để trống nếu giữ nguyên', add: '+ Thêm câu hỏi', clear: 'Xoá hết', clearAsk: 'Xoá toàn bộ bảng câu hỏi?',
+    empty: 'Chưa có câu hỏi. Thả file ở trên hoặc bấm "Thêm câu hỏi".',
+    send: 'Gửi về email anh Thái', sending: 'Đang gửi…', xlsx: 'Tải Excel', need: 'Còn thiếu: ', m_name: 'tên', m_team: 'team', m_rows: 'câu hỏi', ready: 'Sẵn sàng gửi',
+    doneH: 'Đã gửi', doneT: n => `Bảng ${n} câu hỏi đã gửi về email anh Thái và lưu vào Google Sheet MQM.`, ok: 'Xong', sendErr: 'Chưa gửi được: ', sendErr2: 'Có thể bấm "Tải Excel" rồi gửi file cho anh Thái.',
+  },
+  ko: {
+    step: 'MQM PC · 1단계 SETUP', title: '평가 질문표', sub: 'RD · MKT 평가 요구: Word 또는 Excel 파일을 놓으면 바로 질문표로 변환됩니다. 질문별 변경 요청을 적고 전송하세요.',
+    who: '보내는 사람', name: '이름', namePh: '예: 홍길동', team: '팀',
+    fileH: '요구 파일', drop: '파일을 여기에 놓거나 눌러서 선택', dropSub: 'Word (.docx) · Excel (.xlsx, .xls) · .csv · .txt — 파일은 이 기기에서만 읽음',
+    paste: '또는 텍스트 붙여넣기 (한 줄에 질문 1개)', pasteBtn: '질문으로 변환', reading: '파일 읽는 중…',
+    readOk: (n, f) => `${f}에서 질문 ${n}개 변환. 확인 후 수정 · 삭제하세요.`, readErr: '파일을 읽을 수 없음: ', noQ: '파일에서 질문을 찾지 못했습니다.',
+    tableH: '질문표', count: (n, c) => `${n}개 · 변경 요청 ${c}개`,
+    q: '질문', chg: '변경 요청', chgPh: '그대로면 비워 두세요', add: '+ 질문 추가', clear: '모두 삭제', clearAsk: '질문표 전체를 삭제할까요?',
+    empty: '질문이 없습니다. 위에 파일을 놓거나 "질문 추가"를 누르세요.',
+    send: 'Thái 님 메일로 전송', sending: '전송 중…', xlsx: 'Excel 다운로드', need: '미입력: ', m_name: '이름', m_team: '팀', m_rows: '질문', ready: '전송 준비 완료',
+    doneH: '전송 완료', doneT: n => `질문 ${n}개가 Thái 님 메일로 전송되고 MQM Google Sheet에 저장되었습니다.`, ok: '확인', sendErr: '전송 실패: ', sendErr2: '"Excel 다운로드" 후 파일을 Thái 님께 보내 주세요.',
+  },
+};
+let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
+const T = k => I18N[lang][k];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let toastT;
+const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 3200); };
+
+// Bản nháp giữ trên máy (tắt trang không mất): tên, team, tên file, bảng câu hỏi
+const DRAFT = 'mqm-setup-draft';
+let st = (() => { try { return JSON.parse(localStorage.getItem(DRAFT)) || null; } catch (e) { return null; } })() || { name: '', team: '', file: '', rows: [], info: '', err: false };
+const save = () => { try { localStorage.setItem(DRAFT, JSON.stringify(st)); } catch (e) {} };
+let sending = false;
+
+const loadLib = (k, glob) => window[glob] ? Promise.resolve() : new Promise((res, rej) => { const s = document.createElement('script'); s.src = LIB[k]; s.onload = res; s.onerror = () => rej(new Error(k)); document.head.appendChild(s); });
+// Bỏ ký hiệu đầu dòng / đánh số: "- ", "• ", "1. ", "1) ", "a) ", "(2) "
+const clean = s => String(s ?? '').replace(/\s+/g, ' ').trim().replace(/^([-*•●▪◦–]|\(?\d{1,3}[.)]|\(?[a-zA-Z][.)])\s+/, '').trim();
+const linesToRows = txt => String(txt).split(/\r?\n/).map(clean).filter(s => s.length >= 3).map(q => ({ q, c: '' }));
+
+// Excel: tìm dòng tiêu đề có cột câu hỏi (và cột mong muốn nếu có); không có thì lấy cột nhiều chữ nhất
+const Q_RE = /câu hỏi|question|nội dung|tiêu chí|hạng mục|item|mục đánh giá|질문|항목/i, C_RE = /thay đổi|mong muốn|change|ghi chú|note|요청|변경/i;
+function sheetRows(rows) {
+  rows = rows.map(r => (r || []).map(v => String(v ?? '').trim()));
+  let h = rows.findIndex(r => r.some(v => Q_RE.test(v)));
+  let qc, cc = -1;
+  if (h >= 0 && h < 10) { qc = rows[h].findIndex(v => Q_RE.test(v)); cc = rows[h].findIndex((v, i) => i !== qc && C_RE.test(v)); }
+  else {
+    h = -1; const w = {};
+    rows.forEach(r => r.forEach((v, i) => { if (v && isNaN(+v)) w[i] = (w[i] || 0) + v.length; }));
+    qc = +Object.keys(w).sort((a, b) => w[b] - w[a])[0];
+  }
+  return rows.slice(h + 1).map(r => ({ q: clean(r[qc]), c: cc >= 0 ? String(r[cc] || '').trim() : '' })).filter(r => r.q.length >= 3);
+}
+async function readFile(f) {
+  st.info = T('reading'); st.err = false; render();
+  try {
+    const ext = f.name.split('.').pop().toLowerCase(); let rows = [];
+    if (ext === 'docx') {
+      await loadLib('mammoth', 'mammoth');
+      const r = await mammoth.extractRawText({ arrayBuffer: await f.arrayBuffer() });
+      rows = linesToRows(r.value);
+    } else if (['xlsx', 'xls', 'csv'].includes(ext)) {
+      await loadLib('xlsx', 'XLSX');
+      const wb = XLSX.read(await f.arrayBuffer(), { type: 'array' });
+      wb.SheetNames.forEach(n => { rows = rows.concat(sheetRows(XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, blankrows: false }))); });
+    } else if (ext === 'txt') rows = linesToRows(await f.text());
+    else throw new Error('.' + ext);
+    if (!rows.length) { st.info = T('noQ'); st.err = true; render(); return; }
+    st.rows = st.rows.concat(rows); st.file = f.name; st.info = T('readOk')(rows.length, f.name); st.err = false;
+  } catch (e) { st.info = T('readErr') + (e.message || e); st.err = true; }
+  save(); render();
+}
+
+function hero() {
+  document.documentElement.lang = lang; document.title = 'MQM · ' + T('title');
+  $('#hero').innerHTML = `<div class="top"><div class="brand"><svg viewBox="0 0 46 30" fill="#fff"><ellipse cx="13" cy="15" rx="12" ry="13"/><ellipse cx="33" cy="15" rx="12" ry="13"/><circle cx="16" cy="12" r="4" fill="#c8102e"/><circle cx="36" cy="12" r="4" fill="#c8102e"/></svg>${T('step')}</div>
+    <div class="lang"><button data-lang="vi" class="${lang === 'vi' ? 'on' : ''}">VI</button><button data-lang="ko" class="${lang === 'ko' ? 'on' : ''}">한국어</button></div></div>
+    <div class="txt"><h1>${T('title')}</h1><p>${T('sub')}</p></div>`;
+  document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { lang = b.dataset.lang; try { localStorage.setItem('mqm1a-lang', lang); } catch (e) {} render(); });
+}
+function render() {
+  hero();
+  const nC = st.rows.filter(r => r.c.trim()).length;
+  $('#app').innerHTML = `
+    <section class="card"><h2><span class="n">1</span>${T('who')}</h2>
+      <div class="row2"><div><span class="label">${T('name')} <span class="req">*</span></span><input id="nm" autocomplete="name" placeholder="${esc(T('namePh'))}" value="${esc(st.name)}"></div>
+        <div><span class="label">${T('team')} <span class="req">*</span></span><div class="seg" id="tm">${TEAMS.map(t => `<button class="${st.team === t ? 'on' : ''}" data-v="${t}">${t}</button>`).join('')}</div></div></div></section>
+    <section class="card"><h2><span class="n">2</span>${T('fileH')}</h2>
+      <div class="drop" id="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <b>${T('drop')}</b><small>${T('dropSub')}</small></div>
+      ${st.info ? `<div class="fileinfo ${st.err ? 'err' : ''}">${esc(st.info)}</div>` : ''}
+      <details class="paste"><summary>${T('paste')}</summary><textarea id="pasteTx"></textarea><div class="tools"><button class="btn ghost sm" id="pasteGo">${T('pasteBtn')}</button></div></details></section>
+    <section class="card"><h2><span class="n">3</span>${T('tableH')}<span class="meta">${T('count')(st.rows.length, nC)}</span></h2>
+      ${st.rows.length ? `<table class="qt"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th><th></th></tr></thead><tbody>
+        ${st.rows.map((r, i) => `<tr><td class="no">${i + 1}</td><td class="q"><textarea rows="2" data-i="${i}" data-k="q">${esc(r.q)}</textarea></td>
+          <td class="chg"><textarea rows="2" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td><td class="x"><button data-del="${i}" aria-label="×">×</button></td></tr>`).join('')}</tbody></table>`
+        : `<div class="empty">${T('empty')}</div>`}
+      <div class="tools"><button class="btn ghost sm" id="add">${T('add')}</button>${st.rows.length ? `<button class="btn ghost sm" id="clr">${T('clear')}</button>` : ''}</div></section>`;
+  bind(); status();
+}
+function missing() { const m = []; if (!st.name.trim()) m.push(T('m_name')); if (!st.team) m.push(T('m_team')); if (!st.rows.some(r => r.q.trim())) m.push(T('m_rows')); return m; }
+function status() {
+  const m = missing(); $('#send').disabled = !!m.length || sending; $('#send').textContent = sending ? T('sending') : T('send');
+  $('#xlsx').textContent = T('xlsx'); $('#xlsx').disabled = !st.rows.length;
+  $('#barMsg').textContent = m.length ? T('need') + m.join(', ') : T('ready');
+  const meta = document.querySelector('.card h2 .meta'); if (meta) meta.textContent = T('count')(st.rows.length, st.rows.filter(r => r.c.trim()).length);
+}
+function bind() {
+  $('#nm').oninput = e => { st.name = e.target.value; save(); status(); };
+  document.querySelectorAll('#tm button').forEach(b => b.onclick = () => { st.team = b.dataset.v; save(); render(); });
+  const drop = $('#drop');
+  drop.onclick = () => $('#file').click();
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) readFile(f); };
+  $('#pasteGo').onclick = () => { const rows = linesToRows($('#pasteTx').value); if (!rows.length) return toast(T('noQ')); st.rows = st.rows.concat(rows); st.info = T('readOk')(rows.length, 'text'); st.err = false; save(); render(); };
+  document.querySelectorAll('.qt textarea').forEach(el => el.oninput = () => { st.rows[+el.dataset.i][el.dataset.k] = el.value; save(); status(); });
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { st.rows.splice(+b.dataset.del, 1); save(); render(); });
+  $('#add').onclick = () => { st.rows.push({ q: '', c: '' }); save(); render(); const t = document.querySelectorAll('.qt td.q textarea'); if (t.length) t[t.length - 1].focus(); };
+  const clr = $('#clr'); if (clr) clr.onclick = () => { if (confirm(T('clearAsk'))) { st.rows = []; st.file = ''; st.info = ''; save(); render(); } };
+}
+$('#file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) readFile(f); };
+$('#xlsx').onclick = async () => {
+  await loadLib('xlsx', 'XLSX');
+  const ws = XLSX.utils.aoa_to_sheet([['#', I18N.vi.q, I18N.vi.chg], ...st.rows.map((r, i) => [i + 1, r.q, r.c])]);
+  ws['!cols'] = [{ wch: 5 }, { wch: 60 }, { wch: 45 }];
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Cau hoi');
+  XLSX.writeFile(wb, `MQM-setup-${st.team || 'team'}-${new Date().toISOString().slice(0, 10)}.xlsx`);
+};
+$('#send').onclick = async () => {
+  if (missing().length || sending) return;
+  sending = true; status();
+  try {
+    const rows = st.rows.map(r => ({ q: r.q.trim(), c: r.c.trim() })).filter(r => r.q);
+    const r = await fetch(API, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ api: 'sendRequest', k: KEY, data: { name: st.name.trim(), team: st.team, file: st.file, rows } }) }).then(x => x.json());
+    if (!r.ok) throw new Error(r.error || '?');
+    $('#doneHead').textContent = T('doneH'); $('#doneTxt').textContent = T('doneT')(r.count); $('#doneOk').textContent = T('ok');
+    $('#done').classList.add('on');
+    st.rows = []; st.file = ''; st.info = ''; save();
+  } catch (e) { toast(T('sendErr') + (e.message || e) + '. ' + T('sendErr2')); }
+  sending = false; render();
+};
+$('#doneOk').onclick = () => $('#done').classList.remove('on');
+render();
+</script>
+</body>
+</html>
