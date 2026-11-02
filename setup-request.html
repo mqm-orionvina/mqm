@@ -74,6 +74,32 @@ input:focus, textarea:focus { outline: none; border-color: var(--red); box-shado
 .done h3 { margin: 0 0 6px; font-size: 19px; } .done p { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
 .toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; max-width: 90vw; }
 .toast.on { opacity: 1; }
+.hint { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+/* Bước 2: chọn mẫu theo brand → vị → quy cách */
+.bseg { max-width: 360px; margin-bottom: 4px; }
+table.st { width: 100%; border-collapse: collapse; margin-top: 10px; }
+table.st th { text-align: left; font-size: 12px; color: var(--muted); padding: 6px 8px; background: #f6f5f3; }
+table.st td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.st td.fl { font-weight: 600; font-size: 14px; width: 34%; }
+table.st td.all { width: 70px; text-align: right; }
+.sz { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; margin: 2px 4px 2px 0; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
+.sz.on { background: var(--red); border-color: var(--red); color: #fff; }
+.sz.all { border-style: dashed; color: var(--muted); } .sz.all.on { color: #fff; border-style: solid; }
+/* Kết quả chung RD + MKT */
+.card.res { border: 2px solid var(--red); }
+.tchips { display: flex; gap: 8px; flex-wrap: wrap; }
+.tchip { font-size: 12.5px; font-weight: 700; padding: 5px 12px; border-radius: 999px; background: #f1efec; color: var(--muted); }
+.tchip.ok { background: #e7f6ec; color: #1d6b36; }
+.rstats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 14px 0 6px; }
+.rstats > div { background: #f6f5f3; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.rstats small { font-size: 12px; color: var(--muted); } .rstats b { font-size: 26px; } .rstats b.d { font-size: 17px; } .rstats .warn { color: var(--bad); font-weight: 700; }
+.res details { margin-top: 10px; } .res summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+.rlist { margin: 8px 0 0; padding-left: 22px; font-size: 14px; line-height: 1.5; } .rlist li + li { margin-top: 4px; }
+.tg { font-size: 11px; font-weight: 700; color: var(--muted); }
+.rtbl { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13.5px; } .rtbl td { padding: 7px 6px; border-bottom: 1px solid var(--line); }
+.stt { font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.stt.ok { background: #2e9b4f; color: #fff; } .stt.low { background: #f2b705; color: #111; } .stt.none { background: #d93a2b; color: #fff; }
+@media (max-width: 640px) { .rstats { grid-template-columns: 1fr; } table.st td.fl { width: auto; } }
 @media (max-width: 640px) {
   .row2 { grid-template-columns: 1fr; }
   .qt thead { display: none; }
@@ -102,31 +128,46 @@ const LIB = { xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.ful
 const TEAMS = ['RD', 'MKT'];
 const I18N = {
   vi: {
-    step: 'MQM PC · BƯỚC 1 SETUP', title: 'Bảng câu hỏi đánh giá', sub: 'RD và MKT gửi mong muốn đánh giá: thả file Word hoặc Excel, app chuyển ngay thành bảng câu hỏi. Ghi mong muốn thay đổi cạnh từng câu rồi bấm Gửi.',
-    who: 'Người gửi', name: 'Tên', namePh: 'VD: Nguyễn Văn A', team: 'Team',
-    fileH: 'File mong muốn', drop: 'Thả file vào đây hoặc bấm để chọn', dropSub: 'Word (.docx) · Excel (.xlsx, .xls) · .csv · .txt — file chỉ đọc trên máy này',
+    step: 'MQM PC · APP QUYẾT ĐỊNH', title: 'Quyết định chu kỳ MQM', sub: '3 bước rồi Gửi: ① bảng câu hỏi từ file mong muốn ② mẫu cần mua ③ ngày mua. RD và MKT mỗi team gửi 1 lần; phần trùng nhau tự bỏ.',
+    who: 'Bạn là ai', name: 'Tên', namePh: 'VD: Nguyễn Văn A', team: 'Team',
+    s1: 'Bước 1 · Bảng câu hỏi', s2: 'Bước 2 · Mẫu cần mua', s3: 'Bước 3 · Ngày mua',
+    drop: 'Thả file mong muốn vào đây hoặc bấm để chọn', dropSub: 'Word (.docx) · Excel (.xlsx, .xls) · .csv · .txt — file chỉ đọc trên máy này',
     paste: 'Hoặc dán văn bản (mỗi dòng 1 câu hỏi)', pasteBtn: 'Chuyển thành câu hỏi', reading: 'Đang đọc file…',
-    readOk: (n, f) => `Đã chuyển ${n} câu hỏi từ ${f}. Kiểm tra, sửa hoặc xoá câu không cần.`, readErr: 'Không đọc được file: ', noQ: 'Không tìm thấy câu hỏi nào trong file.',
-    tableH: 'Bảng câu hỏi', count: (n, c) => `${n} câu · ${c} câu có mong muốn thay đổi`,
-    q: 'Câu hỏi', chg: 'Mong muốn thay đổi', chgPh: 'Để trống nếu giữ nguyên', add: '+ Thêm câu hỏi', clear: 'Xoá hết', clearAsk: 'Xoá toàn bộ bảng câu hỏi?',
-    empty: 'Chưa có câu hỏi. Thả file ở trên hoặc bấm "Thêm câu hỏi".',
-    send: 'Gửi về email anh Thái', sending: 'Đang gửi…', xlsx: 'Tải Excel', need: 'Còn thiếu: ', m_name: 'tên', m_team: 'team', m_rows: 'câu hỏi', ready: 'Sẵn sàng gửi',
-    doneH: 'Đã gửi', doneT: n => `Bảng ${n} câu hỏi đã gửi về email anh Thái và lưu vào Google Sheet MQM.`, ok: 'Xong', sendErr: 'Chưa gửi được: ', sendErr2: 'Có thể bấm "Tải Excel" rồi gửi file cho anh Thái.',
+    readOk: (n, f) => `Đã chuyển ${n} câu hỏi từ ${f}.`, readErr: 'Không đọc được file: ', noQ: 'Không tìm thấy câu hỏi nào trong file.',
+    count: (n, c) => `${n} câu · ${c} câu có mong muốn thay đổi`,
+    q: 'Câu hỏi', chg: 'Mong muốn thay đổi', chgPh: 'Để trống nếu giữ nguyên', clear: 'Xoá hết', clearAsk: 'Xoá toàn bộ bảng câu hỏi?',
+    empty: 'Chưa có câu hỏi. Thả file mong muốn ở trên.',
+    smpHint: 'Bấm vào quy cách (size) cần mua của từng vị. Mỗi mẫu mua 2 gói.', allFlavor: 'Cả vị', picked: n => `Đã chọn ${n} mẫu`, flavor: 'Vị', size: 'Quy cách (size)',
+    loadingCat: 'Đang tải danh mục sản phẩm…', catErr: 'Không tải được danh mục: ',
+    dateFrom: 'Mua từ ngày', dateTo: 'Đến ngày', dateHint: 'Người mua sẽ mua trong khoảng này. Nếu RD và MKT chọn khác nhau, app lấy khoảng chung của 2 team.',
+    send: 'Gửi', sending: 'Đang gửi…', xlsx: 'Tải Excel', need: 'Còn thiếu: ', m_name: 'tên', m_team: 'team', m_rows: 'câu hỏi', m_smp: 'mẫu cần mua', m_date: 'ngày mua', ready: 'Sẵn sàng gửi',
+    doneH: 'Đã gửi', doneT: (q, s) => `${q} câu hỏi và ${s} mẫu đã gửi về email anh Thái. Xem "Kết quả chung" ở đầu trang.`, ok: 'Xong', sendErr: 'Chưa gửi được: ', sendErr2: 'Có thể bấm "Tải Excel" rồi gửi file cho anh Thái.',
+    resH: 'Kết quả chung · RD + MKT', resSent: (t, n) => `${t} đã gửi (${n})`, resWait: t => `${t} chưa gửi`, resQ: 'Câu hỏi final', resS: 'Mẫu final', resD: 'Ngày mua final',
+    resConflict: '2 team chọn ngày không trùng nhau, anh Thái chốt', resQs: n => `Xem ${n} câu hỏi final (đã bỏ trùng)`, resSs: n => `Xem ${n} mẫu final và tình trạng mua`,
+    have: (h, n) => `${h}/${n} gói`, stOk: 'Đủ', stLow: 'Thiếu', stNone: 'Chưa có', resNote: 'Câu hỏi final tự hiện trên app đánh giá. Số gói cập nhật khi người mua quét mẫu trên app đăng ký.',
   },
   ko: {
-    step: 'MQM PC · 1단계 SETUP', title: '평가 질문표', sub: 'RD · MKT 평가 요구: Word 또는 Excel 파일을 놓으면 바로 질문표로 변환됩니다. 질문별 변경 요청을 적고 전송하세요.',
-    who: '보내는 사람', name: '이름', namePh: '예: 홍길동', team: '팀',
-    fileH: '요구 파일', drop: '파일을 여기에 놓거나 눌러서 선택', dropSub: 'Word (.docx) · Excel (.xlsx, .xls) · .csv · .txt — 파일은 이 기기에서만 읽음',
+    step: 'MQM PC · 결정 앱', title: 'MQM 주기 결정', sub: '3단계 후 전송: ① 요구 파일 → 질문표 ② 구매 샘플 ③ 구매 기간. RD · MKT 팀별 1회 전송; 중복은 자동 제거.',
+    who: '작성자', name: '이름', namePh: '예: 홍길동', team: '팀',
+    s1: '1단계 · 질문표', s2: '2단계 · 구매 샘플', s3: '3단계 · 구매 기간',
+    drop: '요구 파일을 여기에 놓거나 눌러서 선택', dropSub: 'Word (.docx) · Excel (.xlsx, .xls) · .csv · .txt — 파일은 이 기기에서만 읽음',
     paste: '또는 텍스트 붙여넣기 (한 줄에 질문 1개)', pasteBtn: '질문으로 변환', reading: '파일 읽는 중…',
-    readOk: (n, f) => `${f}에서 질문 ${n}개 변환. 확인 후 수정 · 삭제하세요.`, readErr: '파일을 읽을 수 없음: ', noQ: '파일에서 질문을 찾지 못했습니다.',
-    tableH: '질문표', count: (n, c) => `${n}개 · 변경 요청 ${c}개`,
-    q: '질문', chg: '변경 요청', chgPh: '그대로면 비워 두세요', add: '+ 질문 추가', clear: '모두 삭제', clearAsk: '질문표 전체를 삭제할까요?',
-    empty: '질문이 없습니다. 위에 파일을 놓거나 "질문 추가"를 누르세요.',
-    send: 'Thái 님 메일로 전송', sending: '전송 중…', xlsx: 'Excel 다운로드', need: '미입력: ', m_name: '이름', m_team: '팀', m_rows: '질문', ready: '전송 준비 완료',
-    doneH: '전송 완료', doneT: n => `질문 ${n}개가 Thái 님 메일로 전송되고 MQM Google Sheet에 저장되었습니다.`, ok: '확인', sendErr: '전송 실패: ', sendErr2: '"Excel 다운로드" 후 파일을 Thái 님께 보내 주세요.',
+    readOk: (n, f) => `${f}에서 질문 ${n}개 변환.`, readErr: '파일을 읽을 수 없음: ', noQ: '파일에서 질문을 찾지 못했습니다.',
+    count: (n, c) => `${n}개 · 변경 요청 ${c}개`,
+    q: '질문', chg: '변경 요청', chgPh: '그대로면 비워 두세요', clear: '모두 삭제', clearAsk: '질문표 전체를 삭제할까요?',
+    empty: '질문이 없습니다. 위에 요구 파일을 놓으세요.',
+    smpHint: '맛별로 구매할 규격(size)을 누르세요. 샘플당 2봉 구매.', allFlavor: '전체', picked: n => `${n}개 선택`, flavor: '맛', size: '규격',
+    loadingCat: '제품 목록 불러오는 중…', catErr: '제품 목록 오류: ',
+    dateFrom: '구매 시작일', dateTo: '종료일', dateHint: '구매자는 이 기간에 구매합니다. RD · MKT가 다르면 두 팀의 공통 기간을 사용합니다.',
+    send: '전송', sending: '전송 중…', xlsx: 'Excel 다운로드', need: '미입력: ', m_name: '이름', m_team: '팀', m_rows: '질문', m_smp: '구매 샘플', m_date: '구매 기간', ready: '전송 준비 완료',
+    doneH: '전송 완료', doneT: (q, s) => `질문 ${q}개 · 샘플 ${s}개가 Thái 님 메일로 전송되었습니다. 상단 "공통 결과"를 확인하세요.`, ok: '확인', sendErr: '전송 실패: ', sendErr2: '"Excel 다운로드" 후 파일을 Thái 님께 보내 주세요.',
+    resH: '공통 결과 · RD + MKT', resSent: (t, n) => `${t} 전송 완료 (${n})`, resWait: t => `${t} 미전송`, resQ: '최종 질문', resS: '최종 샘플', resD: '최종 구매 기간',
+    resConflict: '두 팀 기간이 겹치지 않음, Thái 님 확정', resQs: n => `최종 질문 ${n}개 보기 (중복 제거)`, resSs: n => `최종 샘플 ${n}개 · 구매 현황 보기`,
+    have: (h, n) => `${h}/${n}봉`, stOk: '충분', stLow: '부족', stNone: '없음', resNote: '최종 질문은 평가 앱에 자동 표시. 구매자가 등록 앱에서 스캔하면 수량이 갱신됩니다.',
   },
 };
-let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
+// Brand đưa vào bước 2 (đợt này chỉ O'star và Swing); tên hiển thị
+const PLAN_BRANDS = [['OStar', "O'star"], ['Swing', 'Swing']];let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
 const T = k => I18N[lang][k];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -136,6 +177,9 @@ const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('
 // Bản nháp giữ trên máy (tắt trang không mất): tên, team, tên file, bảng câu hỏi
 const DRAFT = 'mqm-setup-draft';
 let st = (() => { try { return JSON.parse(localStorage.getItem(DRAFT)) || null; } catch (e) { return null; } })() || { name: '', team: '', file: '', rows: [], info: '', err: false };
+st.samples = st.samples || []; st.brand = st.brand || PLAN_BRANDS[0][0]; st.dateFrom = st.dateFrom || ''; st.dateTo = st.dateTo || '';
+// products: danh mục từ Sheet (tab Products); plan: kết quả chung RD + MKT (api=plan)
+let products = null, catErr = '', plan = null;
 const save = () => { try { localStorage.setItem(DRAFT, JSON.stringify(st)); } catch (e) {} };
 let sending = false;
 
@@ -240,34 +284,67 @@ function hero() {
     <div class="txt"><h1>${T('title')}</h1><p>${T('sub')}</p></div>`;
   document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { lang = b.dataset.lang; try { localStorage.setItem('mqm1a-lang', lang); } catch (e) {} render(); });
 }
+const dmy = d => d ? d.split('-').reverse().join('/') : '';
+// Kết quả chung (sau khi RD và / hoặc MKT gửi): câu hỏi final · mẫu final + tình trạng đủ / thiếu gói · ngày mua final
+function resultCard() {
+  if (!plan) return '';
+  const F = plan.final, tm = t => plan.teams[t] ? `<span class="tchip ok">✓ ${T('resSent')(t, esc(plan.teams[t].name))}</span>` : `<span class="tchip">${T('resWait')(t)}</span>`;
+  const okN = F.samples.filter(x => x.have >= x.need).length;
+  const st3 = x => x.have >= x.need ? ['ok', T('stOk')] : x.have > 0 ? ['low', T('stLow')] : ['none', T('stNone')];
+  return `<section class="card res"><h2>${T('resH')}</h2><div class="tchips">${tm('RD')}${tm('MKT')}</div>
+    <div class="rstats"><div><small>${T('resQ')}</small><b>${F.questions.length}</b></div><div><small>${T('resS')}</small><b>${F.samples.length}</b><small>${okN}/${F.samples.length} ${T('stOk').toLowerCase()}</small></div>
+      <div><small>${T('resD')}</small><b class="d">${F.dateFrom ? dmy(F.dateFrom) + ' – ' + dmy(F.dateTo) : '—'}</b>${F.dateConflict ? `<small class="warn">${T('resConflict')}</small>` : ''}</div></div>
+    ${F.questions.length ? `<details><summary>${T('resQs')(F.questions.length)}</summary><ol class="rlist">${F.questions.map(q => `<li>${esc(q.q)} <span class="tg">${esc(q.team)}</span></li>`).join('')}</ol></details>` : ''}
+    ${F.samples.length ? `<details><summary>${T('resSs')(F.samples.length)}</summary><table class="rtbl">${F.samples.map(x => { const [c, l] = st3(x); return `<tr><td>${esc(x.brand)} · ${esc(x.flavor)}</td><td>${esc(x.sku)}</td><td class="tg">${esc(x.teams)}</td><td>${T('have')(x.have, x.need)}</td><td><span class="stt ${c}">${l}</span></td></tr>`; }).join('')}</table></details>` : ''}
+    <p class="hint">${T('resNote')}</p></section>`;
+}
+// Bước 2: danh mục O'star / Swing theo vị, mỗi vị bấm chọn quy cách (size)
+const skusOf = p => String(p.sku || '').split(',').map(x => x.trim()).filter(Boolean);
+const sKey = (b, f, s) => `${b}|${f}|${s}`;
+function sampleCard() {
+  if (!products) return `<div class="empty">${catErr ? esc(T('catErr') + catErr) : T('loadingCat')}</div>`;
+  const list = products.filter(p => p.brand === st.brand);
+  return `<div class="seg bseg" id="bseg">${PLAN_BRANDS.map(([b, l]) => { const n = st.samples.filter(k => k.startsWith(b + '|')).length; return `<button class="${st.brand === b ? 'on' : ''}" data-b="${b}">${esc(l)}${n ? ` · ${n}` : ''}</button>`; }).join('')}</div>
+    <p class="hint">${T('smpHint')}</p>
+    <table class="st"><thead><tr><th>${T('flavor')}</th><th>${T('size')}</th><th></th></tr></thead><tbody>
+    ${list.map(p => { const ks = skusOf(p).map(s => sKey(p.brand, p.flavor, s)), all = ks.length && ks.every(k => st.samples.includes(k));
+      return `<tr><td class="fl">${esc(p.flavor)}</td><td>${skusOf(p).map(s => { const k = sKey(p.brand, p.flavor, s); return `<button class="sz ${st.samples.includes(k) ? 'on' : ''}" data-k="${esc(k)}">${esc(s)}</button>`; }).join('')}</td>
+        <td class="all"><button class="sz all ${all ? 'on' : ''}" data-all="${esc(ks.join(';'))}">${T('allFlavor')}</button></td></tr>`; }).join('')}</tbody></table>`;
+}
 function render() {
   hero();
   const nC = st.rows.filter(r => r.c.trim()).length;
-  $('#app').innerHTML = `
-    <section class="card"><h2><span class="n">1</span>${T('who')}</h2>
+  $('#app').innerHTML = resultCard() + `
+    <section class="card"><h2>${T('who')}</h2>
       <div class="row2"><div><span class="label">${T('name')} <span class="req">*</span></span><input id="nm" autocomplete="name" placeholder="${esc(T('namePh'))}" value="${esc(st.name)}"></div>
         <div><span class="label">${T('team')} <span class="req">*</span></span><div class="seg" id="tm">${TEAMS.map(t => `<button class="${st.team === t ? 'on' : ''}" data-v="${t}">${t}</button>`).join('')}</div></div></div></section>
-    <section class="card"><h2><span class="n">2</span>${T('fileH')}</h2>
+    <section class="card"><h2><span class="n">1</span>${T('s1')}<span class="meta" id="qmeta">${st.rows.length ? T('count')(st.rows.length, nC) : ''}</span></h2>
       <div class="drop" id="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
         <b>${T('drop')}</b><small>${T('dropSub')}</small></div>
       ${st.info ? `<div class="fileinfo ${st.err ? 'err' : ''}">${esc(st.info)}</div>` : ''}
-      <details class="paste"><summary>${T('paste')}</summary><textarea id="pasteTx"></textarea><div class="tools"><button class="btn ghost sm" id="pasteGo">${T('pasteBtn')}</button></div></details></section>
-    <section class="card"><h2><span class="n">3</span>${T('tableH')}<span class="meta">${T('count')(st.rows.length, nC)}</span></h2>
-      ${st.rows.length ? `<table class="qt"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th></tr></thead><tbody>
+      <details class="paste"><summary>${T('paste')}</summary><textarea id="pasteTx"></textarea><div class="tools"><button class="btn ghost sm" id="pasteGo">${T('pasteBtn')}</button></div></details>
+      ${st.rows.length ? `<table class="qt" style="margin-top:12px"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th></tr></thead><tbody>
         ${st.rows.map((r, i) => `<tr><td class="no">${i + 1}</td><td class="q">${r.g ? `<span class="grp">${esc(r.g)}</span>` : ''}<div class="qtx">${esc(r.q)}</div></td>
-          <td class="chg"><textarea rows="1" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td></tr>`).join('')}</tbody></table>`
-        : `<div class="empty">${T('empty')}</div>`}
-      ${st.rows.length ? `<div class="tools"><button class="btn ghost sm" id="clr">${T('clear')}</button></div>` : ''}</section>`;
+          <td class="chg"><textarea rows="1" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td></tr>`).join('')}</tbody></table>
+        <div class="tools"><button class="btn ghost sm" id="clr">${T('clear')}</button></div>` : `<div class="empty">${T('empty')}</div>`}</section>
+    <section class="card"><h2><span class="n">2</span>${T('s2')}<span class="meta">${T('picked')(st.samples.length)}</span></h2>${sampleCard()}</section>
+    <section class="card"><h2><span class="n">3</span>${T('s3')}</h2>
+      <div class="row2"><div><span class="label">${T('dateFrom')} <span class="req">*</span></span><input type="date" id="df" value="${esc(st.dateFrom)}"></div>
+        <div><span class="label">${T('dateTo')} <span class="req">*</span></span><input type="date" id="dt" value="${esc(st.dateTo)}" min="${esc(st.dateFrom)}"></div></div>
+      <p class="hint">${T('dateHint')}</p></section>`;
   bind(); status();
 }
-function missing() { const m = []; if (!st.name.trim()) m.push(T('m_name')); if (!st.team) m.push(T('m_team')); if (!st.rows.some(r => r.q.trim())) m.push(T('m_rows')); return m; }
+function missing() {
+  const m = []; if (!st.name.trim()) m.push(T('m_name')); if (!st.team) m.push(T('m_team')); if (!st.rows.some(r => r.q.trim())) m.push(T('m_rows'));
+  if (!st.samples.length) m.push(T('m_smp')); if (!st.dateFrom || !st.dateTo || st.dateFrom > st.dateTo) m.push(T('m_date'));
+  return m;
+}
 function status() {
   const m = missing(); $('#send').disabled = !!m.length || sending; $('#send').textContent = sending ? T('sending') : T('send');
   $('#xlsx').textContent = T('xlsx'); $('#xlsx').disabled = !st.rows.length;
   $('#barMsg').textContent = m.length ? T('need') + m.join(', ') : T('ready');
-  const meta = document.querySelector('.card h2 .meta'); if (meta) meta.textContent = T('count')(st.rows.length, st.rows.filter(r => r.c.trim()).length);
-}
-function bind() {
+  const meta = $('#qmeta'); if (meta && st.rows.length) meta.textContent = T('count')(st.rows.length, st.rows.filter(r => r.c.trim()).length);
+}function bind() {
   $('#nm').oninput = e => { st.name = e.target.value; save(); status(); };
   document.querySelectorAll('#tm button').forEach(b => b.onclick = () => { st.team = b.dataset.v; save(); render(); });
   const drop = $('#drop');
@@ -280,6 +357,13 @@ function bind() {
   const grow = el => { el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; };
   document.querySelectorAll('.qt textarea').forEach(el => { grow(el); el.oninput = () => { st.rows[+el.dataset.i][el.dataset.k] = el.value; grow(el); save(); status(); }; });
   const clr = $('#clr'); if (clr) clr.onclick = () => { if (confirm(T('clearAsk'))) { st.rows = []; st.file = ''; st.info = ''; save(); render(); } };
+  const keep = () => { const y = scrollY; save(); render(); scrollTo(0, y); };
+  document.querySelectorAll('#bseg button').forEach(b => b.onclick = () => { st.brand = b.dataset.b; keep(); });
+  document.querySelectorAll('.sz[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, i = st.samples.indexOf(k); i >= 0 ? st.samples.splice(i, 1) : st.samples.push(k); keep(); });
+  document.querySelectorAll('.sz[data-all]').forEach(b => b.onclick = () => { const ks = b.dataset.all.split(';').filter(Boolean), all = ks.every(k => st.samples.includes(k));
+    st.samples = all ? st.samples.filter(k => !ks.includes(k)) : [...new Set(st.samples.concat(ks))]; keep(); });
+  $('#df').onchange = e => { st.dateFrom = e.target.value; if (st.dateTo && st.dateTo < st.dateFrom) st.dateTo = ''; keep(); };
+  $('#dt').onchange = e => { st.dateTo = e.target.value; keep(); };
 }
 $('#file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) readFile(f); };
 $('#xlsx').onclick = async () => {
@@ -295,16 +379,22 @@ $('#send').onclick = async () => {
   try {
     const rows = st.rows.map(r => ({ q: (r.g ? r.g + ' · ' : '') + r.q.trim(), c: r.c.trim() })).filter(r => r.q);
     const r = await fetch(API, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ api: 'sendRequest', k: KEY, data: { name: st.name.trim(), team: st.team, file: st.file, rows } }) }).then(x => x.json());
+      body: JSON.stringify({ api: 'sendRequest', k: KEY, data: { name: st.name.trim(), team: st.team, file: st.file, rows,
+        samples: st.samples.map(k => { const [brand, flavor, sku] = k.split('|'); return { brand, flavor, sku }; }), dateFrom: st.dateFrom, dateTo: st.dateTo } }) }).then(x => x.json());
     if (!r.ok) throw new Error(r.error || '?');
-    $('#doneHead').textContent = T('doneH'); $('#doneTxt').textContent = T('doneT')(r.count); $('#doneOk').textContent = T('ok');
+    $('#doneHead').textContent = T('doneH'); $('#doneTxt').textContent = T('doneT')(r.count, r.samples); $('#doneOk').textContent = T('ok');
     $('#done').classList.add('on');
-    st.rows = []; st.file = ''; st.info = ''; save();
+    st.rows = []; st.file = ''; st.info = ''; st.samples = []; save(); loadPlan();
   } catch (e) { toast(T('sendErr') + (e.message || e) + '. ' + T('sendErr2')); }
   sending = false; render();
 };
-$('#doneOk').onclick = () => $('#done').classList.remove('on');
+$('#doneOk').onclick = () => { $('#done').classList.remove('on'); scrollTo(0, 0); };
+const apiGet = q => fetch(`${API}?api=${q}&k=${KEY}`, { credentials: 'omit' }).then(r => r.json());
+function loadPlan() { apiGet('plan').then(r => { if (r.ok) { plan = r; render(); } }).catch(() => {}); }
 render();
+apiGet('catalog').then(r => { if (!r.ok) throw new Error(r.error); products = r.products.filter(p => PLAN_BRANDS.some(([b]) => b === p.brand)); render(); })
+  .catch(e => { catErr = e.message || String(e); render(); });
+loadPlan();
 </script>
 </body>
 </html>
