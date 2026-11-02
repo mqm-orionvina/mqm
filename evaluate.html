@@ -107,6 +107,8 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 .cq-c { display: block; color: var(--muted); font-size: 12px; margin: -2px 0 8px; }
 .cq.bad .cq-q b { color: var(--bad); } .cq.fine .cq-q b { color: var(--green, #2e9b4f); }
 .cq textarea { margin-top: 4px; }
+.cqprev summary { cursor: pointer; font-size: 14px; } .cqprev summary span { color: var(--muted); font-size: 12px; margin-left: 6px; }
+.cqprev ol { margin: 10px 0 4px; padding-left: 22px; font-size: 13.5px; line-height: 1.5; } .cqprev li + li { margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -162,7 +164,7 @@ const I18N = {
     prog: (n, m) => `Đã chấm ${n}/${m} điểm`, save: 'Lưu đánh giá', saving: 'Đang lưu…', saved: id => `Đã lưu đánh giá ${id}`, saveErr: 'Chưa lưu được: ',
     loadErr: e => `Không tải được danh sách mẫu: ${e}. Kiểm tra mạng rồi tải lại trang.`,
     vs: { 'Tốt hơn': 'Tốt hơn', 'Tương đương': 'Tương đương', 'Kém hơn': 'Kém hơn' }, origin: { 'Đối thủ': 'Đối thủ' }, market: { North: 'Miền Bắc', South: 'Miền Nam' }, tags: {},
-    cqTitle: 'Câu hỏi của chu kỳ', cqSub: n => `${n} câu từ RD / MKT`, cqWant: 'Mong muốn thay đổi: ', cqDesc: 'Mô tả *', nCq: n => `${n} câu hỏi chu kỳ chưa chọn`,
+    cqTitle: 'Câu hỏi của chu kỳ', cqSub: n => `${n} câu từ RD / MKT`, cqHint: 'Các câu này hiện trong màn hình chấm của từng mẫu, sau 4 mục Bao bì / Ngoại quan / Kết cấu / Hương vị.', cqWant: 'Mong muốn thay đổi: ', cqDesc: 'Mô tả *', nCq: n => `${n} câu hỏi chu kỳ chưa chọn`,
   },
   ko: {
     step: 'MQM · 1A 단계', title: '샘플 평가', subLogin: '이름, 부서를 입력하고 담당 브랜드를 선택하세요.', subList: '평가할 샘플을 선택하세요. 각자 독립적으로 평가합니다.',
@@ -190,7 +192,7 @@ const I18N = {
     loadErr: e => `샘플 목록을 불러오지 못했습니다: ${e}. 네트워크 확인 후 새로고침하세요.`,
     vs: { 'Tốt hơn': '더 좋음', 'Tương đương': '비슷함', 'Kém hơn': '더 나쁨' }, origin: { 'Đối thủ': '경쟁사' }, market: { North: '북부', South: '남부' },
     tags: { 'Seal yếu': '실링 약함', 'In lệch / mờ': '인쇄 틀어짐 / 흐림', 'Rách': '찢어짐', 'Code date mờ': '날짜 코드 흐림', 'Coating không đều': '코팅 불균일' },
-    cqTitle: '이번 주기 질문', cqSub: n => `RD / MKT 질문 ${n}개`, cqWant: '변경 요청: ', cqDesc: '서술 *', nCq: n => `주기 질문 ${n}개 미선택`,
+    cqTitle: '이번 주기 질문', cqSub: n => `RD / MKT 질문 ${n}개`, cqHint: '각 샘플 평가 화면에서 포장 / 외관 / 식감 / 맛 4개 항목 다음에 표시됩니다.', cqWant: '변경 요청: ', cqDesc: '서술 *', nCq: n => `주기 질문 ${n}개 미선택`,
   },
 };
 let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
@@ -270,7 +272,10 @@ function viewList() {
   if (filt.show === 'todo') xs = xs.filter(s => !mine(s.id));
   if (filt.q) { const q = filt.q.toLowerCase(); xs = xs.filter(s => `${s.id} ${s.brand} ${s.flavor} ${s.sku}`.toLowerCase().includes(q)); }
   const nb = me.brands === 'all' ? T('allBrands') : T('nBrands')(me.brands.length);
-  return `${qset() ? '' : `<div class="card note">${T('qsetWait')(esc(me.dept))}</div>`}
+  // Câu hỏi của chu kỳ: xem trước ngay ở danh sách (kể cả khi chưa có mẫu); chấm khi mở từng mẫu
+  const cqBox = cq.length ? `<details class="card cqprev" open><summary><b>${T('cqTitle')}</b> <span>${T('cqSub')(cq.length)}</span></summary>
+      <ol>${cq.map(q => `<li><span class="tag">${esc(q.team)}</span> ${esc(q.q)}</li>`).join('')}</ol><p class="hint">${T('cqHint')}</p></details>` : '';
+  return `${qset() ? '' : `<div class="card note">${T('qsetWait')(esc(me.dept))}</div>`}${cqBox}
     <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'all' ? 'on' : ''}" data-show="all">${T('all')}</button></div>
     <div class="stat"><span>${T('left')(todo, pool.length, esc(nb))}</span><button class="linkbtn" id="editBrands">${T('changeBrands')}</button></div>
     ${xs.length ? xs.map(s => { const n = doneBy(s.id).length, m = mine(s.id);
