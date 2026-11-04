@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#c8102e">
-<title>MQM PC · Setup</title>
+<title>MQM ORION VINA · Setup</title>
 <style>
 :root {
   --red: #c8102e; --red-2: #9e0c24; --red-soft: #fdecee; --ink: #1b1b1f; --muted: #6e6e76; --line: #e7e5e2;
@@ -133,14 +133,14 @@ table.st td.all { width: 70px; text-align: right; }
 <input type="file" id="file" accept=".docx,.xlsx,.xls,.csv,.txt" hidden>
 <script src="pc.js"></script>
 <script>
-// MQM PC · Bước 1 Setup: RD / MKT / FQS thả file mong muốn (Word / Excel) → app chuyển ngay thành bảng câu hỏi,
+// MQM ORION VINA · Bước 1 Setup: RD / MKT / FQS thả file mong muốn (Word / Excel) → app chuyển ngay thành bảng câu hỏi,
 // cạnh mỗi câu hỏi có cột "Mong muốn thay đổi" → Gửi: lưu tab Requests trong Google Sheet MQM + email về anh Thái (chủ Apps Script).
 // File chỉ đọc trên trình duyệt; chỉ bảng câu hỏi được gửi đi. Gọi API không kèm tài khoản Google.
 const LIB = { xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', mammoth: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js' };
 const TEAMS = ['RD', 'MKT', 'FQS'];
 const I18N = {
   vi: {
-    step: 'MQM PC · SETUP', title: 'Setup chu kỳ MQM', sub: '3 bước rồi Gửi: ① bảng câu hỏi (file, gõ, hoặc dùng lại bộ cũ; thêm / bớt được) ② mẫu cần mua ③ ngày sản xuất. RD, MKT, FQS mỗi team gửi 1 lần; phần trùng nhau tự bỏ.',
+    step: 'MQM ORION VINA · SETUP', title: 'Setup chu kỳ MQM', sub: '3 bước rồi Gửi: ① bảng câu hỏi (file, gõ, hoặc dùng lại bộ cũ; thêm / bớt được) ② mẫu cần mua ③ ngày sản xuất. RD, MKT, FQS mỗi team gửi 1 lần; phần trùng nhau tự bỏ.',
     who: 'Đang đăng nhập', name: 'Tên', namePh: 'VD: Nguyễn Văn A', team: 'Team',
     rvHead: 'Xem lại bảng câu hỏi', rvTxt: (t, q, s) => `${t} · ${q} câu hỏi · ${s} mẫu cần mua. Kiểm tra rồi bấm OK để lưu; bộ phận còn lại gửi xong thì app gộp thành bảng final.`,
     rvBack: 'Sửa lại', rvOk: 'OK, lưu', rvQ: 'Bảng câu hỏi', rvS: 'Mẫu cần mua', rvD: 'Ngày sản xuất', saving: 'Đang lưu…',
@@ -165,7 +165,7 @@ const I18N = {
     have: (h, n) => `${h}/${n} gói`, stOk: 'Đủ', stLow: 'Thiếu', stNone: 'Chưa có', resNote: 'Câu hỏi final tự hiện trên app đánh giá. Số gói cập nhật khi người mua quét mẫu trên app đăng ký.',
   },
   ko: {
-    step: 'MQM PC · SETUP', title: 'MQM 주기 Setup', sub: '3단계 후 전송: ① 질문표 (파일 · 입력 · 이전 질문; 추가 · 삭제 가능) ② 구매 샘플 ③ 제조일 범위. RD · MKT · FQS 팀별 1회 전송; 중복은 자동 제거.',
+    step: 'MQM ORION VINA · SETUP', title: 'MQM 주기 Setup', sub: '3단계 후 전송: ① 질문표 (파일 · 입력 · 이전 질문; 추가 · 삭제 가능) ② 구매 샘플 ③ 제조일 범위. RD · MKT · FQS 팀별 1회 전송; 중복은 자동 제거.',
     who: '로그인 사용자', name: '이름', namePh: '예: 홍길동', team: '팀',
     rvHead: '질문표 확인', rvTxt: (t, q, s) => `${t} · 질문 ${q}개 · 구매 샘플 ${s}개. 확인 후 OK를 누르면 저장되고, 다른 팀이 저장하면 최종표로 합쳐집니다.`,
     rvBack: '수정', rvOk: 'OK, 저장', rvQ: '질문표', rvS: '구매 샘플', rvD: '제조일', saving: '저장 중…',
