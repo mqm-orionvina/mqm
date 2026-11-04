@@ -61,6 +61,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--red); box-shado
 .qt td.q { padding: 10px 10px 10px 4px; }
 .qt td.chg { width: 40%; }
 .qtx { font-size: 15px; line-height: 1.45; font-weight: 600; }
+.qt textarea.qedit { font-size: 15px; font-weight: 600; line-height: 1.45; overflow: hidden; resize: none; min-height: 44px; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; }
 .grp { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--red-soft); color: var(--red); margin-bottom: 4px; }
 .qt td.chg textarea:not(:placeholder-shown) { border-color: #e8a400; background: #fff6dc; }
 .empty { text-align: center; color: var(--muted); padding: 22px 0; font-size: 14px; }
@@ -148,7 +150,7 @@ const I18N = {
     paste: 'Hoặc dán văn bản (mỗi dòng 1 câu hỏi)', pasteBtn: 'Chuyển thành câu hỏi', reading: 'Đang đọc file…',
     readOk: (n, f) => `Đã chuyển ${n} câu hỏi từ ${f}.`, readErr: 'Không đọc được file: ', noQ: 'Không tìm thấy câu hỏi nào trong file.',
     count: (n, c) => `${n} câu · ${c} câu có mong muốn thay đổi`,
-    q: 'Câu hỏi', chg: 'Mong muốn thay đổi', chgPh: 'Để trống nếu giữ nguyên', clear: 'Xoá hết', clearAsk: 'Xoá toàn bộ bảng câu hỏi?',
+    q: 'Câu hỏi', chg: 'Mong muốn thay đổi', chgPh: 'Để trống nếu giữ nguyên', clear: 'Xoá hết', clearAsk: 'Xoá toàn bộ bảng câu hỏi?', addQ: '+ Thêm câu hỏi', delQ: 'Bỏ câu này', qPh: 'Nhập câu hỏi…',
     empty: 'Chưa có câu hỏi. Thả file mong muốn, gõ ở trên, hoặc dùng lại bộ cũ.', reuse: 'Dùng lại bộ câu hỏi cũ', reuseSub: 'Lấy bộ câu hỏi team bạn đã lưu lần gần nhất, sửa tiếp được.',
     reuseOk: (n, c) => `Đã lấy ${n} câu hỏi từ chu kỳ ${c}`, reuseErr: 'Chưa lấy được: ',
     smpHint: 'Bấm vào quy cách (size) cần mua của từng vị. Mỗi mẫu mua 2 gói.', allFlavor: 'Cả vị', picked: n => `Đã chọn ${n} mẫu`, flavor: 'Vị', size: 'Quy cách (size)',
@@ -173,7 +175,7 @@ const I18N = {
     paste: '또는 텍스트 붙여넣기 (한 줄에 질문 1개)', pasteBtn: '질문으로 변환', reading: '파일 읽는 중…',
     readOk: (n, f) => `${f}에서 질문 ${n}개 변환.`, readErr: '파일을 읽을 수 없음: ', noQ: '파일에서 질문을 찾지 못했습니다.',
     count: (n, c) => `${n}개 · 변경 요청 ${c}개`,
-    q: '질문', chg: '변경 요청', chgPh: '그대로면 비워 두세요', clear: '모두 삭제', clearAsk: '질문표 전체를 삭제할까요?',
+    q: '질문', chg: '변경 요청', chgPh: '그대로면 비워 두세요', clear: '모두 삭제', clearAsk: '질문표 전체를 삭제할까요?', addQ: '+ 질문 추가', delQ: '이 질문 삭제', qPh: '질문 입력…',
     empty: '질문이 없습니다. 위에 요구 파일을 놓거나 입력하거나, 이전 질문을 다시 사용하세요.', reuse: '이전 질문 다시 사용', reuseSub: '팀이 마지막으로 저장한 질문을 불러와 수정할 수 있습니다.',
     reuseOk: (n, c) => `${c} 주기에서 질문 ${n}개를 불러왔습니다`, reuseErr: '불러오지 못함: ',
     smpHint: '맛별로 구매할 규격(size)을 누르세요. 샘플당 2봉 구매.', allFlavor: '전체', picked: n => `${n}개 선택`, flavor: '맛', size: '규격',
@@ -349,10 +351,11 @@ function render() {
         <b>${T('drop')}</b><small>${T('dropSub')}</small></div>
       ${st.info ? `<div class="fileinfo ${st.err ? 'err' : ''}">${esc(st.info)}</div>` : ''}
       <details class="paste" open><summary>${T('typeH')}</summary><textarea id="pasteTx"></textarea><div class="tools"><button class="btn ghost sm" id="pasteGo">${T('pasteBtn')}</button></div></details>
-      ${st.rows.length ? `<table class="qt" style="margin-top:12px"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th></tr></thead><tbody>
-        ${st.rows.map((r, i) => `<tr><td class="no">${i + 1}</td><td class="q">${r.g ? `<span class="grp">${esc(r.g)}</span>` : ''}<div class="qtx">${esc(r.q)}</div></td>
-          <td class="chg"><textarea rows="1" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td></tr>`).join('')}</tbody></table>
-        <div class="tools"><button class="btn ghost sm" id="clr">${T('clear')}</button></div>` : `<div class="empty">${T('empty')}<div style="margin-top:12px"><button class="btn" id="reuse">${T('reuse')}</button></div><small style="display:block;margin-top:8px">${T('reuseSub')}</small></div>`}</section>
+      ${st.rows.length ? `<table class="qt" style="margin-top:12px"><thead><tr><th>#</th><th>${T('q')}</th><th>${T('chg')}</th><th></th></tr></thead><tbody>
+        ${st.rows.map((r, i) => `<tr><td class="no">${i + 1}</td><td class="q">${r.g ? `<span class="grp">${esc(r.g)}</span>` : ''}<textarea class="qedit" rows="1" data-i="${i}" data-k="q" placeholder="${esc(T('qPh'))}">${esc(r.q)}</textarea></td>
+          <td class="chg"><textarea rows="1" data-i="${i}" data-k="c" placeholder="${esc(T('chgPh'))}">${esc(r.c)}</textarea></td>
+          <td class="x"><button data-del="${i}" title="${esc(T('delQ'))}" aria-label="${esc(T('delQ'))}">×</button></td></tr>`).join('')}</tbody></table>
+        <div class="tools"><button class="btn sm" id="addQ">${T('addQ')}</button><button class="btn ghost sm" id="clr">${T('clear')}</button></div>` : `<div class="empty">${T('empty')}<div style="margin-top:12px"><button class="btn ghost" id="addQ">${T('addQ')}</button></div><div style="margin-top:12px"><button class="btn" id="reuse">${T('reuse')}</button></div><small style="display:block;margin-top:8px">${T('reuseSub')}</small></div>`}</section>
     <section class="card"><h2><span class="n">2</span>${T('s2')}<span class="meta">${T('picked')(st.samples.length)}</span></h2>${sampleCard()}</section>
     <section class="card"><h2><span class="n">3</span>${T('s3')}</h2>
       <div class="row2"><div><span class="label">${T('dateFrom')} <span class="req">*</span></span><input type="date" id="df" value="${esc(st.dateFrom)}"></div>
@@ -391,6 +394,9 @@ function status() {
       st.rows = r.rows.map(x => ({ g: '', q: x.q, c: '' })); st.file = ''; st.info = T('reuseOk')(r.rows.length, r.cycle); st.err = false; save(); render();
     } catch (x) { ru.disabled = false; toast(T('reuseErr') + x.message); }
   };
+  // Thêm / bớt câu hỏi: dòng mới ở cuối bảng, con trỏ vào luôn ô câu hỏi
+  const aq = $('#addQ'); if (aq) aq.onclick = () => { st.rows.push({ g: '', q: '', c: '' }); save(); render(); const all = document.querySelectorAll('.qt textarea.qedit'); if (all.length) { all[all.length - 1].focus(); all[all.length - 1].scrollIntoView({ block: 'center' }); } };
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { st.rows.splice(+b.dataset.del, 1); save(); render(); });
   const clr = $('#clr'); if (clr) clr.onclick = () => { if (confirm(T('clearAsk'))) { st.rows = []; st.file = ''; st.info = ''; save(); render(); } };
   const keep = () => { const y = scrollY; save(); render(); scrollTo(0, y); };
   document.querySelectorAll('#bseg button').forEach(b => b.onclick = () => { st.brand = b.dataset.b; keep(); });
