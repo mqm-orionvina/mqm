@@ -89,6 +89,20 @@ const PC = {
   @media (max-width:520px){.pc-login{align-items:flex-end;padding:0}.pc-login-card{border-radius:32px 32px 0 0;padding:26px 20px 22px}.pc-login-card>b{font-size:25px}.pc-bar{padding:10px 16px}}
   /* Giao diện chung 3 trang Setup / Đăng ký / Đánh giá */
   body:has(.pc-bar){background:#fff!important;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+  /* Chỉ trắng · đỏ · xám: thay các màu hồng, xanh, vàng, tím cũ */
+  :root:has(.pc-bar){--red-soft:#f3f3f3!important;--page:#fff!important;--line:#e6e6e6!important;--blue:#111!important;--green:#111!important;--amber:#8a8a8a!important;--g:#111!important;--g-soft:#f3f3f3!important;--ink:#111!important;--muted:#6b6b6b!important}
+  .pc-bar~* .tag,.pc-bar~* .grp{background:#f1f1f1!important;color:#111!important;font-weight:700!important;letter-spacing:.01em}
+  .pc-bar~* .tag.comp,.pc-bar~* .tag.new,.pc-bar~* .tag.low{background:#fff!important;color:#6b6b6b!important;box-shadow:inset 0 0 0 1px #dcdcdc}
+  .pc-bar~* .tag.na{background:#fff!important;color:#c8102e!important;box-shadow:inset 0 0 0 1px #f0c4cc}
+  .pc-bar~* .tag.ok{background:#111!important;color:#fff!important}
+  .pc-bar~* .ball,.pc-bar~* .drow:focus-within{background:#f6f6f6!important}
+  .pc-bar~* .p-ok{background:#111!important;color:#fff!important}.pc-bar~* .p-low{background:#efefef!important;color:#111!important}.pc-bar~* .p-none{background:#fff!important;color:#c8102e!important;box-shadow:inset 0 0 0 1px #f0c4cc}
+  .pc-bar~* .done .ok{background:#c8102e!important;color:#fff!important}
+  .pc-bar~* .savedbox.draft,.pc-bar~* .fileinfo.err{background:#f3f3f3!important;color:#111!important}
+  .pc-bar~* .qt td.chg textarea:not(:placeholder-shown){border-color:#111!important;background:#fafafa!important}
+  .pc-bar~* .prod .ic{background:#f3f3f3!important;color:#111!important}
+  .pc-bar~* .sample{border-radius:22px!important}.pc-bar~* .sample .th{background:#f3f3f3!important}
+  .pc-bar~* .bar .prog .track i{background:#c8102e!important}
   .pc-bar~.hero{background:#fff!important;color:#111!important;padding:28px 20px 18px!important}
   .pc-bar~.hero{text-align:center}.pc-bar~.hero .top,.pc-bar~.hero .txt{max-width:640px!important;margin:0 auto!important}
   .pc-bar~.hero .top{justify-content:center!important;gap:14px!important;flex-wrap:wrap}

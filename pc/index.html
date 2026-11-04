@@ -30,19 +30,20 @@ a { color: inherit; }
 .hero p { font-size: 19px; color: var(--muted); margin: 0 0 28px; max-width: 520px; }
 .cta { display: flex; gap: 12px; flex-wrap: wrap; }
 .collage { position: relative; height: 560px; }
-.ph { position: absolute; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; color: #fff; font-weight: 800; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-.ph small { display: block; font-weight: 600; opacity: .9; font-size: 12px; }
-.ph svg { position: absolute; inset: 18% 18% auto auto; width: 46%; height: auto; opacity: .95; }
-.ph.a { left: 4%; top: 6%; width: 38%; height: 56%; background: linear-gradient(160deg, #ffb36b, #f26b3a); }
-.ph.b { left: 46%; top: 0; width: 30%; height: 32%; background: linear-gradient(160deg, #9ed39b, #3f9a5b); }
-.ph.c { left: 46%; top: 36%; width: 46%; height: 44%; background: linear-gradient(160deg, #7cc0f0, #2d6fb8); }
-.ph.d { left: 80%; top: 4%; width: 20%; height: 28%; background: linear-gradient(160deg, #f6d36a, #e3a31d); }
-.ph.e { left: 10%; top: 66%; width: 32%; height: 30%; background: linear-gradient(160deg, #f19bb0, #c8102e); }
+.ph { position: absolute; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; color: var(--ink); font-weight: 700; font-size: 16px; letter-spacing: -.01em; background: #f3f3f3; }
+.ph small { display: block; font-weight: 500; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.ph svg { position: absolute; left: 18px; top: 18px; width: 34px; height: 34px; }
+.ph.a { left: 4%; top: 6%; width: 38%; height: 56%; background: #f3f3f3; }
+.ph.b { left: 46%; top: 0; width: 30%; height: 32%; background: #fff; border: 1.5px solid #e6e6e6; }
+.ph.c { left: 46%; top: 36%; width: 46%; height: 44%; background: var(--red); color: #fff; } .ph.c small { color: #ffd5dc; }
+.ph.d { left: 80%; top: 4%; width: 20%; height: 28%; background: #e9e9e9; }
+.ph.e { left: 10%; top: 66%; width: 32%; height: 30%; background: #fff; border: 1.5px solid #e6e6e6; }
+.ph .big { font-size: 44px; font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-bottom: 4px; }
 /* 3 phần của app */
 .parts { max-width: 1280px; margin: 0 auto; padding: 10px 28px 20px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .part { border-radius: 32px; padding: 26px; background: var(--soft); text-decoration: none; color: var(--ink); display: flex; flex-direction: column; gap: 10px; min-height: 230px; border: 0; text-align: left; font: inherit; cursor: pointer; transition: transform .15s; }
 .part:hover { transform: translateY(-3px); }
-.part .ic { width: 52px; height: 52px; border-radius: 16px; background: #fff; display: grid; place-items: center; font-size: 26px; }
+.part .ic { width: 52px; height: 52px; border-radius: 16px; background: #fff; display: grid; place-items: center; } .part .ic svg { width: 26px; height: 26px; }
 .part b { font-size: 24px; letter-spacing: -.02em; }
 .part p { margin: 0; color: var(--muted); font-size: 15px; }
 .part .tag { margin-top: auto; align-self: flex-start; font-size: 13px; font-weight: 700; border-radius: 999px; padding: 6px 12px; background: #fff; }
@@ -56,7 +57,7 @@ a { color: inherit; }
 .st div { background: #f7f7f7; border-radius: 20px; padding: 14px 16px; }
 .st small { display: block; color: var(--muted); font-size: 13px; font-weight: 600; }
 .st b { font-size: 24px; }
-.ok { color: #1e8a4c; } .wait { color: #b07b00; } .no { color: var(--red); }
+.ok { color: var(--ink); } .wait { color: #8a8a8a; } .no { color: var(--red); }
 @media (max-width: 900px) {
   .nav { padding: 12px 16px; gap: 12px; } .nav .links { display: none; } .logo { font-size: 19px; white-space: nowrap; }
   .nav .pill { padding: 10px 16px; white-space: nowrap; } .nav a.pill.gray { display: none; } .me { display: none; }
@@ -86,18 +87,18 @@ a { color: inherit; }
     </div>
   </div>
   <div class="collage" aria-hidden="true">
-    <div class="ph a"><svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="8" fill="#fff" opacity=".85"/><path d="M14 18h36M14 46h36" stroke="#f26b3a" stroke-width="3"/></svg>Snack<small>O'star · Swing</small></div>
-    <div class="ph b">Đủ mẫu<small>2 gói / SKU</small></div>
-    <div class="ph c"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#fff" opacity=".85"/><path d="M22 33l7 7 13-15" stroke="#2d6fb8" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Ổn / Có vấn đề<small>đánh giá định tính</small></div>
-    <div class="ph d">QR<small>quét mở app</small></div>
-    <div class="ph e">Câu hỏi chu kỳ<small>từ RD · MKT</small></div>
+    <div class="ph a"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linejoin="round"><path d="M7 3h10l-1 3 1 3v9l1 3H6l1-3V9l1-3z"/><path d="M8 9h8"/></svg>Mẫu thị trường<small>ORION · đối thủ</small></div>
+    <div class="ph b"><span class="big">2</span>gói / SKU<small>đủ để chấm</small></div>
+    <div class="ph c"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></svg>Ổn / Có vấn đề<small>đánh giá định tính, vài giây mỗi mẫu</small></div>
+    <div class="ph d"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></svg>QR<small>quét mở app</small></div>
+    <div class="ph e"><svg viewBox="0 0 24 24" fill="none" stroke="#c8102e" stroke-width="1.6" stroke-linecap="round"><path d="M5 5h14v10H9l-4 4z"/><path d="M9 9h6M9 12h4"/></svg>Câu hỏi chu kỳ<small>từ RD · MKT</small></div>
   </div>
 </section>
 
 <section class="parts" id="parts">
-  <a class="part" id="tSetup" href="setup.html"><span class="ic">📝</span><b>Setup</b><p>RD / MKT gửi mong muốn (gõ trực tiếp hoặc kéo thả file), xem lại bảng câu hỏi, chọn mẫu cần mua và ngày sản xuất.</p><span class="tag">🔒 Cần đăng nhập</span></a>
-  <a class="part" id="tReg" href="register.html"><span class="ic">📦</span><b>Đăng ký mẫu</b><p>Host quét barcode từng gói, chọn nơi mua, nhà máy, NSX. Theo dõi SKU nào đủ, thiếu, chưa có.</p><span class="tag">🔒 Cần đăng nhập</span></a>
-  <a class="part ev" href="evaluate.html"><span class="ic">✅</span><b>Đánh giá mẫu</b><p>Vào là chấm, không cần đăng nhập. SKU chưa có mẫu sẽ ghi "Chưa có" và không chấm được.</p><span class="tag">Mở cho mọi người</span></a>
+  <a class="part" id="tSetup" href="setup.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><b>Setup</b><p>RD / MKT gửi mong muốn (gõ trực tiếp hoặc kéo thả file), xem lại bảng câu hỏi, chọn mẫu cần mua và ngày sản xuất.</p><span class="tag">Cần đăng nhập</span></a>
+  <a class="part" id="tReg" href="register.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M4 6v12M7 6v12M10 6v12M13 6v12M17 6v12M20 6v12" /></svg></span><b>Đăng ký mẫu</b><p>Host quét barcode từng gói, chọn nơi mua, nhà máy, NSX. Theo dõi SKU nào đủ, thiếu, chưa có.</p><span class="tag">Cần đăng nhập</span></a>
+  <a class="part ev" href="evaluate.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></svg></span><b>Đánh giá mẫu</b><p>Vào là chấm, không cần đăng nhập. SKU chưa có mẫu sẽ ghi "Chưa có" và không chấm được.</p><span class="tag">Mở cho mọi người</span></a>
 </section>
 
 <section class="status" id="status"><div class="box"><h2>Chu kỳ hiện tại</h2><p class="me" style="margin:0">Đang tải…</p></div></section>
@@ -116,7 +117,7 @@ function renderMe() {
   [['#tSetup', 'setup'], ['#tReg', 'register']].forEach(([id, part]) => {
     const el = $(id), ok = PC.can(part, u);
     el.classList.toggle('off', !!u && !ok);
-    el.querySelector('.tag').textContent = ok ? '✓ Đã có quyền' : u ? '🔒 Tài khoản không có quyền' : '🔒 Cần đăng nhập';
+    el.querySelector('.tag').textContent = ok ? '✓ Đã có quyền' : u ? 'Tài khoản không có quyền' : 'Cần đăng nhập';
   });
 }
 async function doLogin() { await PC.login(); renderMe(); }
