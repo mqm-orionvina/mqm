@@ -84,6 +84,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--navy); box-shad
 .attr .chips { margin-bottom: 10px; }
 .attr.fine { box-shadow: inset 4px 0 0 var(--g), 0 1px 2px rgba(0,0,0,.04); } .attr.bad { box-shadow: inset 4px 0 0 var(--r), 0 1px 2px rgba(0,0,0,.04); }
 .seg.okis button.on.ok { background: var(--g); color: #fff; } .seg.okis button.on.is { background: var(--r); color: #fff; }
+.pick { margin-top: 12px; } .pick .scale { margin: 6px 0 0; }
 details.ref { margin-top: 10px; } details.ref summary { font-size: 12.5px; color: var(--muted); font-weight: 700; cursor: pointer; padding: 4px 0; }
 details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-size: 14px; }
 .attr textarea { min-height: 64px; font-size: 15px; }
@@ -147,7 +148,7 @@ const I18N = {
   vi: {
     step: 'MQM PC · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập tên, bộ phận và chọn brand mình phụ trách.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',
     subScore: 'Ghi nhận vấn đề bằng mô tả theo chuyên môn của bạn. Điểm chỉ để tham khảo.', back: '← Danh sách',
-    ok: 'Ổn', issue: 'Có vấn đề', desc: 'Mô tả hiện tượng *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
+    ok: 'Ổn', issue: 'Có vấn đề', scoreL: 'Điểm · 1 tốt → 9 kém', pickIssue: 'Chọn vấn đề', desc: 'Diễn giải *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
     causeTitle: 'Nguyên nhân & giải pháp', causeSub: 'Theo chuyên môn của bộ phận bạn', causeIn: 'Nguyên nhân nghi ngờ · bên trong', causeOut: 'Nguyên nhân nghi ngờ · bên ngoài',
     solution: 'Giải pháp đề xuất *', solutionPh: 'VD: QA kiểm lực seal lô 09/2026; SCM kiểm kho NPP…', owners: 'Bộ phận nên xử lý *', overall: 'Chung', mqmRef: 'Điểm tổng thể (tham khảo)',
     need: 'Còn thiếu: ', nAttr: n => `${n} mục chưa chọn Ổn / Có vấn đề`, nDesc: 'mô tả', nCause: 'nguyên nhân', nSol: 'giải pháp', nOwner: 'bộ phận xử lý', ready: 'Sẵn sàng lưu',
@@ -172,7 +173,7 @@ const I18N = {
   ko: {
     step: 'MQM PC · 샘플 평가', title: '샘플 평가', naH: n => `샘플 없음 · SKU ${n}개 (평가 불가)`, na: '없음', low: (a, b) => `부족 ${a}/${b}봉`, subLogin: '이름, 부서를 입력하고 담당 브랜드를 선택하세요.', subList: '평가할 샘플을 선택하세요. 각자 독립적으로 평가합니다.',
     subScore: '부서 전문성으로 문제를 서술해 주세요. 점수는 참고용입니다.', back: '← 목록',
-    ok: '이상 없음', issue: '문제 있음', desc: '현상 서술 *', descPh: '예: 봉지 납작, 모서리 눅눅, 이전 로트보다 맛이 약함…', refScore: '참고 점수 (선택) · 1 양호 → 9 불량',
+    ok: '이상 없음', issue: '문제 있음', scoreL: '점수 · 1 양호 → 9 불량', pickIssue: '문제 선택', desc: '설명 *', descPh: '예: 봉지 납작, 모서리 눅눅, 이전 로트보다 맛이 약함…', refScore: '참고 점수 (선택) · 1 양호 → 9 불량',
     causeTitle: '원인 및 대책', causeSub: '소속 부서 전문성 기준', causeIn: '추정 원인 · 내부', causeOut: '추정 원인 · 외부',
     solution: '대책 제안 *', solutionPh: '예: QA 09/2026 로트 실링 점검; SCM 대리점 창고 점검…', owners: '처리 부서 *', overall: '종합', mqmRef: '종합 점수 (참고)',
     need: '미입력: ', nAttr: n => `${n}개 항목 이상 없음 / 문제 있음 미선택`, nDesc: '서술', nCause: '원인', nSol: '대책', nOwner: '처리 부서', ready: '저장 준비 완료',
@@ -321,9 +322,9 @@ function viewScore() {
     <div class="stat"><span></span><button class="linkbtn" id="allOk">${T('allOk')}</button></div>
     ${Q.map(a => { const [k, en, , , tags] = a, st = ev.st[k]; return `<div class="card attr ${st === 'issue' ? 'bad' : st === 'ok' ? 'fine' : ''}"><h3>${en} <span>${attrName(a)}</span></h3>
       <div class="seg okis" data-st="${k}"><button class="${st === 'ok' ? 'on ok' : ''}" data-v="ok">✓ ${T('ok')}</button><button class="${st === 'issue' ? 'on is' : ''}" data-v="issue">! ${T('issue')}</button></div>
-      ${st === 'issue' ? `<div class="chips" data-t="${k}" style="margin-top:10px">${tags.map(t => `<button class="chip sm ${ev.tags[k].includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
-        <span class="label">${T('desc')}</span><textarea data-c="${k}" placeholder="${esc(T('descPh'))}">${esc(ev.c[k])}</textarea>` : ''}
-      <details class="ref" ${ev[k] ? 'open' : ''}><summary>${T('refScore')}</summary>${scale(k)}</details></div>`; }).join('')}
+      ${st ? `<div class="pick"><span class="label">${T('scoreL')}</span>${scale(k)}</div>` : ''}
+      ${st === 'issue' ? `<span class="label">${T('pickIssue')}</span><div class="chips" data-t="${k}">${tags.map(t => `<button class="chip sm ${ev.tags[k].includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
+        <span class="label">${T('desc')}</span><textarea data-c="${k}" placeholder="${esc(T('descPh'))}">${esc(ev.c[k])}</textarea>` : ''}</div>`; }).join('')}
     ${cq.length ? `<div class="card attr"><h3>${T('cqTitle')} <span>${T('cqSub')(cq.length)}</span></h3>
       ${cq.map((q, i) => { const x = ev.xq[q.id]; return `<div class="cq ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}">
         <div class="cq-q"><span class="tag">${esc(q.team)}</span> <b>${i + 1}.</b> ${esc(q.q)}</div>${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}

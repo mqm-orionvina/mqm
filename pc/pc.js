@@ -59,8 +59,10 @@ const PC = {
   // Thanh trên cùng: về trang chủ + người đang đăng nhập
   bar(el, label) {
     const u = PC.user();
-    el.innerHTML = `<a class="pc-home" href="./"><span class="pc-logo sm">${PC_LOGO}</span>MQM PC</a><span class="pc-part">${label}</span>${u ? `<span class="pc-me">${u.name} · ${PC.roleName[u.role] || u.role}<button class="pc-out">Đăng xuất</button></span>` : ''}`;
+    el.innerHTML = `<button class="pc-back" aria-label="Quay lại">← Quay lại</button><a class="pc-home" href="./"><span class="pc-logo sm">${PC_LOGO}</span>MQM PC</a><span class="pc-part">${label}</span>${u ? `<span class="pc-me">${u.name} · ${PC.roleName[u.role] || u.role}<button class="pc-out">Đăng xuất</button></span>` : ''}`;
     const o = el.querySelector('.pc-out'); if (o) o.onclick = () => { PC.logout(); location.href = './'; };
+    // Quay lại trang trước trong app; mở thẳng từ link / QR thì về trang chủ
+    el.querySelector('.pc-back').onclick = () => { if (history.length > 1 && document.referrer.startsWith(location.origin)) history.back(); else location.href = './'; };
   },
 };
 // Link riêng của anh Thái (pc/?k=…): đổi khoá lấy token quản lý dài hạn, lưu trên máy này, bỏ khoá khỏi thanh địa chỉ rồi tải lại
@@ -81,6 +83,7 @@ const PC = {
   .pc-logo.sm svg{width:42px;height:28px}
   .pc-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;background:#fff;color:#111;font:600 14px/1.3 "Segoe UI",system-ui,Arial,sans-serif;position:sticky;top:0;z-index:20;border-bottom:1px solid #f0f0f0}
   .pc-bar a.pc-home{display:flex;align-items:center;gap:8px;color:#c8102e;text-decoration:none;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .pc-back{border:0;background:#efefef;color:#111;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.pc-back:hover{background:#e2e2e2}
   .pc-part{font-weight:700;background:#efefef;border-radius:999px;padding:7px 14px}.pc-me{margin-left:auto;display:flex;align-items:center;gap:10px;color:#5f5f5f}
   .pc-out{border:0;background:#efefef;color:#111;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.pc-out:hover{background:#e2e2e2}
   .pc-login{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px;overflow:auto}
