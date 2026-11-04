@@ -69,6 +69,37 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 .iss p { margin: 6px 0 0; font-size: 13.5px; } .iss p i { font-style: normal; color: var(--muted); }
 .iss .at { color: var(--red); font-weight: 700; }
 .note { color: var(--muted); font-size: 12.5px; text-align: center; margin-top: 8px; }
+/* Độ tươi: cột theo tuổi sản phẩm (ngày từ NSX đến ngày mua) */
+.age { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; align-items: end; height: 240px; padding-top: 10px; margin-bottom: 6px; }
+.age .col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.age .stk { width: 100%; max-width: 64px; display: flex; flex-direction: column-reverse; border-radius: 12px 12px 4px 4px; overflow: hidden; background: var(--soft); min-height: 4px; }
+.age .stk i { display: block; } .age .stk .o { background: var(--red); } .age .stk .c { background: #bdbdbd; }
+.age .v { font-weight: 800; font-size: 14px; }
+.age .lb { font-size: 12px; color: var(--muted); font-weight: 600; text-align: center; white-space: nowrap; }
+.age .is { font-size: 11.5px; color: var(--red); font-weight: 700; min-height: 15px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.avg { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.avg span { background: var(--soft); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; } .avg b { font-size: 15px; }
+/* Bảng issue theo hạng mục × CAT */
+.heat { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+.heat th { background: #f3f3f3; color: #333; font-weight: 700; padding: 12px 10px; text-align: center; font-size: 13px; }
+.heat th:first-child { border-radius: 14px 0 0 14px; text-align: left; } .heat th:last-child { border-radius: 0 14px 14px 0; }
+.heat td { padding: 11px 10px; text-align: center; border-bottom: 1px solid #efefef; }
+.heat td:first-child { text-align: left; font-weight: 700; white-space: nowrap; }
+.heat td.tot, .heat tr.tot td { font-weight: 800; }
+.heat tr.tot td { border-bottom: 0; border-top: 1.5px solid #e6e6e6; }
+/* Kết thúc đánh giá */
+.end { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.end p { margin: 0; color: var(--muted); font-size: 13.5px; max-width: 620px; }
+.btn { border: 0; border-radius: 999px; padding: 13px 22px; font: inherit; font-weight: 700; cursor: pointer; background: var(--red); color: #fff; }
+.btn.gray { background: var(--soft); color: var(--ink); } .btn:disabled { opacity: .5; cursor: default; }
+.done { background: #f6f6f6; border-radius: 18px; padding: 12px 16px; font-size: 13.5px; margin-bottom: 16px; text-align: center; }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 90; }
+.modal .box { background: #fff; border-radius: 28px; padding: 24px; width: 100%; max-width: 560px; max-height: 88vh; overflow: auto; }
+.modal h3 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.02em; } .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
+.modal table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; } .modal td, .modal th { padding: 8px 6px; border-bottom: 1px solid #efefef; text-align: left; }
+.modal .miss { color: var(--red); font-weight: 600; }
 @media (max-width: 760px) {
   .head { padding: 20px 16px 4px; } .wrap { padding: 12px 16px 60px; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi b { font-size: 24px; }
@@ -97,6 +128,81 @@ let R = null, fOrigin = 'all', fBrand = '';
 const bad = (e, k) => (e.tags[k] || []).length > 0 || !!String(e.c[k] || '').trim();
 const skuKey = s => [s.brand, s.flavor, s.sku].join('|');
 
+// Độ tươi: tuổi sản phẩm = ngày mua − NSX (ngày). NSX sau ngày mua hoặc thiếu ngày = "Chưa rõ"
+const AGE = [[0, 30, '≤30'], [31, 60, '31–60'], [61, 90, '61–90'], [91, 120, '91–120'], [121, 180, '121–180'], [181, 1e9, '>180']];
+const ageOf = s => { const a = Date.parse(s.buyDate), b = Date.parse(s.mfd); if (isNaN(a) || isNaN(b)) return null; const d = Math.round((a - b) / 864e5); return d < 0 ? null : d; };
+function freshness(samples, evals) {
+  const cols = AGE.map(([lo, hi, lb]) => ({ lb: lb + ' ngày', test: d => d != null && d >= lo && d <= hi })).concat([{ lb: 'Chưa rõ', test: d => d == null }]);
+  cols.forEach(c => { const xs = samples.filter(s => c.test(ageOf(s))); c.o = xs.filter(s => s.origin === 'ORION').length; c.c = xs.length - c.o;
+    const ids = new Set(xs.map(s => s.id)), es = evals.filter(e => ids.has(e.sampleId)); c.iss = es.length ? pct(es.filter(e => e.issue === 'Y').length, es.length) : null; });
+  const max = Math.max(1, ...cols.map(c => c.o + c.c));
+  const avg = list => { const ds = list.map(ageOf).filter(d => d != null); return ds.length ? Math.round(ds.reduce((a, b) => a + b, 0) / ds.length) : null; };
+  const aO = avg(samples.filter(s => s.origin === 'ORION')), aC = avg(samples.filter(s => s.origin !== 'ORION')), unk = cols[cols.length - 1].o + cols[cols.length - 1].c;
+  // Tuổi theo brand (gói đã đăng ký)
+  const br = {}; samples.forEach(s => { const d = ageOf(s); if (d != null) (br[s.brand] = br[s.brand] || []).push(d); });
+  const brRows = Object.entries(br).sort((a, b) => b[1].length - a[1].length).map(([b, ds]) => `<tr><td class="sku"><b>${esc(b)}</b></td><td class="c">${ds.length}</td><td class="c">${Math.round(ds.reduce((x, y) => x + y, 0) / ds.length)}</td><td class="c">${Math.min(...ds)}–${Math.max(...ds)}</td></tr>`).join('');
+  return `<div class="card"><h2>Độ tươi sản phẩm</h2><p class="sub">Tuổi = ngày mua − ngày sản xuất · ${samples.length} gói đã đăng ký</p>
+    <div class="avg"><span>Tuổi TB ORION <b>${aO == null ? '—' : aO + ' ngày'}</b></span><span>Tuổi TB đối thủ <b>${aC == null ? '—' : aC + ' ngày'}</b></span>${unk ? `<span>${unk} gói chưa rõ tuổi (thiếu ngày hoặc NSX sau ngày mua)</span>` : ''}</div>
+    <div class="age">${cols.map(c => `<div class="col"><span class="v">${c.o + c.c || ''}</span><div class="stk" style="height:${(c.o + c.c) / max * 150}px"><i class="o" style="height:${c.o / Math.max(1, c.o + c.c) * 100}%"></i><i class="c" style="height:${c.c / Math.max(1, c.o + c.c) * 100}%"></i></div>
+      <span class="lb">${c.lb}</span><span class="is">${c.iss == null ? '' : c.iss + '% vấn đề'}</span></div>`).join('')}</div>
+    <div class="legend"><span><i style="background:var(--red)"></i>ORION</span><span><i style="background:#bdbdbd"></i>Đối thủ</span><span>Số đỏ dưới cột = % lượt chấm có vấn đề ở nhóm tuổi đó</span></div>
+    ${brRows ? `<details style="margin-top:12px"><summary class="sub" style="cursor:pointer;margin:0">Tuổi theo brand</summary><div class="scroll"><table class="tbl" style="margin-top:8px"><thead><tr><th>Brand</th><th class="c">Gói</th><th class="c">Tuổi TB (ngày)</th><th class="c">Khoảng</th></tr></thead><tbody>${brRows}</tbody></table></div></details>` : ''}</div>`;
+}
+
+// Issue theo hạng mục × CAT: mỗi lượt chấm, mỗi tiêu chí có vấn đề tính 1 lần vào từng hạng mục mà lỗi của nó thuộc về
+const HM = ['Bao bì', 'In ấn · thiết kế', 'Hương vị', 'Kết cấu', 'Ngoại quan', 'Tươi mới · tồn kho', 'Khác'];
+const HM_DEF = { pkg: 'Bao bì', app: 'Ngoại quan', tex: 'Kết cấu', fla: 'Hương vị' };
+const HM_TAG = { 'In lệch / mờ': 'In ấn · thiết kế', 'Code date mờ': 'In ấn · thiết kế', 'Rancid / oily': 'Tươi mới · tồn kho', 'Sour / spoiled': 'Tươi mới · tồn kho', 'Soft / moisture': 'Tươi mới · tồn kho', 'Bloom': 'Tươi mới · tồn kho' };
+const hmOfQ = q => { const p = String(q).split('·')[0].toLowerCase();
+  return /bao bì|đóng gói|seal/.test(p) ? 'Bao bì' : /in ấn|thiết kế|nhãn|code/.test(p) ? 'In ấn · thiết kế' : /hương|vị|mùi/.test(p) ? 'Hương vị' : /cấu trúc|kết cấu|giòn|mềm/.test(p) ? 'Kết cấu'
+    : /ngoại quan|màu|hình dạng/.test(p) ? 'Ngoại quan' : /tươi|hạn|tồn kho|date/.test(p) ? 'Tươi mới · tồn kho' : 'Khác'; };
+const CG = { PIE: 'Pie', BISCUIT: 'Biscuit', CANDY: 'Candy', JELLY: 'Candy', PELLET: 'Snack', 'R.CRACKER': 'Snack', BOY: 'Snack', POTATO: 'Potato' };
+const COLS_CAT = ['Pie', 'Biscuit', 'Candy', 'Snack', 'Potato', 'Khác'];
+const catOf = s => CG[String(s.catGroup || '').toUpperCase()] || 'Khác';
+function heat(evals, extra) {
+  const m = {}; HM.forEach(h => { m[h] = {}; COLS_CAT.forEach(c => { m[h][c] = 0; }); });
+  evals.forEach(e => Object.keys(HM_DEF).forEach(k => { if (!bad(e, k)) return;
+    const hs = new Set((e.tags[k] || []).map(t => HM_TAG[t] || HM_DEF[k])); if (!hs.size) hs.add(HM_DEF[k]);
+    hs.forEach(h => { m[h][catOf(e.s)]++; }); }));
+  extra.filter(x => x.result === 'Có vấn đề').forEach(x => { m[hmOfQ(x.question)][catOf(x.s)]++; });
+  const rows = HM.filter(h => COLS_CAT.some(c => m[h][c])), cols = COLS_CAT.filter(c => HM.some(h => m[h][c]));
+  if (!rows.length) return '';
+  const max = Math.max(1, ...rows.flatMap(h => cols.map(c => m[h][c]))), sumR = h => cols.reduce((a, c) => a + m[h][c], 0), sumC = c => rows.reduce((a, h) => a + m[h][c], 0);
+  const qs = [...new Set(evals.map(e => e.s.quarter).filter(Boolean))].join(', ');
+  return `<div class="card"><h2>Issue theo hạng mục${qs ? ` <span class="sub" style="font-size:14px">· ${esc(qs)}</span>` : ''}</h2><p class="sub">Số lần ghi "Có vấn đề" theo hạng mục và nhóm sản phẩm · gồm cả câu hỏi chu kỳ</p>
+    <div class="scroll"><table class="heat"><thead><tr><th></th>${cols.map(c => `<th>${c}</th>`).join('')}<th>Total</th></tr></thead><tbody>
+    ${rows.map(h => `<tr><td>${h}</td>${cols.map(c => { const v = m[h][c]; return `<td style="${v ? `background:rgba(200,16,46,${(.05 + v / max * .3).toFixed(2)})` : ''}">${v || ''}</td>`; }).join('')}<td class="tot">${sumR(h)}</td></tr>`).join('')}
+    <tr class="tot"><td>Total</td>${cols.map(c => `<td>${sumC(c) || ''}</td>`).join('')}<td>${rows.reduce((a, h) => a + sumR(h), 0)}</td></tr></tbody></table></div></div>`;
+}
+
+// Kết thúc đánh giá (host / quản lý): xem trước số vấn đề theo bộ phận → xác nhận → gửi mail từng bộ phận, hạn cải thiện 2 tuần
+function endCard() {
+  return `<div class="card"><div class="end"><div><h2>Kết thúc đánh giá</h2><p>${R.ended ? `Đã kết thúc lúc ${esc(String(R.ended).slice(0, 16).replace('T', ' '))}. Có thể gửi lại nếu cần.` : 'Khi mọi người đã chấm xong: tổng hợp vấn đề theo từng bộ phận nên xử lý và gửi mail cho bộ phận đó, kèm thời gian cải thiện 2 tuần.'} Chỉ Host / quản lý thực hiện.</p></div>
+    <button class="btn ${R.ended ? 'gray' : ''}" id="endBtn">${R.ended ? 'Gửi lại mail' : 'Kết thúc đánh giá'}</button></div></div>`;
+}
+async function endFlow() {
+  if (!PC.can('register')) { if (PC.user()) PC.logout(); const u = await PC.login('Đăng nhập để kết thúc đánh giá'); if (!u) return; if (!PC.can('register', u)) return toastMsg('Tài khoản này không có quyền kết thúc đánh giá.'); PC.bar($('#pcbar'), 'Report'); }
+  const b = $('#endBtn'); b.disabled = true; b.textContent = 'Đang tổng hợp…';
+  try {
+    const p = await PC.post('endCycle', { send: false }); if (!p.ok) throw new Error(p.error);
+    const box = document.createElement('div'); box.className = 'modal';
+    box.innerHTML = `<div class="box"><h3>Xác nhận kết thúc đánh giá</h3><p class="sub" style="margin:0">Chu kỳ ${esc(p.cycle)} · ${p.total} vấn đề · hạn cải thiện <b>${dmy(p.deadline)}</b> (2 tuần)</p>
+      ${p.depts.length ? `<table><thead><tr><th>Bộ phận</th><th>Số vấn đề</th><th>Email</th></tr></thead><tbody>${p.depts.map(g => `<tr><td><b>${esc(g.dept)}</b></td><td>${g.n}</td><td class="${g.email ? '' : 'miss'}">${esc(g.email || 'Chưa có, gửi về quản lý')}</td></tr>`).join('')}</tbody></table>`
+        : '<p class="sub">Chưa có vấn đề nào được ghi nhận. Vẫn có thể kết thúc, chỉ gửi mail tổng hợp cho quản lý.</p>'}
+      <p class="sub" style="margin-top:10px">Mỗi bộ phận nhận 1 mail với danh sách vấn đề, nguyên nhân nghi ngờ và giải pháp đề xuất. Các việc được ghi vào tab Actions để theo dõi.</p>
+      <div class="row"><button class="btn gray" id="mNo">Huỷ</button><button class="btn" id="mOk">Xác nhận & gửi mail</button></div></div>`;
+    document.body.appendChild(box);
+    $('#mNo').onclick = () => box.remove();
+    $('#mOk').onclick = async () => { const ok = $('#mOk'); ok.disabled = true; ok.textContent = 'Đang gửi…';
+      try { const r = await PC.post('endCycle', { send: true, again: !!R.ended }); if (!r.ok) throw new Error(r.error);
+        R.ended = r.ended; box.remove(); render(); toastMsg(`Đã gửi mail cho ${r.sent.length} bộ phận${r.noEmail.length ? ` · ${r.noEmail.join(', ')} chưa có email, đã gửi về quản lý` : ''}.`);
+      } catch (x) { ok.disabled = false; ok.textContent = 'Xác nhận & gửi mail'; toastMsg('Chưa gửi được: ' + x.message); } };
+  } catch (x) { toastMsg('Không tổng hợp được: ' + x.message); }
+  b.disabled = false; b.textContent = R.ended ? 'Gửi lại mail' : 'Kết thúc đánh giá';
+}
+function toastMsg(t) { let el = $('#toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:999px;font-weight:600;font-size:14px;z-index:99;max-width:90vw;text-align:center'; document.body.appendChild(el); }
+  el.textContent = t; el.hidden = false; clearTimeout(el._t); el._t = setTimeout(() => { el.hidden = true; }, 5000); }
+
 function view() {
   const byId = Object.fromEntries(R.samples.map(s => [s.id, s]));
   const keep = s => s && (fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')) && (!fBrand || s.brand === fBrand);
@@ -124,7 +230,8 @@ function render() {
     <div class="kpi red"><small>Lượt có vấn đề</small><b>${pct(nIssue, evals.length)}%</b><span>${nIssue}/${evals.length} lượt</span></div></div>`;
 
   if (!evals.length) {
-    $('#app').innerHTML = filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong chu kỳ ' + esc(R.cycle)}. Report sẽ hiện ngay khi có người chấm.</div>`;
+    $('#app').innerHTML = filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong chu kỳ ' + esc(R.cycle)}. Report sẽ hiện ngay khi có người chấm.</div>`
+      + freshness(samples, evals) + endCard();
     bind(); return;
   }
 
@@ -173,17 +280,18 @@ function render() {
     ${e.causeIn.length || e.causeOut.length ? `<p><i>Nguyên nhân nghi ngờ:</i> ${esc(e.causeIn.concat(e.causeOut).join(', '))}</p>` : ''}
     ${e.solution ? `<p><i>Giải pháp đề xuất:</i> ${esc(e.solution)}</p>` : ''}${e.owners.length ? `<p><i>Bộ phận xử lý:</i> ${esc(e.owners.join(', '))}</p>` : ''}</div>`).join('');
 
-  $('#app').innerHTML = filters + kpis +
+  $('#app').innerHTML = (R.ended ? `<div class="done">✓ Đã kết thúc đánh giá chu kỳ ${esc(R.cycle)} và gửi mail các bộ phận</div>` : '') + filters + kpis + heat(evals, extra) + freshness(samples, evals) +
     `<div class="card"><h2>Vấn đề theo tiêu chí</h2><p class="sub">% lượt ghi "Có vấn đề" · bên dưới là lỗi gặp nhiều nhất</p>${attrs}</div>
     <div class="two">${causes}${owners}</div>
     ${R.questions.length ? `<div class="card"><h2>Câu hỏi của chu kỳ</h2><p class="sub">${R.questions.length} câu từ RD / MKT</p>${qs}</div>` : ''}
     <div class="card"><h2>Theo SKU</h2><p class="sub">${rows.length} SKU đã có lượt chấm · SKU nhiều vấn đề nhất ở trên</p>${table}</div>
-    <div class="card"><h2>Ghi nhận vấn đề</h2><p class="sub">${iss.length} lượt có vấn đề, mới nhất trước</p>${list || '<p class="sub" style="margin:0">Chưa có lượt nào ghi vấn đề.</p>'}</div>`;
+    <div class="card"><h2>Ghi nhận vấn đề</h2><p class="sub">${iss.length} lượt có vấn đề, mới nhất trước</p>${list || '<p class="sub" style="margin:0">Chưa có lượt nào ghi vấn đề.</p>'}</div>` + endCard();
   bind();
 }
 function bind() {
   document.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { fOrigin = b.dataset.o; render(); });
   const sel = $('#brand'); if (sel) sel.onchange = () => { fBrand = sel.value; render(); };
+  const eb = $('#endBtn'); if (eb) eb.onclick = endFlow;
 }
 (async () => {
   PC.bar($('#pcbar'), 'Report');
