@@ -14,8 +14,8 @@ const PC = {
   save(tok, user) { try { localStorage.setItem('mqmPcToken', tok); localStorage.setItem('mqmPcUser', JSON.stringify(user)); } catch (e) {} },
   logout() { try { localStorage.removeItem('mqmPcToken'); localStorage.removeItem('mqmPcUser'); } catch (e) {} },
   // Vai trò được vào từng phần: RD / MKT vào Setup, HOST vào Đăng ký mẫu, ADMIN vào cả hai; Đánh giá thì ai cũng vào
-  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'ADMIN'].includes(u.role) : part === 'register' ? ['HOST', 'ADMIN'].includes(u.role) : true; },
-  roleName: { RD: 'RD', MKT: 'MKT', HOST: 'Host · đăng ký mẫu', ADMIN: 'Quản lý' },
+  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'FQS', 'ADMIN'].includes(u.role) : part === 'register' ? ['HOST', 'ADMIN'].includes(u.role) : true; },
+  roleName: { RD: 'RD', MKT: 'MKT', FQS: 'FQS', HOST: 'Host · đăng ký mẫu', ADMIN: 'Quản lý' },
   // Hộp đăng nhập; resolve khi đăng nhập xong
   login(title) {
     return new Promise(done => {
@@ -63,6 +63,16 @@ const PC = {
     const o = el.querySelector('.pc-out'); if (o) o.onclick = () => { PC.logout(); location.href = './'; };
   },
 };
+// Link riêng của anh Thái (pc/?k=…): đổi khoá lấy token quản lý dài hạn, lưu trên máy này, bỏ khoá khỏi thanh địa chỉ rồi tải lại
+(() => {
+  const k = new URLSearchParams(location.search).get('k');
+  if (!k) return;
+  history.replaceState(null, '', location.pathname);
+  PC.post('keyLogin', { k }).then(r => {
+    if (!r.ok) throw new Error(r.error);
+    PC.save(r.token, r.user); location.reload();
+  }).catch(e => alert('Link quản lý không dùng được: ' + e.message));
+})();
 // Kiểu chung: thanh trên, hộp đăng nhập, và giao diện trắng · bo tròn · nút viên thuốc đỏ cho 3 trang (chèn 1 lần, đè kiểu cũ của trang)
 (() => {
   const s = document.createElement('style');

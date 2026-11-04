@@ -129,18 +129,18 @@ table.st td.all { width: 70px; text-align: right; }
 <input type="file" id="file" accept=".docx,.xlsx,.xls,.csv,.txt" hidden>
 <script src="pc.js"></script>
 <script>
-// MQM PC · Bước 1 Setup: RD / MKT thả file mong muốn (Word / Excel) → app chuyển ngay thành bảng câu hỏi,
+// MQM PC · Bước 1 Setup: RD / MKT / FQS thả file mong muốn (Word / Excel) → app chuyển ngay thành bảng câu hỏi,
 // cạnh mỗi câu hỏi có cột "Mong muốn thay đổi" → Gửi: lưu tab Requests trong Google Sheet MQM + email về anh Thái (chủ Apps Script).
 // File chỉ đọc trên trình duyệt; chỉ bảng câu hỏi được gửi đi. Gọi API không kèm tài khoản Google.
 const LIB = { xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', mammoth: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js' };
-const TEAMS = ['RD', 'MKT'];
+const TEAMS = ['RD', 'MKT', 'FQS'];
 const I18N = {
   vi: {
     step: 'MQM PC · APP QUYẾT ĐỊNH', title: 'Quyết định chu kỳ MQM', sub: '3 bước rồi Gửi: ① bảng câu hỏi từ file mong muốn ② mẫu cần mua ③ ngày sản xuất. RD và MKT mỗi team gửi 1 lần; phần trùng nhau tự bỏ.',
     who: 'Đang đăng nhập', name: 'Tên', namePh: 'VD: Nguyễn Văn A', team: 'Team',
     rvHead: 'Xem lại bảng câu hỏi', rvTxt: (t, q, s) => `${t} · ${q} câu hỏi · ${s} mẫu cần mua. Kiểm tra rồi bấm OK để lưu; bộ phận còn lại gửi xong thì app gộp thành bảng final.`,
     rvBack: 'Sửa lại', rvOk: 'OK, lưu', rvQ: 'Bảng câu hỏi', rvS: 'Mẫu cần mua', rvD: 'Ngày sản xuất', saving: 'Đang lưu…',
-    savedH: 'Đã lưu', savedT: o => o ? 'Bảng câu hỏi đã lưu. Cả 2 bộ phận đã lưu, câu hỏi và danh sách mẫu final đã chuyển sang Đăng ký mẫu và Đánh giá.' : 'Bảng câu hỏi đã lưu, đang chờ bộ phận còn lại.',
+    savedH: 'Đã lưu', savedT: o => o ? 'Bảng câu hỏi đã lưu. Tất cả các team đã lưu, câu hỏi và danh sách mẫu final đã chuyển sang Đăng ký mẫu và Đánh giá.' : 'Bảng câu hỏi đã lưu, đang chờ bộ phận còn lại.',
     mySaved: at => `Bản của bạn đã lưu lúc ${at}. Gửi lại sẽ thay bản cũ.`, myDraft: 'Bạn có 1 bản đang xem lại, chưa bấm OK.', openDraft: 'Mở bản đang xem lại',
     typeH: 'Gõ trực tiếp hoặc dán mong muốn (mỗi ý 1 dòng, dạng "Bao bì: …" cũng được)',
     s1: 'Bước 1 · Bảng câu hỏi', s2: 'Bước 2 · Mẫu cần mua', s3: 'Bước 3 · Ngày sản xuất',
@@ -156,7 +156,7 @@ const I18N = {
     dateFrom: 'Ngày sản xuất từ:', dateTo: 'Đến ngày:', dateHint: 'Người mua sẽ chọn mẫu có ngày sản xuất (NSX) trong khoảng này. Nếu RD và MKT chọn khác nhau, app lấy khoảng chung của 2 team.',
     send: 'Gửi', sending: 'Đang gửi…', xlsx: 'Tải Excel', need: 'Còn thiếu: ', m_name: 'tên', m_team: 'team', m_rows: 'câu hỏi', m_smp: 'mẫu cần mua', m_date: 'ngày sản xuất', ready: 'Sẵn sàng gửi',
     doneH: 'Đã gửi', doneT: (q, s) => `${q} câu hỏi và ${s} mẫu đã gửi về email anh Thái. Xem "Kết quả chung" ở đầu trang.`, ok: 'Xong', sendErr: 'Chưa gửi được: ', sendErr2: 'Có thể bấm "Tải Excel" rồi gửi file cho anh Thái.',
-    resH: 'Kết quả chung · RD + MKT', resSent: (t, n) => `${t} đã gửi (${n})`, resWait: t => `${t} chưa gửi`, resQ: 'Câu hỏi final', resS: 'Mẫu final', resD: 'Ngày sản xuất final',
+    resH: 'Kết quả chung · RD + MKT + FQS', resSent: (t, n) => `${t} đã gửi (${n})`, resWait: t => `${t} chưa gửi`, resQ: 'Câu hỏi final', resS: 'Mẫu final', resD: 'Ngày sản xuất final',
     resConflict: '2 team chọn ngày không trùng nhau, anh Thái chốt', resQs: n => `Xem ${n} câu hỏi final (đã bỏ trùng)`, resSs: n => `Xem ${n} mẫu final và tình trạng mua`,
     have: (h, n) => `${h}/${n} gói`, stOk: 'Đủ', stLow: 'Thiếu', stNone: 'Chưa có', resNote: 'Câu hỏi final tự hiện trên app đánh giá. Số gói cập nhật khi người mua quét mẫu trên app đăng ký.',
   },
@@ -165,7 +165,7 @@ const I18N = {
     who: '로그인 사용자', name: '이름', namePh: '예: 홍길동', team: '팀',
     rvHead: '질문표 확인', rvTxt: (t, q, s) => `${t} · 질문 ${q}개 · 구매 샘플 ${s}개. 확인 후 OK를 누르면 저장되고, 다른 팀이 저장하면 최종표로 합쳐집니다.`,
     rvBack: '수정', rvOk: 'OK, 저장', rvQ: '질문표', rvS: '구매 샘플', rvD: '제조일', saving: '저장 중…',
-    savedH: '저장 완료', savedT: o => o ? '저장 완료. 두 팀 모두 저장되어 최종 질문 · 샘플이 등록 · 평가로 넘어갔습니다.' : '저장 완료. 다른 팀을 기다리는 중입니다.',
+    savedH: '저장 완료', savedT: o => o ? '저장 완료. 모든 팀이 저장되어 최종 질문 · 샘플이 등록 · 평가로 넘어갔습니다.' : '저장 완료. 다른 팀을 기다리는 중입니다.',
     mySaved: at => `${at}에 저장됨. 다시 보내면 이전 것을 대체합니다.`, myDraft: '확인 대기 중인 초안이 있습니다.', openDraft: '초안 열기',
     typeH: '요구 사항 직접 입력 또는 붙여넣기 (한 줄에 1개, "포장: …" 형식 가능)',
     s1: '1단계 · 질문표', s2: '2단계 · 구매 샘플', s3: '3단계 · 제조일',
@@ -181,7 +181,7 @@ const I18N = {
     dateFrom: '제조일 시작:', dateTo: '종료일:', dateHint: '구매자는 제조일이 이 범위인 샘플을 구매합니다. RD · MKT가 다르면 두 팀의 공통 범위를 사용합니다.',
     send: '전송', sending: '전송 중…', xlsx: 'Excel 다운로드', need: '미입력: ', m_name: '이름', m_team: '팀', m_rows: '질문', m_smp: '구매 샘플', m_date: '제조일', ready: '전송 준비 완료',
     doneH: '전송 완료', doneT: (q, s) => `질문 ${q}개 · 샘플 ${s}개가 Thái 님 메일로 전송되었습니다. 상단 "공통 결과"를 확인하세요.`, ok: '확인', sendErr: '전송 실패: ', sendErr2: '"Excel 다운로드" 후 파일을 Thái 님께 보내 주세요.',
-    resH: '공통 결과 · RD + MKT', resSent: (t, n) => `${t} 전송 완료 (${n})`, resWait: t => `${t} 미전송`, resQ: '최종 질문', resS: '최종 샘플', resD: '최종 제조일 범위',
+    resH: '공통 결과 · RD + MKT + FQS', resSent: (t, n) => `${t} 전송 완료 (${n})`, resWait: t => `${t} 미전송`, resQ: '최종 질문', resS: '최종 샘플', resD: '최종 제조일 범위',
     resConflict: '두 팀 기간이 겹치지 않음, Thái 님 확정', resQs: n => `최종 질문 ${n}개 보기 (중복 제거)`, resSs: n => `최종 샘플 ${n}개 · 구매 현황 보기`,
     have: (h, n) => `${h}/${n}봉`, stOk: '충분', stLow: '부족', stNone: '없음', resNote: '최종 질문은 평가 앱에 자동 표시. 구매자가 등록 앱에서 스캔하면 수량이 갱신됩니다.',
   },
@@ -444,7 +444,7 @@ $('#rvOk').onclick = async () => {
     if (!r.ok) throw new Error(r.error || '?');
     plan = r; mine = Object.assign({}, mine, { status: 'saved' });
     $('#review').classList.remove('on');
-    $('#doneHead').textContent = T('savedH'); $('#doneTxt').textContent = T('savedT')(!!(r.teams.RD && r.teams.MKT)); $('#doneOk').textContent = T('ok');
+    $('#doneHead').textContent = T('savedH'); $('#doneTxt').textContent = T('savedT')(TEAMS.every(t => r.teams[t])); $('#doneOk').textContent = T('ok');
     $('#done').classList.add('on');
     st.rows = []; st.file = ''; st.info = ''; st.samples = []; st.wish = ''; save(); render();
   } catch (e) { toast(T('sendErr') + (e.message || e)); $('#rvOk').disabled = false; $('#rvOk').textContent = T('rvOk'); }
