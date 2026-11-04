@@ -12,8 +12,8 @@ html, body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.45 "Se
 /* Thanh trên: chỉ logo; ai đã đăng nhập thì hiện tên + đăng xuất */
 .nav { display: flex; align-items: center; gap: 12px; padding: 16px 28px; max-width: 1180px; margin: 0 auto; }
 .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; color: var(--red); text-decoration: none; letter-spacing: -.02em; white-space: nowrap; }
-.logo i { width: 34px; height: 34px; border-radius: 50%; background: var(--red); display: grid; place-items: center; }
-.logo i svg { width: 19px; height: 19px; }
+.logo i { display: grid; place-items: center; }
+.logo i svg { width: 48px; height: 32px; }
 .nav .right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
 .me { font-size: 14px; color: var(--muted); font-weight: 600; }
 .out { border: 0; border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; background: var(--soft); color: var(--ink); }
@@ -23,7 +23,9 @@ html, body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.45 "Se
 .head h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -.035em; margin: 0 0 10px; font-weight: 800; }
 .head p { margin: 0 auto; color: var(--muted); font-size: 17px; max-width: 560px; }
 /* 3 ô */
-.parts { max-width: 1180px; margin: 0 auto; padding: 0 28px 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.parts { max-width: 1180px; margin: 0 auto; padding: 0 28px 24px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.part.rp { background: #fff; border: 1.5px solid #e6e6e6; } .part.rp .ic, .part.rp .arr { background: #f3f3f3; }
+@media (max-width: 1100px) { .parts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .part { border-radius: 32px; padding: 28px; background: var(--soft); text-decoration: none; color: var(--ink); display: flex; flex-direction: column; gap: 10px; min-height: 300px; transition: transform .15s, box-shadow .15s; }
 .part:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,.07); }
 .part .ic { width: 56px; height: 56px; border-radius: 18px; background: #fff; display: grid; place-items: center; }
@@ -56,18 +58,19 @@ html, body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.45 "Se
 </head>
 <body>
 <nav class="nav">
-  <a class="logo" href="./"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="11" r="5.5"/><path d="M15.2 15.2 19.5 19.5"/></svg></i>MQM PC</a>
+  <a class="logo" href="./"><i id="logo"></i>MQM PC</a>
   <div class="right" id="navRight"></div>
 </nav>
 
 <header class="head">
   <h1>Bạn muốn làm gì?</h1>
-  <p>Đánh giá mẫu thì vào ngay. Setup và Đăng ký mẫu sẽ hỏi đăng nhập khi bấm vào.</p>
+  <p>Đánh giá mẫu và Report thì vào ngay. Setup và Đăng ký mẫu sẽ hỏi đăng nhập khi bấm vào.</p>
 </header>
 
 <section class="parts">
   <a class="part" id="tSetup" href="setup.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><b>Setup</b><p>RD / MKT gửi mong muốn (gõ trực tiếp hoặc kéo thả file), xem lại bảng câu hỏi, chọn mẫu cần mua và ngày sản xuất.</p><span class="go"><span class="tag">Cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
   <a class="part" id="tReg" href="register.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M4 6v12M7 6v12M10 6v12M13 6v12M17 6v12M20 6v12"/></svg></span><b>Đăng ký mẫu</b><p>Host quét barcode từng gói, chọn nơi mua, nhà máy, NSX. Theo dõi SKU nào đủ, thiếu, chưa có.</p><span class="go"><span class="tag">Cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+  <a class="part rp" href="report.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M4 20h16"/><path d="M7 16v-5M12 16V6M17 16v-8"/></svg></span><b>Report</b><p>Xem Fact sau khi đánh giá: tiêu chí nào có vấn đề, lỗi gặp nhiều, kết quả câu hỏi chu kỳ, từng SKU.</p><span class="go"><span class="tag">Ai cũng xem được</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
   <a class="part ev" href="evaluate.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></svg></span><b>Đánh giá mẫu</b><p>Vào là chấm, không cần đăng nhập. SKU chưa có mẫu sẽ ghi "Chưa có" và không chấm được.</p><span class="go"><span class="tag">Không cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
 </section>
 
@@ -76,6 +79,7 @@ html, body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.45 "Se
 <script src="pc.js"></script>
 <script>
 const $ = s => document.querySelector(s);
+$('#logo').innerHTML = PC_LOGO;
 function renderMe() {
   const u = PC.user();
   $('#navRight').innerHTML = u ? `<span class="me">${u.name} · ${PC.roleName[u.role] || u.role}</span><button class="out" id="out">Đăng xuất</button>` : '';

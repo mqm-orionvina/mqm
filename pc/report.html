@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>MQM PC · Report</title>
+<style>
+:root { --red: #c8102e; --ink: #111; --muted: #6b6b6b; --soft: #f3f3f3; --line: #e6e6e6; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: #fff; color: var(--ink); font: 15px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+.head { max-width: 1080px; margin: 0 auto; padding: 28px 20px 8px; text-align: center; }
+.head .k { color: var(--red); font-size: 11px; letter-spacing: .22em; font-weight: 700; }
+.head h1 { font-size: clamp(30px, 5vw, 46px); letter-spacing: -.035em; line-height: 1.08; margin: 10px 0 8px; }
+.head p { margin: 0 auto; color: var(--muted); max-width: 560px; font-size: 16px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 14px 20px 80px; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 6px 0 18px; }
+.chip { border: 0; background: var(--soft); color: var(--ink); border-radius: 999px; padding: 9px 16px; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+.chip.on { background: var(--ink); color: #fff; }
+select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; background-image: linear-gradient(45deg, transparent 50%, #111 50%), linear-gradient(135deg, #111 50%, transparent 50%); background-position: right 15px center, right 10px center; background-size: 5px 5px; background-repeat: no-repeat; }
+.wrap select.chip { border: 0 !important; min-height: 0 !important; border-radius: 999px !important; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi { background: var(--soft); border-radius: 24px; padding: 16px 18px; }
+.kpi small { display: block; color: var(--muted); font-weight: 600; font-size: 13px; }
+.kpi b { font-size: 28px; letter-spacing: -.03em; }
+.kpi span { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.kpi.red { background: var(--red); color: #fff; } .kpi.red small, .kpi.red span { color: #ffd5dc; }
+.card { border: 1.5px solid #ececec; border-radius: 28px; padding: 20px 22px; margin-bottom: 16px; }
+.card h2 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.02em; }
+.card .sub { margin: 0 0 14px; color: var(--muted); font-size: 13.5px; }
+.empty { text-align: center; color: var(--muted); padding: 30px 20px; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+/* Tiêu chí */
+.attr { display: grid; grid-template-columns: 110px minmax(0, 1fr) 70px; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid #f0f0f0; }
+.attr:first-of-type { border-top: 0; }
+.attr b { font-size: 14.5px; }
+.track { height: 10px; background: var(--soft); border-radius: 999px; overflow: hidden; display: flex; }
+.track i { display: block; height: 100%; background: var(--red); }
+.track i.ok { background: #cfcfcf; }
+.attr .n { text-align: right; font-weight: 700; font-size: 13px; }
+.attr .tags { grid-column: 2 / 4; display: flex; flex-wrap: wrap; gap: 6px; margin-top: -2px; }
+.t { font-size: 12px; font-weight: 700; background: #fff; box-shadow: inset 0 0 0 1px #dcdcdc; color: #333; border-radius: 999px; padding: 3px 10px; }
+.t em { font-style: normal; color: var(--red); margin-left: 4px; }
+/* Câu hỏi chu kỳ */
+.q { padding: 12px 0; border-top: 1px solid #f0f0f0; } .q:first-of-type { border-top: 0; }
+.q .qt { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; }
+.q .qt b { font-size: 14.5px; font-weight: 600; }
+.q .team { flex: none; font-size: 11.5px; font-weight: 700; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 2px 9px; }
+.q .cnt { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); margin: 6px 0 4px; }
+.q .cnt b { color: var(--ink); } .q .cnt .r b { color: var(--red); }
+.q details { margin-top: 6px; font-size: 13.5px; } .q summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.q ul { margin: 6px 0 0; padding-left: 18px; } .q li + li { margin-top: 4px; }
+.dept { font-weight: 700; }
+/* Bảng SKU */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tbl th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; padding: 0 8px 8px; border-bottom: 1.5px solid #ececec; white-space: nowrap; }
+.tbl td { padding: 10px 8px; border-bottom: 1px solid #f2f2f2; vertical-align: top; }
+.tbl td.c, .tbl th.c { text-align: center; }
+.tbl .sku { min-width: 160px; }
+.tbl .sku small { display: block; color: var(--muted); font-size: 12px; }
+.dot { display: inline-grid; place-items: center; min-width: 26px; height: 26px; border-radius: 999px; font-weight: 800; font-size: 12px; background: var(--soft); color: #999; }
+.dot.bad { background: var(--red); color: #fff; }
+.scroll { overflow-x: auto; margin: 0 -6px; padding: 0 6px; }
+.orig { font-size: 11px; font-weight: 700; color: var(--muted); }
+/* Ghi nhận vấn đề */
+.iss { border-radius: 22px; background: #fafafa; padding: 14px 16px; margin-top: 10px; }
+.iss .top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.iss .top b { font-size: 14.5px; } .iss .top span { color: var(--muted); font-size: 12.5px; }
+.iss p { margin: 6px 0 0; font-size: 13.5px; } .iss p i { font-style: normal; color: var(--muted); }
+.iss .at { color: var(--red); font-weight: 700; }
+.note { color: var(--muted); font-size: 12.5px; text-align: center; margin-top: 8px; }
+@media (max-width: 760px) {
+  .head { padding: 20px 16px 4px; } .wrap { padding: 12px 16px 60px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi b { font-size: 24px; }
+  .two { grid-template-columns: minmax(0, 1fr); }
+  .card { padding: 18px 16px; border-radius: 24px; }
+  .attr { grid-template-columns: 86px minmax(0, 1fr) 56px; gap: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="pc-bar" id="pcbar"></div>
+<header class="head"><div class="k">MQM PC · REPORT</div><h1>Kết quả đánh giá</h1><p id="sub">Fact từ các lượt đánh giá của chu kỳ hiện tại. Ai cũng xem được.</p></header>
+<main class="wrap" id="app"><div class="card empty">Đang tải…</div></main>
+<script src="pc.js"></script>
+<script>
+// MQM PC · Report: chỉ Fact (đếm, tỉ lệ, lỗi gặp nhiều, ghi nhận vấn đề). Deepdive làm sau.
+// Dữ liệu từ API report: mẫu đăng ký, lượt chấm (chỉ bộ phận, không có tên người chấm), câu trả lời câu hỏi chu kỳ.
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dmy = s => s ? String(s).slice(0, 10).split('-').reverse().join('/') : '';
+const ATTRS = [['pkg', 'Bao bì'], ['app', 'Ngoại quan'], ['tex', 'Kết cấu'], ['fla', 'Hương vị']];
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+let R = null, fOrigin = 'all', fBrand = '';
+
+// Mục có vấn đề = có lỗi được chọn hoặc có mô tả (app đánh giá chỉ gửi lỗi / mô tả cho mục "Có vấn đề")
+const bad = (e, k) => (e.tags[k] || []).length > 0 || !!String(e.c[k] || '').trim();
+const skuKey = s => [s.brand, s.flavor, s.sku].join('|');
+
+function view() {
+  const byId = Object.fromEntries(R.samples.map(s => [s.id, s]));
+  const keep = s => s && (fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')) && (!fBrand || s.brand === fBrand);
+  const samples = R.samples.filter(keep);
+  const evals = R.evals.filter(e => keep(byId[e.sampleId])).map(e => Object.assign({ s: byId[e.sampleId] }, e));
+  const extra = R.extra.filter(x => keep(byId[x.sampleId])).map(x => Object.assign({ s: byId[x.sampleId] }, x));
+  return { samples, evals, extra };
+}
+
+function render() {
+  const { samples, evals, extra } = view();
+  const brands = [...new Set(R.samples.filter(s => fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')).map(s => s.brand))].sort();
+  if (fBrand && !brands.includes(fBrand)) fBrand = '';
+  const filters = `<div class="filters">${[['all', 'Tất cả'], ['ORION', 'ORION'], ['comp', 'Đối thủ']].map(([v, t]) => `<button class="chip ${fOrigin === v ? 'on' : ''}" data-o="${v}">${t}</button>`).join('')}
+    <select class="chip" id="brand"><option value="">Mọi brand</option>${brands.map(b => `<option ${b === fBrand ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select></div>`;
+
+  const skus = {}; samples.forEach(s => { (skus[skuKey(s)] = skus[skuKey(s)] || { s, ids: [] }).ids.push(s.id); });
+  const evalSku = new Set(evals.map(e => skuKey(e.s)));
+  const depts = [...new Set(evals.map(e => e.dept))];
+  const nIssue = evals.filter(e => e.issue === 'Y').length;
+  const kpis = `<div class="kpis">
+    <div class="kpi"><small>SKU đã được chấm</small><b>${evalSku.size}/${Object.keys(skus).length}</b><span>${samples.length} gói đã đăng ký</span></div>
+    <div class="kpi"><small>Lượt đánh giá</small><b>${evals.length}</b><span>${new Set(evals.map(e => e.sampleId)).size} gói đã chấm</span></div>
+    <div class="kpi"><small>Bộ phận tham gia</small><b>${depts.length}</b><span>${esc(depts.join(' · ')) || '—'}</span></div>
+    <div class="kpi red"><small>Lượt có vấn đề</small><b>${pct(nIssue, evals.length)}%</b><span>${nIssue}/${evals.length} lượt</span></div></div>`;
+
+  if (!evals.length) {
+    $('#app').innerHTML = filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong chu kỳ ' + esc(R.cycle)}. Report sẽ hiện ngay khi có người chấm.</div>`;
+    bind(); return;
+  }
+
+  // 1. Theo tiêu chí: tỉ lệ lượt có vấn đề + lỗi gặp nhiều
+  const attrs = ATTRS.map(([k, name]) => {
+    const n = evals.filter(e => bad(e, k)).length, tc = {};
+    evals.forEach(e => (e.tags[k] || []).forEach(t => { tc[t] = (tc[t] || 0) + 1; }));
+    const top = Object.entries(tc).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    return `<div class="attr"><b>${name}</b><div class="track"><i style="width:${pct(n, evals.length)}%"></i></div><span class="n">${pct(n, evals.length)}% · ${n}</span>
+      ${top.length ? `<div class="tags">${top.map(([t, c]) => `<span class="t">${esc(t)}<em>${c}</em></span>`).join('')}</div>` : ''}</div>`;
+  }).join('');
+
+  // 2. Nguyên nhân nghi ngờ + bộ phận nên xử lý (từ các lượt có vấn đề)
+  const count = list => { const m = {}; list.forEach(x => { m[x] = (m[x] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+  const iss = evals.filter(e => e.issue === 'Y');
+  const bars = (rows, tot) => rows.length ? rows.map(([t, c]) => `<div class="attr"><b style="font-weight:600">${esc(t)}</b><div class="track"><i style="width:${pct(c, tot)}%"></i></div><span class="n">${c}</span></div>`).join('') : '<p class="sub" style="margin:0">Chưa có.</p>';
+  const causes = `<div class="card"><h2>Nguyên nhân nghi ngờ</h2><p class="sub">Trong ${iss.length} lượt có vấn đề · một lượt có thể chọn nhiều</p>
+    ${bars(count(iss.flatMap(e => e.causeIn.map(c => c + ' (trong)').concat(e.causeOut.map(c => c + ' (ngoài)')))), iss.length)}</div>`;
+  const owners = `<div class="card"><h2>Bộ phận nên xử lý</h2><p class="sub">Do người chấm đề xuất</p>${bars(count(iss.flatMap(e => e.owners)), iss.length)}</div>`;
+
+  // 3. Câu hỏi chu kỳ: Ổn / Có vấn đề + mô tả
+  const qs = R.questions.map(q => {
+    const xs = extra.filter(x => x.qid === q.id || x.question === q.q), ok = xs.filter(x => x.result === 'Ổn').length, no = xs.length - ok;
+    const notes = xs.filter(x => x.note);
+    return `<div class="q"><div class="qt"><b>${esc(q.q)}</b><span class="team">${esc(q.team)}</span></div>
+      <div class="cnt"><span>Ổn <b>${ok}</b></span><span class="r">Có vấn đề <b>${no}</b></span><span>${xs.length} lượt trả lời</span></div>
+      <div class="track">${xs.length ? `<i class="ok" style="width:${pct(ok, xs.length)}%"></i><i style="width:${pct(no, xs.length)}%"></i>` : ''}</div>
+      ${notes.length ? `<details><summary>${notes.length} mô tả vấn đề</summary><ul>${notes.map(x => `<li><span class="dept">${esc(x.dept)}</span> · ${esc(x.s.brand)} ${esc(x.s.flavor)}: ${esc(x.note)}</li>`).join('')}</ul></details>` : ''}</div>`;
+  }).join('');
+
+  // 4. Theo SKU: số lượt, số lượt có vấn đề từng tiêu chí, điểm tổng thể TB (1 tốt → 9 kém), so với đối thủ
+  const rows = Object.values(skus).map(({ s }) => {
+    const es = evals.filter(e => skuKey(e.s) === skuKey(s)), sc = es.map(e => +e.mqm).filter(v => v > 0);
+    const vs = count(es.map(e => e.vs).filter(Boolean))[0];
+    return { s, es, avg: sc.length ? (sc.reduce((a, b) => a + b, 0) / sc.length).toFixed(1) : '—', vs: vs ? vs[0] : '—', nb: es.filter(e => e.issue === 'Y').length };
+  }).filter(r => r.es.length).sort((a, b) => b.nb - a.nb || b.es.length - a.es.length);
+  const table = `<div class="scroll"><table class="tbl"><thead><tr><th>SKU</th><th class="c">Lượt</th>${ATTRS.map(([, n]) => `<th class="c">${n}</th>`).join('')}<th class="c">Điểm TB</th><th>So đối thủ</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td class="sku"><span class="orig">${r.s.origin === 'ORION' ? 'ORION' : 'ĐỐI THỦ'}</span><br><b>${esc(r.s.brand)} · ${esc(r.s.flavor)}</b><small>${esc(r.s.sku)}</small></td><td class="c">${r.es.length}</td>
+      ${ATTRS.map(([k]) => { const n = r.es.filter(e => bad(e, k)).length; return `<td class="c"><span class="dot ${n ? 'bad' : ''}">${n || '–'}</span></td>`; }).join('')}
+      <td class="c">${r.avg}</td><td>${esc(r.vs)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="note">Số trong ô = số lượt ghi "Có vấn đề" ở tiêu chí đó · Điểm TB là điểm tổng thể tham khảo, 1 tốt → 9 kém</p>`;
+
+  // 5. Ghi nhận vấn đề (mới nhất trước)
+  const list = iss.slice().sort((a, b) => String(b.at).localeCompare(String(a.at))).map(e => `<div class="iss"><div class="top"><b>${esc(e.s.brand)} · ${esc(e.s.flavor)} <span>${esc(e.s.sku)}</span></b><span>${esc(e.dept)} · mẫu ${esc(e.sampleId)} · NSX ${dmy(e.s.mfd)}</span></div>
+    ${ATTRS.filter(([k]) => bad(e, k)).map(([k, n]) => `<p><span class="at">${n}:</span> ${esc((e.tags[k] || []).join(', '))}${(e.tags[k] || []).length && e.c[k] ? ' — ' : ''}${esc(e.c[k] || '')}</p>`).join('')}
+    ${e.causeIn.length || e.causeOut.length ? `<p><i>Nguyên nhân nghi ngờ:</i> ${esc(e.causeIn.concat(e.causeOut).join(', '))}</p>` : ''}
+    ${e.solution ? `<p><i>Giải pháp đề xuất:</i> ${esc(e.solution)}</p>` : ''}${e.owners.length ? `<p><i>Bộ phận xử lý:</i> ${esc(e.owners.join(', '))}</p>` : ''}</div>`).join('');
+
+  $('#app').innerHTML = filters + kpis +
+    `<div class="card"><h2>Vấn đề theo tiêu chí</h2><p class="sub">% lượt ghi "Có vấn đề" · bên dưới là lỗi gặp nhiều nhất</p>${attrs}</div>
+    <div class="two">${causes}${owners}</div>
+    ${R.questions.length ? `<div class="card"><h2>Câu hỏi của chu kỳ</h2><p class="sub">${R.questions.length} câu từ RD / MKT</p>${qs}</div>` : ''}
+    <div class="card"><h2>Theo SKU</h2><p class="sub">${rows.length} SKU đã có lượt chấm · SKU nhiều vấn đề nhất ở trên</p>${table}</div>
+    <div class="card"><h2>Ghi nhận vấn đề</h2><p class="sub">${iss.length} lượt có vấn đề, mới nhất trước</p>${list || '<p class="sub" style="margin:0">Chưa có lượt nào ghi vấn đề.</p>'}</div>`;
+  bind();
+}
+function bind() {
+  document.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { fOrigin = b.dataset.o; render(); });
+  const sel = $('#brand'); if (sel) sel.onchange = () => { fBrand = sel.value; render(); };
+}
+(async () => {
+  PC.bar($('#pcbar'), 'Report');
+  try {
+    R = await PC.get('report');
+    if (!R.ok) throw new Error(R.error);
+    $('#sub').textContent = `Fact từ các lượt đánh giá của chu kỳ ${R.cycle}. Ai cũng xem được.`;
+    render();
+  } catch (e) { $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
+})();
+</script>
+</body>
+</html>
