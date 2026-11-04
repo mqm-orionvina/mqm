@@ -1,6 +1,7 @@
 // MQM PC · phần dùng chung cho 4 trang (trang chủ, Setup, Đăng ký mẫu, Đánh giá mẫu)
 // API: Apps Script "MQM PC" trong tài khoản thaixclaude. Đăng nhập (tên + PIN) lưu token trên máy này 12 giờ.
 const PC_API = 'https://script.google.com/macros/s/AKfycby7R2fwonLjguL1Vh6RyipQ45xhSfv9OPg9Fs-_elgMTUBr8knevf3R6JBPWcSPwajx/exec';
+const PC_LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="11" r="5.5"/><path d="M15.2 15.2 19.5 19.5"/></svg>';
 const PC = {
   get(q) { return fetch(`${PC_API}?api=${q}`, { credentials: 'omit' }).then(r => r.json()); },
   post(api, data) {
@@ -19,13 +20,17 @@ const PC = {
     return new Promise(done => {
       const box = document.createElement('div');
       box.className = 'pc-login';
-      box.innerHTML = `<form class="pc-login-card"><b>${title || 'Đăng nhập'}</b><small>Tài khoản do anh Thái cấp</small>
-        <label>Tên đăng nhập<input name="user" autocomplete="username" required></label>
-        <label>Mã PIN<input name="pin" type="password" inputmode="numeric" autocomplete="current-password" required></label>
-        <p class="pc-err" hidden></p><div class="pc-row"><button type="button" class="pc-ghost">Huỷ</button><button class="pc-main">Đăng nhập</button></div></form>`;
+      box.innerHTML = `<form class="pc-login-card"><button type="button" class="pc-x" aria-label="Đóng">×</button>
+        <span class="pc-logo">${PC_LOGO}</span><b>${title || 'Chào mừng đến MQM PC'}</b><small>Đăng nhập bằng tài khoản anh Thái cấp</small>
+        <label>Tên đăng nhập<input name="user" autocomplete="username" placeholder="Tên đăng nhập" required></label>
+        <label>Mã PIN<input name="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Mã PIN" required></label>
+        <p class="pc-err" hidden></p><button class="pc-main">Tiếp tục</button>
+        <div class="pc-or">HOẶC</div><a class="pc-ghost" href="evaluate.html">Vào đánh giá mẫu, không cần đăng nhập</a>
+        <p class="pc-fine">Quên PIN? Liên hệ anh Thái để cấp lại.</p></form>`;
       document.body.appendChild(box);
       const f = box.querySelector('form'), err = box.querySelector('.pc-err');
-      box.querySelector('.pc-ghost').onclick = () => { box.remove(); done(null); };
+      box.querySelector('.pc-x').onclick = () => { box.remove(); done(null); };
+      box.onclick = e => { if (e.target === box) { box.remove(); done(null); } };
       f.onsubmit = async e => {
         e.preventDefault(); err.hidden = true; f.querySelector('.pc-main').disabled = true;
         try {
@@ -53,21 +58,54 @@ const PC = {
   // Thanh trên cùng: về trang chủ + người đang đăng nhập
   bar(el, label) {
     const u = PC.user();
-    el.innerHTML = `<a class="pc-home" href="./">← MQM PC</a><span class="pc-part">${label}</span>${u ? `<span class="pc-me">${u.name} · ${PC.roleName[u.role] || u.role}<button class="pc-out">Đăng xuất</button></span>` : ''}`;
+    el.innerHTML = `<a class="pc-home" href="./"><span class="pc-logo sm">${PC_LOGO}</span>MQM PC</a><span class="pc-part">${label}</span>${u ? `<span class="pc-me">${u.name} · ${PC.roleName[u.role] || u.role}<button class="pc-out">Đăng xuất</button></span>` : ''}`;
     const o = el.querySelector('.pc-out'); if (o) o.onclick = () => { PC.logout(); location.href = './'; };
   },
 };
-// Kiểu cho thanh trên và hộp đăng nhập (chèn 1 lần)
+// Kiểu chung: thanh trên, hộp đăng nhập, và giao diện trắng · bo tròn · nút viên thuốc đỏ cho 3 trang (chèn 1 lần, đè kiểu cũ của trang)
 (() => {
   const s = document.createElement('style');
-  s.textContent = `.pc-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:#141414;color:#fff;font:600 13px/1.3 system-ui,Segoe UI,Arial,sans-serif}
-  .pc-bar a{color:#eef36a;text-decoration:none;font-weight:800}.pc-part{font-weight:700}.pc-me{margin-left:auto;display:flex;align-items:center;gap:8px;color:#d9d9d9}
-  .pc-out{border:1px solid #555;background:none;color:#fff;border-radius:999px;padding:3px 10px;font:inherit;cursor:pointer}
-  .pc-login{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px}
-  .pc-login-card{background:#fff;color:#141414;border-radius:20px;padding:22px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;font:14px system-ui,Segoe UI,Arial,sans-serif}
-  .pc-login-card b{font-size:18px}.pc-login-card small{color:#666}.pc-login-card label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}
-  .pc-login-card input{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid #ddd;border-radius:12px}
-  .pc-row{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}.pc-row button{font:inherit;font-weight:700;border-radius:999px;padding:10px 18px;cursor:pointer;border:1.5px solid #141414}
-  .pc-main{background:#141414;color:#fff}.pc-ghost{background:#fff}.pc-err{color:#d93a2b;margin:0;font-size:13px}`;
+  s.textContent = `
+  .pc-logo{width:46px;height:46px;border-radius:50%;background:#c8102e;display:grid;place-items:center;flex:none}.pc-logo svg{width:26px;height:26px}
+  .pc-logo.sm{width:30px;height:30px}.pc-logo.sm svg{width:17px;height:17px}
+  .pc-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;background:#fff;color:#111;font:600 14px/1.3 "Segoe UI",system-ui,Arial,sans-serif;position:sticky;top:0;z-index:20;border-bottom:1px solid #f0f0f0}
+  .pc-bar a.pc-home{display:flex;align-items:center;gap:8px;color:#c8102e;text-decoration:none;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .pc-part{font-weight:700;background:#efefef;border-radius:999px;padding:7px 14px}.pc-me{margin-left:auto;display:flex;align-items:center;gap:10px;color:#5f5f5f}
+  .pc-out{border:0;background:#efefef;color:#111;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.pc-out:hover{background:#e2e2e2}
+  .pc-login{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px;overflow:auto}
+  .pc-login-card{position:relative;background:#fff;color:#111;border-radius:32px;padding:30px 34px 24px;width:100%;max-width:480px;display:flex;flex-direction:column;align-items:stretch;gap:12px;font:15px/1.4 "Segoe UI",system-ui,Arial,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .pc-login-card .pc-logo{align-self:center;margin-bottom:4px}
+  .pc-login-card>b{font-size:30px;line-height:1.15;letter-spacing:-.03em;text-align:center;font-weight:800}
+  .pc-login-card>small{color:#5f5f5f;text-align:center;font-size:15px;margin:-4px 0 6px}
+  .pc-login-card label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:13px;color:#333}
+  .pc-login-card input{font:inherit;font-size:16px;height:52px;padding:0 16px;border:2px solid #cdcdcd;border-radius:16px;outline:none;width:100%;box-sizing:border-box}
+  .pc-login-card input:focus{border-color:#0074e8;box-shadow:0 0 0 4px rgba(0,116,232,.18)}
+  .pc-main{margin-top:6px;height:50px;border:0;border-radius:999px;background:#c8102e;color:#fff;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.pc-main:hover{background:#a00c24}.pc-main:disabled{opacity:.5}
+  .pc-or{display:flex;align-items:center;gap:12px;color:#111;font-weight:700;font-size:13px;margin:2px 0}.pc-or:before,.pc-or:after{content:"";flex:1;height:1px;background:#e2e2e2}
+  .pc-ghost{height:50px;border:2px solid #cdcdcd;border-radius:999px;background:#fff;color:#111;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none;text-align:center;padding:0 14px}.pc-ghost:hover{background:#f6f6f6}
+  .pc-fine{margin:4px 0 0;text-align:center;font-size:12px;color:#767676}
+  .pc-x{position:absolute;right:16px;top:14px;width:40px;height:40px;border-radius:50%;border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:#111}.pc-x:hover{background:#efefef}
+  .pc-err{color:#c8102e;margin:0;font-size:13px;font-weight:600}
+  @media (max-width:520px){.pc-login{align-items:flex-end;padding:0}.pc-login-card{border-radius:32px 32px 0 0;padding:26px 20px 22px}.pc-login-card>b{font-size:25px}.pc-bar{padding:10px 16px}}
+  /* Giao diện chung 3 trang Setup / Đăng ký / Đánh giá */
+  body:has(.pc-bar){background:#fff!important;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+  .pc-bar~.hero{background:#fff!important;color:#111!important;padding:28px 20px 18px!important}
+  .pc-bar~.hero{text-align:center}.pc-bar~.hero .top,.pc-bar~.hero .txt{max-width:640px!important;margin:0 auto!important}
+  .pc-bar~.hero .top{justify-content:center!important;gap:14px!important;flex-wrap:wrap}
+  .pc-bar~.hero .brand{color:#c8102e;opacity:1!important}.pc-bar~.hero .right{align-items:center!important}
+  .pc-bar~.hero h1{font-size:clamp(30px,5vw,46px)!important;letter-spacing:-.035em;line-height:1.08;margin:12px 0 8px!important}
+  .pc-bar~.hero p{color:#5f5f5f!important;opacity:1!important;font-size:16px!important;margin:0 auto!important;max-width:560px}
+  .pc-bar~.hero .lang{background:#efefef!important}.pc-bar~.hero .lang button{color:#111!important}.pc-bar~.hero .lang button.on{background:#111!important;color:#fff!important}
+  .pc-bar~.wrap,.pc-bar~* .wrap{margin-top:8px!important}
+  .pc-bar~* .card,.pc-bar~.card{border-radius:28px!important;box-shadow:none!important;border:1.5px solid #ececec;padding:20px!important}
+  .pc-bar~* .card h2 .n{background:#c8102e!important;color:#fff!important}
+  .pc-bar~* .btn{border-radius:999px!important;font-weight:700!important;background:#c8102e}
+  .pc-bar~* .btn:hover{filter:brightness(.92)}
+  .pc-bar~* .btn.ghost{background:#efefef!important;border:0!important;color:#111!important}
+  .pc-bar~* .chip{border-radius:999px;border:0!important;background:#efefef!important;color:#111!important}
+  .pc-bar~* .chip.on{background:#111!important;color:#fff!important}
+  .pc-bar~* input:not([type=checkbox]):not([type=radio]),.pc-bar~* select,.pc-bar~* textarea{border:2px solid #cdcdcd!important;border-radius:16px!important;min-height:50px}
+  .pc-bar~* textarea{min-height:110px}
+  .pc-bar~* input:focus,.pc-bar~* select:focus,.pc-bar~* textarea:focus{border-color:#0074e8!important;box-shadow:0 0 0 4px rgba(0,116,232,.18)!important}`;
   document.head.appendChild(s);
 })();
