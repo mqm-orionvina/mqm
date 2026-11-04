@@ -131,7 +131,7 @@ const I18N = {
     step: 'MQM PC · ĐĂNG KÝ MẪU', progH: 'Tiến độ mẫu theo danh sách final', pOk: n => `${n} SKU đủ`, pLow: n => `${n} thiếu`, pNone: n => `${n} chưa có`, pList: 'Xem từng SKU', pNoPlan: 'Chưa có danh sách mẫu final (RD / MKT chưa lưu setup).', title: 'Sample Register', subSetup: 'Nhập tên và bộ phận mua một lần, sau đó chỉ cần quét barcode.', subScan: 'Quét barcode trên gói mẫu.', subForm: 'Kiểm tra sản phẩm, nhập ngày và chụp ảnh.',
     name: 'Tên người mua', namePh: 'VD: Nguyễn Văn A', dept: 'Bộ phận mua', deptOther: 'Nhập bộ phận', market: 'Nơi mua', fac: 'Nhà máy sản xuất', start: 'Bắt đầu quét', needSetup: 'Nhập tên và chọn bộ phận',
     scan: 'Quét barcode', scanning: 'Đưa barcode vào khung…', camErr: 'Không mở được camera. Cho phép camera trong trình duyệt, hoặc nhập barcode bên dưới.', stop: 'Dừng quét',
-    manualPh: 'Hoặc nhập số barcode', lookup: 'Tra cứu', badCode: 'Barcode chưa đúng (8–14 chữ số)',
+    manualPh: 'Hoặc nhập số barcode', lookup: 'Tra cứu', noCode: 'Không có / không quét được barcode? Nhập tay', noCodeTag: 'Nhập tay', noCodeHint: 'Chọn Brand, Vị, SKU của gói này:', badCode: 'Barcode chưa đúng (8–14 chữ số)',
     found: 'Đã nhận diện', many: 'Barcode này trùng nhiều sản phẩm, chọn đúng sản phẩm:', unknown: 'Barcode mới, chưa có trong danh mục. Chọn sản phẩm (app sẽ nhớ cho lần sau):', rescan: 'Quét lại', change: 'Đổi sản phẩm',
     brand: 'Brand', chooseBrand: 'Chọn brand…', flavor: 'Vị', chooseFlavor: 'Chọn vị…', brandFirst: 'Chọn brand trước', flavorOther: 'Vị khác (nhập tay)…', flavorPh: 'Nhập tên vị',
     back: 'Quay lại', sku: 'SKU (size)', skuAuto: 'Tự nhận từ barcode', chooseSku: 'Chọn SKU…', skuOther: 'SKU khác (nhập tay)…', skuPh: 'VD: 33g, Normal',
@@ -146,7 +146,7 @@ const I18N = {
     step: 'MQM PC · 샘플 등록', progH: '최종 목록 기준 샘플 현황', pOk: n => `충분 ${n}`, pLow: n => `부족 ${n}`, pNone: n => `없음 ${n}`, pList: 'SKU별 보기', pNoPlan: '최종 샘플 목록이 아직 없습니다 (RD / MKT 설정 미저장).', title: 'Sample Register', subSetup: '이름과 구매 부서를 한 번 입력하면, 이후에는 바코드만 스캔하면 됩니다.', subScan: '샘플 포장의 바코드를 스캔하세요.', subForm: '제품을 확인하고 날짜와 사진을 입력하세요.',
     name: '구매자 이름', namePh: '예: 홍길동', dept: '구매 부서', deptOther: '부서 입력', market: '구매처', fac: '생산 공장', start: '스캔 시작', needSetup: '이름과 부서를 입력하세요',
     scan: '바코드 스캔', scanning: '바코드를 프레임에 맞추세요…', camErr: '카메라를 열 수 없습니다. 브라우저에서 카메라를 허용하거나 아래에 바코드를 입력하세요.', stop: '스캔 중지',
-    manualPh: '또는 바코드 번호 입력', lookup: '조회', badCode: '바코드가 올바르지 않습니다 (8–14자리)',
+    manualPh: '또는 바코드 번호 입력', lookup: '조회', noCode: '바코드가 없거나 스캔 불가? 직접 입력', noCodeTag: '직접 입력', noCodeHint: '이 제품의 브랜드 · 맛 · SKU를 선택하세요:', badCode: '바코드가 올바르지 않습니다 (8–14자리)',
     found: '인식 완료', many: '여러 제품에 같은 바코드가 있습니다. 맞는 제품을 선택하세요:', unknown: '새 바코드입니다. 제품을 선택하세요 (다음부터 자동 인식):', rescan: '다시 스캔', change: '제품 변경',
     brand: '브랜드', chooseBrand: '브랜드 선택…', flavor: '맛', chooseFlavor: '맛 선택…', brandFirst: '먼저 브랜드를 선택하세요', flavorOther: '기타 맛 (직접 입력)…', flavorPh: '맛 이름 입력',
     back: '뒤로', sku: 'SKU (규격)', skuAuto: '바코드로 자동 인식', chooseSku: 'SKU 선택…', skuOther: '기타 SKU (직접 입력)…', skuPh: '예: 33g, Normal',
@@ -213,6 +213,12 @@ function onCode(code) {
   if (navigator.vibrate) navigator.vibrate(60);
   view = 'form'; render(); scrollTo(0, 0);
 }
+// Không quét được / gói không có barcode: vào thẳng form, chọn Brand · Vị · SKU bằng tay (không ghi nhớ barcode)
+function manualEntry() {
+  stopScan();
+  cur = { barcode: '', cands: [], pick: -1, learn: false, market: lastMarket, fac: lastFac, origin: 'ORION', brand: '', flavor: '', flavorOther: '', sku: '', skuOther: '', mfd: '', buyDate: today(), photos: [] };
+  view = 'form'; render(); scrollTo(0, 0);
+}
 function applyCand(i) {
   const c = cur.cands[i]; cur.pick = i;
   cur.origin = c.origin || originOf(c.brand) || 'ORION'; cur.brand = c.brand; cur.sku = String(c.sku || ''); cur.skuOther = '';
@@ -272,7 +278,8 @@ function viewSetup() {
 function viewScan() {
   return `<div class="card"><div class="scanbox" id="scanbox">${scanning ? `<video id="video" playsinline muted></video><div class="aim"></div>` : `<video id="video" playsinline muted hidden></video><div class="msg">${T('subScan')}</div>`}</div>
     <div style="margin-top:12px">${scanning ? `<button class="btn ghost full" id="stop">${T('stop')}</button>` : `<button class="scanbtn" id="scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3M7 8v8M10 8v8M13 8v8M16 8v8"/></svg>${T('scan')}</button>`}</div>
-    <div class="manual"><input id="code" inputmode="numeric" placeholder="${esc(T('manualPh'))}"><button class="btn sm" id="look">${T('lookup')}</button></div></div>
+    <div class="manual"><input id="code" inputmode="numeric" placeholder="${esc(T('manualPh'))}"><button class="btn sm" id="look">${T('lookup')}</button></div>
+    <button class="btn ghost full" id="noCode" style="margin-top:10px">${T('noCode')}</button></div>
     ${progCard()}
     ${recent.length ? `<div class="card recent"><h3>${T('recent')}</h3>${recent.slice(0, 8).map(s => `<div class="it"><div class="th" style="${s.thumb ? `background-image:url(${s.thumb})` : ''}"></div><span class="id ${s.state || ''}">${s.state === 'wait' ? T('sending') : s.state === 'fail' ? T('failed') : esc(s.id)}</span><span>${esc(s.brand)} · ${esc(s.flavor)}${s.sku ? ' · ' + esc(s.sku) : ''}${s.state === 'fail' ? `<br><small style="color:var(--bad)">${esc(s.err)}</small>` : ''}</span></div>`).join('')}</div>` : ''}`;
 }
@@ -316,7 +323,7 @@ function viewForm() {
   const card = ok ? `<div class="prod"><div class="ic">✓</div><div class="pt"><span class="tag ${comp ? 'comp' : ''}">${esc(optL(cur.origin))}</span><b>${esc(cur.brand)} · ${esc(flavorVal())}</b><small>${esc(cur.barcode)}</small></div></div>
       <div style="display:flex;gap:8px;margin-top:10px"><button class="btn ghost sm" id="rescan">${T('rescan')}</button><button class="btn ghost sm" id="change">${T('change')}</button></div>` : '';
   const cands = cur.cands.length > 1 && !ok ? `<p class="hint" style="margin:0 0 8px">${T('many')}</p><div class="cands">${cur.cands.map((x, i) => `<button class="cand ${cur.pick === i ? 'on' : ''}" data-cand="${i}"><b>${esc(x.brand)} · ${esc(x.flavor)}</b><br><small>SKU ${esc(x.sku)}</small></button>`).join('')}</div>` : '';
-  const unknown = !ok && (cur.cands.length === 0 || cur.editing) ? `${cur.cands.length === 0 ? `<p class="hint" style="margin:0"><span class="tag new">${esc(cur.barcode)}</span> ${T('unknown')}</p>` : ''}${productPicker()}<button class="btn ghost sm" id="rescan">${T('rescan')}</button>` : '';
+  const unknown = !ok && (cur.cands.length === 0 || cur.editing) ? `${cur.cands.length === 0 ? (cur.barcode ? `<p class="hint" style="margin:0"><span class="tag new">${esc(cur.barcode)}</span> ${T('unknown')}</p>` : `<p class="hint" style="margin:0"><span class="tag new">${T('noCodeTag')}</span> ${T('noCodeHint')}</p>`) : ''}${productPicker()}<button class="btn ghost sm" id="rescan">${T('rescan')}</button>` : '';
   const sku = ok && skuVal() ? `<div class="skubox"><b>${esc(skuVal())}</b><span>${T('skuAuto')}</span></div>` : skuField();
   const market = `<div class="seg" id="mk">${['North', 'South'].map(m => `<button class="${cur.market === m ? 'on' : ''}" data-v="${m}">${esc(optL(m))}</button>`).join('')}</div>`;
   const dates = `<div class="dbox">
@@ -371,6 +378,7 @@ function bind() {
   if (view === 'scan') {
     const sc = $('#scan'); if (sc) sc.onclick = startScan;
     const st = $('#stop'); if (st) st.onclick = () => { stopScan(); render(); };
+    $('#noCode').onclick = manualEntry;
     const go = () => onCode($('#code').value); $('#look').onclick = go; $('#code').onkeydown = e => { if (e.key === 'Enter') go(); };
     return;
   }
