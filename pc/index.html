@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MQM PC</title>
+<style>
+:root { --lime: #eef36a; --ink: #141414; --soft: #f2f2f2; --muted: #6b6b6b; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #fff; color: var(--ink); font: 15px/1.5 system-ui, "Segoe UI", Arial, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+h1 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -.01em; }
+h1 span { background: var(--lime); padding: 0 8px; border-radius: 8px; }
+.me { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.me button { font: inherit; border: 1.5px solid var(--ink); background: #fff; border-radius: 999px; padding: 5px 12px; cursor: pointer; font-weight: 700; color: var(--ink); }
+.sub { color: var(--muted); margin: 6px 0 20px; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tile { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 210px; padding: 22px; border-radius: 24px; background: var(--soft);
+  color: var(--ink); text-decoration: none; border: 0; text-align: left; font: inherit; cursor: pointer; }
+.tile:hover { outline: 2px solid var(--ink); }
+.tile.eval { background: var(--ink); color: #fff; }
+.tile .n { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
+.tile b { font-size: 24px; line-height: 1.2; }
+.tile p { margin: 0; font-size: 14px; opacity: .85; }
+.tile .lock { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; background: #fff; color: var(--ink); border-radius: 999px; padding: 4px 10px; align-self: flex-start; }
+.tile.eval .lock { background: var(--lime); }
+.tile.off { opacity: .55; }
+.status { margin-top: 22px; background: var(--soft); border-radius: 20px; padding: 18px 20px; }
+.status h2 { margin: 0 0 10px; font-size: 16px; }
+.st { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.st div { background: #fff; border-radius: 14px; padding: 10px 12px; }
+.st small { display: block; color: var(--muted); font-size: 12px; font-weight: 700; }
+.st b { font-size: 20px; }
+.ok { color: #1e8a4c; } .wait { color: #b07b00; } .no { color: #d93a2b; }
+@media (max-width: 760px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile { min-height: 0; } .st { grid-template-columns: repeat(2, minmax(0, 1fr)); } h1 { font-size: 24px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>MQM <span>PC</span></h1><div class="me" id="me"></div></header>
+  <p class="sub">Đánh giá mẫu thị trường · chọn phần bạn cần làm</p>
+  <div class="tiles">
+    <a class="tile" id="tSetup" href="setup.html"><span class="n">1 · RD / MKT</span><b>Setup</b><p>Gửi mong muốn (gõ trực tiếp hoặc kéo thả file Word / Excel), xem lại bảng câu hỏi, chọn mẫu cần mua và ngày sản xuất.</p><span class="lock">🔒 Cần đăng nhập</span></a>
+    <a class="tile" id="tReg" href="register.html"><span class="n">2 · Host</span><b>Đăng ký mẫu</b><p>Quét barcode từng gói mẫu đã mua, chọn nơi mua, nhà máy, NSX. Theo dõi SKU nào đủ, thiếu, chưa có.</p><span class="lock">🔒 Cần đăng nhập</span></a>
+    <a class="tile eval" href="evaluate.html"><span class="n">3 · Người đánh giá</span><b>Đánh giá mẫu</b><p>Vào là chấm được, không cần đăng nhập. Chỉ mẫu đã đăng ký mới chấm được, SKU chưa có mẫu sẽ ghi "Chưa có".</p><span class="lock">Mở cho mọi người</span></a>
+  </div>
+  <section class="status" id="status"><h2>Chu kỳ hiện tại</h2><p class="sub" style="margin:0">Đang tải…</p></section>
+</div>
+<script src="pc.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+function renderMe() {
+  const u = PC.user();
+  $('#me').innerHTML = u ? `${u.name} · ${PC.roleName[u.role] || u.role}<button id="out">Đăng xuất</button>` : `<button id="in">Đăng nhập</button>`;
+  if (u) $('#out').onclick = () => { PC.logout(); renderMe(); }; else $('#in').onclick = async () => { await PC.login(); renderMe(); };
+  // Người đánh giá (chưa đăng nhập) vẫn thấy 2 ô nhưng bấm vào sẽ phải đăng nhập; sai quyền thì ô mờ đi
+  [['#tSetup', 'setup'], ['#tReg', 'register']].forEach(([id, part]) => {
+    const el = $(id), ok = PC.can(part, u);
+    el.classList.toggle('off', !!u && !ok);
+    el.querySelector('.lock').textContent = ok ? '✓ Đã có quyền' : u ? '🔒 Tài khoản không có quyền' : '🔒 Cần đăng nhập';
+  });
+}
+// Bấm ô Setup / Đăng ký khi chưa có quyền: hỏi đăng nhập ngay tại trang chủ
+['#tSetup', '#tReg'].forEach(id => $(id).addEventListener('click', async e => {
+  const part = id === '#tSetup' ? 'setup' : 'register';
+  if (PC.can(part)) return;
+  e.preventDefault();
+  const u = PC.user() ? null : await PC.login(part === 'setup' ? 'Đăng nhập để vào Setup' : 'Đăng nhập để vào Đăng ký mẫu');
+  renderMe();
+  if (u && PC.can(part, u)) location.href = $(id).href; else if (u || PC.user()) alert('Tài khoản này không có quyền vào phần này.');
+}));
+renderMe();
+const dmy = s => s ? String(s).split('-').reverse().join('/') : '—';
+const stl = s => s === 'saved' ? '<span class="ok">Đã lưu</span>' : s === 'draft' ? '<span class="wait">Đang xem lại</span>' : '<span class="no">Chưa gửi</span>';
+PC.get('status').then(r => {
+  if (!r.ok) throw new Error(r.error);
+  $('#status').innerHTML = `<h2>Chu kỳ ${r.cycle}</h2><div class="st">
+    <div><small>Setup RD</small><b>${stl(r.setup.RD)}</b></div><div><small>Setup MKT</small><b>${stl(r.setup.MKT)}</b></div>
+    <div><small>Câu hỏi final</small><b>${r.questions}</b></div><div><small>Ngày sản xuất</small><b style="font-size:15px">${dmy(r.dateFrom)} – ${dmy(r.dateTo)}</b></div>
+    <div><small>SKU đủ mẫu</small><b class="ok">${r.enough}/${r.skus}</b></div><div><small>SKU thiếu</small><b class="wait">${r.short}</b></div>
+    <div><small>SKU chưa có</small><b class="no">${r.none}</b></div><div><small>Lượt đánh giá</small><b>${r.evals}</b></div></div>`;
+}).catch(e => { $('#status').innerHTML = `<h2>Chu kỳ hiện tại</h2><p class="sub" style="margin:0">Không tải được tình trạng (${e.message}).</p>`; });
+</script>
+</body>
+</html>
