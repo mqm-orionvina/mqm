@@ -139,6 +139,10 @@ const QSETS = {
   ],
   piDesign: null,
 };
+// PI / Design (anh Thái 05/11/2026): không có bộ câu hỏi riêng — dùng chung bộ, chỉ phần Bao bì và câu hỏi chu kỳ về bao bì / in ấn / thiết kế / chất liệu
+QSETS.piDesign = QSETS.std.filter(a => a[0] === 'pkg');
+const PKG_Q = /bao bì|đóng gói|seal|hàn|in ấn|in rõ|thiết kế|nhãn|chất liệu|code date|màng/i;
+const cqFor = () => me && QSET_OF[me.dept] === 'piDesign' ? cqAll.filter(q => PKG_Q.test(String(q.q))) : cqAll;
 const VS = ['Tốt hơn', 'Tương đương', 'Kém hơn'];   // giá trị lưu
 // Định tính: mỗi mục ghi "Ổn" hoặc "Có vấn đề" + mô tả; có vấn đề thì ghi nguyên nhân nghi ngờ (trong / ngoài), giải pháp, bộ phận xử lý. Điểm 1–9 chỉ để tham khảo.
 const CAUSE_IN = ['Nguyên liệu', 'Phụ liệu / bao bì', 'Process sản xuất', 'Bảo quản kho nhà máy'];
@@ -214,10 +218,10 @@ const api = { get: q => PC.get(q), post: (name, data) => PC.post(name, data) };
 let plan = null;   // danh sách mẫu final + số gói đã đăng ký mỗi SKU
 // me = {name, dept, brands}; brands là 'all' (gồm cả brand đăng ký sau) hoặc danh sách brand phụ trách
 let me = (() => { try { const v = JSON.parse(localStorage.getItem('mqm-pc-eval-me')); return v && DEPTS.includes(v.dept) ? v : null; } catch (e) { return null; } })();
-const setMe = v => { me = v; try { v ? localStorage.setItem('mqm-pc-eval-me', JSON.stringify(v)) : localStorage.removeItem('mqm-pc-eval-me'); } catch (e) {} };
+const setMe = v => { me = v; cq = cqFor(); try { v ? localStorage.setItem('mqm-pc-eval-me', JSON.stringify(v)) : localStorage.removeItem('mqm-pc-eval-me'); } catch (e) {} };
 
 // cq = câu hỏi của chu kỳ (RD / MKT gửi qua app setup-request, lần gửi mới nhất mỗi team): [{id, team, q, c}]
-let cq = [];
+let cq = [], cqAll = [];   // cq = câu hỏi chu kỳ của bộ phận đang chấm (PI / Design chỉ phần bao bì)
 let samples = [], evals = [], loaded = false, loadErr = '', view = 'list', cur = null, ev = null, filt = { show: 'todo', q: '' };
 let draft = { name: me ? me.name : '', dept: me ? me.dept : '', brands: me ? me.brands : [] };   // đang nhập ở màn hình đầu / đổi brand
 const doneBy = id => evals.filter(e => e.sampleId === id);
@@ -455,7 +459,7 @@ async function save() {
   try {
     const [r, qr, pl] = await Promise.all([api.get('samples'), api.get('questions').catch(() => ({})), api.get('plan').catch(() => ({}))]);
     if (!r.ok) throw new Error(r.error);
-    samples = r.samples; evals = r.evals; cq = qr.ok ? qr.questions : []; plan = pl.ok ? pl : null; loaded = true;
+    samples = r.samples; evals = r.evals; cqAll = qr.ok ? qr.questions : []; cq = cqFor(); plan = pl.ok ? pl : null; loaded = true;
   } catch (err) { loadErr = err.message; }
   render();
 })();
