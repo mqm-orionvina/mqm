@@ -122,7 +122,7 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 <main class="wrap" id="app"><div class="card empty">…</div></main>
 <div class="bar" id="bar" hidden></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js"></script>
+<script src="pc.js?v=20261105"></script>
 <script>
 // MQM 1A · App đánh giá mẫu. Nhập tên + bộ phận → chọn brand mình phụ trách → chọn mẫu → chấm theo bộ câu hỏi của bộ phận.
 // Dữ liệu ghi vào Google Sheet "MQM 1A - Đánh giá mẫu" qua Apps Script (Api.gs), gọi không kèm tài khoản Google.
@@ -177,7 +177,7 @@ const I18N = {
     prog: (n, m) => `Đã chấm ${n}/${m} điểm`, save: 'Lưu đánh giá', saving: 'Đang lưu…', saved: id => `Đã lưu đánh giá ${id}`, saveErr: 'Chưa lưu được: ',
     loadErr: e => `Không tải được danh sách mẫu: ${e}. Kiểm tra mạng rồi tải lại trang.`,
     vs: { 'Tốt hơn': 'Tốt hơn', 'Tương đương': 'Tương đương', 'Kém hơn': 'Kém hơn' }, origin: { 'Đối thủ': 'Đối thủ' }, market: { North: 'Miền Bắc', South: 'Miền Nam' }, tags: {},
-    cqTitle: 'Câu hỏi của tháng', cqSub: n => `${n} câu bạn sẽ chấm`, cqHint: 'Các câu này hiện khi mở từng mẫu, xếp từ ngoài vào trong.', cqWant: 'Mong muốn thay đổi: ', cqDesc: 'Mô tả *', nCq: n => `${n} câu hỏi chu kỳ chưa chọn`,
+    cqTitle: 'Câu hỏi của tháng', cqSub: n => `${n} câu bạn sẽ chấm`, cqHint: 'Các câu này hiện khi mở từng mẫu, xếp từ ngoài vào trong.', cqWant: 'Mong muốn thay đổi: ', cqDesc: 'Mô tả *', nCq: n => `${n} câu hỏi chưa chọn Ổn / Có vấn đề`,
   },
   ko: {
     step: 'MQM ORION VINA · 샘플 평가', title: '샘플 평가', naH: n => `샘플 없음 · SKU ${n}개 (평가 불가)`, na: '없음', low: (a, b) => `부족 ${a}/${b}봉`, subLogin: '이름, 부서를 입력하고 담당 브랜드를 선택하세요.', subList: '평가할 샘플을 선택하세요. 각자 독립적으로 평가합니다.',
