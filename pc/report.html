@@ -161,10 +161,12 @@ const COLS_CAT = ['Pie', 'Biscuit', 'Candy', 'Snack', 'Potato', 'Khác'];
 const catOf = s => CG[String(s.catGroup || '').toUpperCase()] || 'Khác';
 function heat(evals, extra) {
   const m = {}; HM.forEach(h => { m[h] = {}; COLS_CAT.forEach(c => { m[h][c] = 0; }); });
-  evals.forEach(e => Object.keys(HM_DEF).forEach(k => { if (!bad(e, k)) return;
+  // Lượt chấm kiểu mới (theo câu hỏi, từ 05/11/2026) đã tính qua từng câu hỏi bên dưới, không tính lại theo 4 mục
+  evals.forEach(e => Object.keys(HM_DEF).forEach(k => { if (e.src === 'q' || !bad(e, k)) return;
     const hs = new Set((e.tags[k] || []).map(t => HM_TAG[t] || HM_DEF[k])); if (!hs.size) hs.add(HM_DEF[k]);
     hs.forEach(h => { m[h][catOf(e.s)]++; }); }));
-  extra.filter(x => x.result === 'Có vấn đề').forEach(x => { m[hmOfQ(x.question)][catOf(x.s)]++; });
+  const GM = { 'Bao bì': 'Bao bì', 'In ấn': 'In ấn · thiết kế', 'Ngoại quan': 'Ngoại quan', 'Cấu trúc': 'Kết cấu', 'Hương vị': 'Hương vị' };
+  extra.filter(x => x.result === 'Có vấn đề').forEach(x => { m[GM[x.group] || hmOfQ(x.question)][catOf(x.s)]++; });
   const rows = HM.filter(h => COLS_CAT.some(c => m[h][c])), cols = COLS_CAT.filter(c => HM.some(h => m[h][c]));
   if (!rows.length) return '';
   const max = Math.max(1, ...rows.flatMap(h => cols.map(c => m[h][c]))), sumR = h => cols.reduce((a, c) => a + m[h][c], 0), sumC = c => rows.reduce((a, h) => a + m[h][c], 0);
@@ -184,17 +186,17 @@ async function endFlow() {
   if (!PC.can('register')) { if (PC.user()) PC.logout(); const u = await PC.login('Đăng nhập để kết thúc đánh giá'); if (!u) return; if (!PC.can('register', u)) return toastMsg('Tài khoản này không có quyền kết thúc đánh giá.'); PC.bar($('#pcbar'), 'Report'); }
   const b = $('#endBtn'); b.disabled = true; b.textContent = 'Đang tổng hợp…';
   try {
-    const p = await PC.post('endCycle', { send: false }); if (!p.ok) throw new Error(p.error);
+    const p = await PC.post('endCycle', { send: false, cycle: R.cycle }); if (!p.ok) throw new Error(p.error);
     const box = document.createElement('div'); box.className = 'modal';
-    box.innerHTML = `<div class="box"><h3>Xác nhận kết thúc đánh giá</h3><p class="sub" style="margin:0">Chu kỳ ${esc(p.cycle)} · ${p.total} vấn đề · hạn cải thiện <b>${dmy(p.deadline)}</b> (2 tuần)</p>
+    box.innerHTML = `<div class="box"><h3>Xác nhận kết thúc đánh giá</h3><p class="sub" style="margin:0">${PC.monthLabel(p.cycle)} · ${p.total} vấn đề · hạn cải thiện <b>${dmy(p.deadline)}</b> (2 tuần)</p>
       ${p.depts.length ? `<table><thead><tr><th>Bộ phận</th><th>Số vấn đề</th><th>Email</th></tr></thead><tbody>${p.depts.map(g => `<tr><td><b>${esc(g.dept)}</b></td><td>${g.n}</td><td class="${g.email ? '' : 'miss'}">${esc(g.email || 'Chưa có, gửi về quản lý')}</td></tr>`).join('')}</tbody></table>`
         : '<p class="sub">Chưa có vấn đề nào được ghi nhận. Vẫn có thể kết thúc, chỉ gửi mail tổng hợp cho quản lý.</p>'}
-      <p class="sub" style="margin-top:10px">Mỗi bộ phận nhận 1 mail với danh sách vấn đề, nguyên nhân nghi ngờ và giải pháp đề xuất. Các việc được ghi vào tab Actions để theo dõi.</p>
+      <p class="sub" style="margin-top:10px">Mỗi bộ phận nhận 1 mail với danh sách vấn đề, nguyên nhân nghi ngờ, giải pháp tạm thời và link vào tab Cải thiện để cập nhật tiến độ, hướng giải quyết, evidence.</p>
       <div class="row"><button class="btn gray" id="mNo">Huỷ</button><button class="btn" id="mOk">Xác nhận & gửi mail</button></div></div>`;
     document.body.appendChild(box);
     $('#mNo').onclick = () => box.remove();
     $('#mOk').onclick = async () => { const ok = $('#mOk'); ok.disabled = true; ok.textContent = 'Đang gửi…';
-      try { const r = await PC.post('endCycle', { send: true, again: !!R.ended }); if (!r.ok) throw new Error(r.error);
+      try { const r = await PC.post('endCycle', { send: true, again: !!R.ended, cycle: R.cycle }); if (!r.ok) throw new Error(r.error);
         R.ended = r.ended; box.remove(); render(); toastMsg(`Đã gửi mail cho ${r.sent.length} bộ phận${r.noEmail.length ? ` · ${r.noEmail.join(', ')} chưa có email, đã gửi về quản lý` : ''}.`);
       } catch (x) { ok.disabled = false; ok.textContent = 'Xác nhận & gửi mail'; toastMsg('Chưa gửi được: ' + x.message); } };
   } catch (x) { toastMsg('Không tổng hợp được: ' + x.message); }
@@ -216,7 +218,7 @@ function render() {
   const { samples, evals, extra } = view();
   const brands = [...new Set(R.samples.filter(s => fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')).map(s => s.brand))].sort();
   if (fBrand && !brands.includes(fBrand)) fBrand = '';
-  const filters = `<div class="filters">${[['all', 'Tất cả'], ['ORION', 'ORION'], ['comp', 'Đối thủ']].map(([v, t]) => `<button class="chip ${fOrigin === v ? 'on' : ''}" data-o="${v}">${t}</button>`).join('')}
+  const filters = `<div class="filters">${PC.monthSelect(R.months, R.cycle)}${[['all', 'Tất cả'], ['ORION', 'ORION'], ['comp', 'Đối thủ']].map(([v, t]) => `<button class="chip ${fOrigin === v ? 'on' : ''}" data-o="${v}">${t}</button>`).join('')}
     <select class="chip" id="brand"><option value="">Mọi brand</option>${brands.map(b => `<option ${b === fBrand ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select></div>`;
 
   const skus = {}; samples.forEach(s => { (skus[skuKey(s)] = skus[skuKey(s)] || { s, ids: [] }).ids.push(s.id); });
@@ -230,7 +232,7 @@ function render() {
     <div class="kpi red"><small>Lượt có vấn đề</small><b>${pct(nIssue, evals.length)}%</b><span>${nIssue}/${evals.length} lượt</span></div></div>`;
 
   if (!evals.length) {
-    $('#app').innerHTML = filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong chu kỳ ' + esc(R.cycle)}. Report sẽ hiện ngay khi có người chấm.</div>`
+    $('#app').innerHTML = filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong ' + PC.monthLabel(R.cycle).toLowerCase()}. Report sẽ hiện ngay khi có người chấm.</div>`
       + freshness(samples, evals) + endCard();
     bind(); return;
   }
@@ -280,10 +282,10 @@ function render() {
     ${e.causeIn.length || e.causeOut.length ? `<p><i>Nguyên nhân nghi ngờ:</i> ${esc(e.causeIn.concat(e.causeOut).join(', '))}</p>` : ''}
     ${e.solution ? `<p><i>Giải pháp đề xuất:</i> ${esc(e.solution)}</p>` : ''}${e.owners.length ? `<p><i>Bộ phận xử lý:</i> ${esc(e.owners.join(', '))}</p>` : ''}</div>`).join('');
 
-  $('#app').innerHTML = (R.ended ? `<div class="done">✓ Đã kết thúc đánh giá chu kỳ ${esc(R.cycle)} và gửi mail các bộ phận</div>` : '') + filters + kpis + heat(evals, extra) + freshness(samples, evals) +
+  $('#app').innerHTML = (R.ended ? `<div class="done">✓ Đã kết thúc đánh giá ${PC.monthLabel(R.cycle).toLowerCase()} và gửi mail các bộ phận · <a href="improve.html">Xem tiến độ cải thiện →</a></div>` : '') + filters + kpis + heat(evals, extra) + freshness(samples, evals) +
     `<div class="card"><h2>Vấn đề theo tiêu chí</h2><p class="sub">% lượt ghi "Có vấn đề" · bên dưới là lỗi gặp nhiều nhất</p>${attrs}</div>
     <div class="two">${causes}${owners}</div>
-    ${R.questions.length ? `<div class="card"><h2>Câu hỏi của chu kỳ</h2><p class="sub">${R.questions.length} câu từ RD / MKT</p>${qs}</div>` : ''}
+    ${R.questions.length ? `<div class="card"><h2>Câu hỏi của tháng</h2><p class="sub">${R.questions.length} câu từ RD / MKT / FQS · từ ngoài vào trong</p>${qs}</div>` : ''}
     <div class="card"><h2>Theo SKU</h2><p class="sub">${rows.length} SKU đã có lượt chấm · SKU nhiều vấn đề nhất ở trên</p>${table}</div>
     <div class="card"><h2>Ghi nhận vấn đề</h2><p class="sub">${iss.length} lượt có vấn đề, mới nhất trước</p>${list || '<p class="sub" style="margin:0">Chưa có lượt nào ghi vấn đề.</p>'}</div>` + endCard();
   bind();
@@ -292,15 +294,19 @@ function bind() {
   document.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { fOrigin = b.dataset.o; render(); });
   const sel = $('#brand'); if (sel) sel.onchange = () => { fBrand = sel.value; render(); };
   const eb = $('#endBtn'); if (eb) eb.onclick = endFlow;
+  const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); load(ms.value); };
+}
+async function load(c) {
+  try {
+    R = await PC.get('report' + (c ? '&cycle=' + c : ''));
+    if (!R.ok) throw new Error(R.error);
+    $('#sub').textContent = `Fact từ các lượt đánh giá ${PC.monthLabel(R.cycle).toLowerCase()}. Ai cũng xem được.`;
+    render();
+  } catch (e) { $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }
 (async () => {
   PC.bar($('#pcbar'), 'Report');
-  try {
-    R = await PC.get('report');
-    if (!R.ok) throw new Error(R.error);
-    $('#sub').textContent = `Fact từ các lượt đánh giá của chu kỳ ${R.cycle}. Ai cũng xem được.`;
-    render();
-  } catch (e) { $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
+  load(PC.month());
 })();
 </script>
 </body>

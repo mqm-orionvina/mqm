@@ -14,8 +14,20 @@ const PC = {
   save(tok, user) { try { localStorage.setItem('mqmPcToken', tok); localStorage.setItem('mqmPcUser', JSON.stringify(user)); } catch (e) {} },
   logout() { try { localStorage.removeItem('mqmPcToken'); localStorage.removeItem('mqmPcUser'); } catch (e) {} },
   // Vai trò được vào từng phần: RD / MKT vào Setup, HOST vào Đăng ký mẫu, ADMIN vào cả hai; Đánh giá thì ai cũng vào
-  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'FQS', 'ADMIN'].includes(u.role) : part === 'register' ? ['HOST', 'ADMIN'].includes(u.role) : true; },
+  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'FQS', 'ADMIN'].includes(u.role) : part === 'register' || part === 'improve' ? ['HOST', 'ADMIN'].includes(u.role) : true; },
   roleName: { RD: 'RD', MKT: 'MKT', FQS: 'FQS', HOST: 'Host · đăng ký mẫu', ADMIN: 'Quản lý' },
+  // Chu kỳ theo tháng (yyyy-MM). Tháng đang xem dùng chung cho Đánh giá / Report / Cải thiện, lưu trên máy này
+  monthLabel(c) { const m = String(c || '').match(/^(\d{4})-(\d{2})$/); return m ? `Tháng ${+m[2]}/${m[1]}` : String(c || ''); },
+  month() { try { return localStorage.getItem('mqmPcMonth') || ''; } catch (e) { return ''; } },
+  setMonth(c) { try { c ? localStorage.setItem('mqmPcMonth', c) : localStorage.removeItem('mqmPcMonth'); } catch (e) {} },
+  monthSelect(months, cur, id) { const ms = [...new Set([cur].concat(months || []))].filter(Boolean).sort().reverse();
+    return `<select class="pc-month" id="${id || 'month'}" aria-label="Tháng">${ms.map(m => `<option value="${m}" ${m === cur ? 'selected' : ''}>${PC.monthLabel(m)}</option>`).join('')}</select>`; },
+  // Nhóm câu hỏi, thứ tự từ ngoài vào trong: nhìn bao bì trước, rồi tới sản phẩm
+  GROUPS: ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'],
+  groupOf(q) { const p = String(q || '').split('·')[0].trim(); if (PC.GROUPS.includes(p)) return p; const s = String(q || '').toLowerCase();
+    return /in ấn|in rõ|in lệch|code date|nhãn|thiết kế/.test(s) ? 'In ấn' : /bao bì|đóng gói|seal|hàn|gói|khí|màng/.test(s) ? 'Bao bì' : /hương|vị|mùi|ngọt|mặn/.test(s) ? 'Hương vị'
+      : /cấu trúc|kết cấu|giòn|mềm|cứng|xốp|ỉu|dai/.test(s) ? 'Cấu trúc' : 'Ngoại quan'; },
+  stripG(q) { const p = String(q || '').split('·'); return p.length > 1 && PC.GROUPS.includes(p[0].trim()) ? p.slice(1).join('·').trim() : String(q || ''); },
   // Hộp đăng nhập; resolve khi đăng nhập xong
   login(title) {
     return new Promise(done => {
@@ -100,6 +112,8 @@ const PC = {
   .pc-fine{margin:4px 0 0;text-align:center;font-size:12px;color:#767676}
   .pc-x{position:absolute;right:16px;top:14px;width:40px;height:40px;border-radius:50%;border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:#111}.pc-x:hover{background:#efefef}
   .pc-err{color:#c8102e;margin:0;font-size:13px;font-weight:600}
+  html body select.pc-month{font:inherit;font-weight:700;font-size:15px;border:0!important;background:#efefef;color:#111;border-radius:999px!important;padding:10px 36px 10px 16px;min-height:0!important;cursor:pointer;appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:14px}
   @media (max-width:520px){.pc-login{align-items:flex-end;padding:0}.pc-login-card{border-radius:32px 32px 0 0;padding:26px 20px 22px}.pc-login-card>b{font-size:25px}.pc-bar{padding:10px 12px;gap:8px;flex-wrap:nowrap}.pc-back{padding:8px 12px}.pc-back .t{display:none}
     .pc-bar a.pc-home{font-size:15px;white-space:nowrap;gap:6px}.pc-logo.sm svg{width:32px;height:22px}.pc-part{padding:6px 10px;font-size:12.5px;white-space:nowrap}.pc-me{display:none}}
   /* Giao diện chung 3 trang Setup / Đăng ký / Đánh giá */
