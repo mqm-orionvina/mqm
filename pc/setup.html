@@ -185,6 +185,7 @@ const I18N = {
     resConflict: 'Các team chọn ngày không trùng nhau, anh Thái chốt', resQs: n => `Xem ${n} câu hỏi final (đã bỏ trùng, xếp từ ngoài vào trong)`, resSs: n => `Xem ${n} mẫu final và tình trạng mua`,
     have: (h, n) => `${h}/${n} gói`, stOk: 'Đủ', stLow: 'Thiếu', stNone: 'Chưa có', resNote: 'Câu hỏi final tự hiện trên Đánh giá của tháng. Số gói cập nhật khi Host đăng ký mẫu.',
     pickTeam: 'Chọn team để setup',
+    hist: 'Lịch sử gửi', hQ: 'câu', hS: 'mẫu', hSaved: 'Đã OK', hDraft: 'Chưa OK', histNote: 'Mọi lần gửi đều được lưu lại trong Google Sheet (không xoá, không ghi đè); bản Đã OK mới nhất là bản được dùng.',
   },
   ko: {
     step: 'MQM ORION VINA · SETUP', title: '월간 평가 Setup', sub: '월 선택 → 그룹별 질문표 (추가 · 삭제 · 수정) → 구매 샘플 → 제조일 → 전송. 전송 후에도 확인 · 수정 가능.',
@@ -207,6 +208,7 @@ const I18N = {
     resConflict: '팀별 기간이 겹치지 않음, Thái 님 확정', resQs: n => `최종 질문 ${n}개 보기`, resSs: n => `최종 샘플 ${n}개 · 구매 현황`,
     have: (h, n) => `${h}/${n}봉`, stOk: '충분', stLow: '부족', stNone: '없음', resNote: '최종 질문은 해당 월 평가에 자동 표시됩니다.',
     pickTeam: 'Setup할 팀 선택',
+    hist: '전송 이력', hQ: '질문', hS: '샘플', hSaved: 'OK 완료', hDraft: 'OK 전', histNote: '모든 전송은 Google Sheet에 기록됩니다 (삭제 · 덮어쓰기 없음). 최신 OK 버전이 사용됩니다.',
   },
 };
 const PLAN_BRANDS = [['OStar', "O'star"], ['Swing', 'Swing']];
@@ -272,7 +274,8 @@ function viewCard() {
     ${m.newerDraft || readDraft() ? `<div class="savedbox draft">${T('vDraft')} <button class="btn ghost sm" id="openDraft">${T('openDraft')}</button></div>` : ''}
     <h4>${T('rvQ')} · ${m.rows.length}</h4>${byG.map(([g, rs]) => `<div><span class="grp">${esc(g)}</span><ol>${rs.map(r => `<li>${esc(r.q)}</li>`).join('')}</ol></div>`).join('')}
     <h4>${T('rvS')} · ${m.samples.length}</h4><table class="rtbl">${m.samples.map(s => `<tr><td>${esc(s.brand)} · ${esc(s.flavor)}</td><td>${esc(s.sku)}</td></tr>`).join('')}</table>
-    <h4>${T('rvD')}</h4><b>${dmy(m.dateFrom)} – ${dmy(m.dateTo)}</b></section>`;
+    <h4>${T('rvD')}</h4><b>${dmy(m.dateFrom)} – ${dmy(m.dateTo)}</b>
+    ${(m.history || []).length ? `<h4>${T('hist')} · ${m.history.length}</h4><table class="rtbl">${m.history.map(h => `<tr><td>${esc(fmtAt(h.at))}</td><td><b>${esc(h.name)}</b> <span class="tg">${esc(h.user)}</span></td><td>${h.questions} ${T('hQ')} · ${h.samples} ${T('hS')}</td><td><span class="stt ${h.status === 'saved' ? 'ok' : 'low'}">${h.status === 'saved' ? T('hSaved') : T('hDraft')}</span></td></tr>`).join('')}</table><p class="hint">${T('histNote')}</p>` : ''}</section>`;
 }
 function qCard() {
   let n = 0;
