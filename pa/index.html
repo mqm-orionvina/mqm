@@ -389,7 +389,7 @@ document.addEventListener('click', async e => {
     const it = f.it, today = TODAY(), id = uid(), flavor = it.other ? 'Khác: ' + f.other.trim() : it.flavor;
     const key = it.other ? `${it.brand}|Khác:${f.other.trim()}|${f.size}` : it.k, sk = shopKey();
     const data = { id, clientAt: new Date().toISOString(), center: st.center, office: `${st.office.code} ${st.office.name}`, brand: it.brand, flavor, size: f.size,
-      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopType(), buyDate: today, photo: f.photo, thumb: f.thumb, photo2: f.photo2, thumb2: f.thumb2, device: DEVICE, sales: st.name, item: it.other ? 'khac' : String(it.no) };
+      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopType(), buyDate: today, photo: f.photo, photo2: f.photo2,   /* không gửi thumbnail: Sheet nhẹ, Tracker đọc nhanh (09/11) */ device: DEVICE, sales: st.name, item: it.other ? 'khac' : String(it.no) };
     const label = it.other ? `${it.B.n} ${f.other.trim()} ${f.size === 'Small' ? 'Small (nhỏ)' : 'Normal (vừa)'}` : it.label;
     await DB.put({ id, t: Date.now(), data, label, mark: { sk, key } });
     setDone(key, { a1: ageOf(f.mfd), a2: ageOf(f.mfdOld), st: 'q', id, nm: label });
