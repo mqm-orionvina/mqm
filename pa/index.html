@@ -67,6 +67,12 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .date.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .date.two label { min-width: 0; } .date.two label span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink2); margin: 0 0 5px 2px; } .date.two input { font-size: 15px; padding: 0 8px; height: 52px; width: 100%; min-width: 0; }
 .ages { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 10px; } .ages .age { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; } .ages .age .v { font-size: 28px; }
 .hint2 { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.step.pack .prow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: stretch; margin-bottom: 10px; }
+.prow .dl { min-width: 0; } .prow .dl span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink2); margin: 0 0 5px 2px; }
+.prow .dl input { width: 100%; min-width: 0; height: 52px; border: 1.5px solid var(--line); border-radius: 14px; padding: 0 8px; font-size: 15px; font-weight: 700; background: #fff; appearance: none; -webkit-appearance: none; }
+.prow .dl input:focus { border-color: var(--ink); outline: none; }
+.prow .age { flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; padding: 8px 12px; } .prow .age .v { font-size: 26px; } .prow .age .d { font-size: 11.5px; }
+.step.pack .shot .pick { height: 96px; font-size: 15px; } .step.pack .shot .pv img { max-height: 220px; }
 .err { color: var(--red-d); font-size: 13px; font-weight: 600; margin-top: 6px; }
 .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,.97); backdrop-filter: blur(8px); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
 .bar .in { max-width: 560px; margin: 0 auto; }
@@ -110,7 +116,7 @@ $('#logo').innerHTML = LOGO;
 
 let st = { screen: 'center', center: LS.get('center', ''), office: LS.get('office', null), q: '', shop: 0 };
 if (st.office) st.shop = LS.get('shop', {})[st.office.code] || 0;
-let f = { brand: LS.get('brand', ''), flavor: '', other: '', size: '', mfd: '', mfdOld: '', photo: null, thumb: null }, moreFl = false;
+let f = { brand: LS.get('brand', ''), flavor: '', other: '', size: '', mfd: '', mfdOld: '', photo: null, thumb: null, photo2: null, thumb2: null }, moreFl = false;
 
 function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('show'), 2600); }
 function go(s) { st.screen = s; render(); window.scrollTo(0, 0); }
@@ -144,15 +150,19 @@ function missing() { const m = [];
   if (!f.brand) m.push('Brand'); if (!f.flavor) m.push('Flavor'); else if (f.flavor === 'Khác' && !f.other.trim()) m.push('Tên vị khác'); if (!f.size) m.push('Size');
   if (!f.mfd) m.push('Ngày SX đầu kệ'); else if (badDate(f.mfd)) m.push('Ngày đầu kệ ' + badDate(f.mfd));
   if (!f.mfdOld) m.push('Ngày SX cũ nhất'); else if (badDate(f.mfdOld)) m.push('Ngày cũ nhất ' + badDate(f.mfdOld)); else if (f.mfd && f.mfdOld > f.mfd) m.push('Gói cũ nhất mới hơn đầu kệ');
-  if (!f.photo) m.push('Ảnh'); return m; }
+  if (!f.photo) m.push('Ảnh gói 1'); if (!f.photo2) m.push('Ảnh gói 2'); return m; }
 const ageBox = (d, label) => { const a = ageOf(d), bad = badDate(d);
   return `<div class="age ${d && !bad ? 'has' : ''}"><div class="v">${d && !bad ? a : '–'}<small>ngày</small></div><div class="d"><b>${label}</b><br>${d ? (bad ? `<b style="color:#c8102e">Ngày ${bad} – kiểm tra lại</b>` : `SX ${vnDay(d)}${a >= 30 ? ` · ~${(a / 30).toFixed(1).replace('.', ',')} tháng` : ''}`) : 'chọn ngày in trên bao bì'}</div></div>`; };
 
+const CAM_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+const shot = n => { const ph = n === 1 ? f.photo : f.photo2, id = 'cam' + n;
+  return `<div class="shot">${ph ? `<div class="pv"><img src="${ph}" alt=""><button data-re="${n}">Chụp lại</button></div><input type="file" id="${id}" accept="image/*" capture="environment">`
+    : `<label class="pick">${CAM_SVG}Chụp ảnh gói ${n} (rõ ngày SX)<input type="file" id="${id}" accept="image/*" capture="environment"></label>`}</div>`; };
 function form() {
   const fl = FLAVORS[f.brand] || [], today = isoDay(new Date()), types = shopTypes(), ty = st.shop ? types[shopKey()] : '';
   const sent = LS.get('shopCnt', {});
   const ok = k => ({ shop: !!(st.shop && ty), brand: !!f.brand, flavor: !!f.flavor && (f.flavor !== 'Khác' || !!f.other.trim()), size: !!f.size,
-    mfd: !!f.mfd && !!f.mfdOld && !badDate(f.mfd) && !badDate(f.mfdOld) && f.mfdOld <= f.mfd, photo: !!f.photo })[k];
+    p1: !!f.mfd && !badDate(f.mfd) && !!f.photo, p2: !!f.mfdOld && !badDate(f.mfdOld) && (!f.mfd || f.mfdOld <= f.mfd) && !!f.photo2 })[k];
   const tCount = TYPES.map(t => [t, Object.entries(types).filter(([k, v]) => k.startsWith(st.office.code + '|') && v === t).length]);
   const cnt = (LS.get('cnt', {})[st.office.code + '|' + today]) || 0;
   $('#app').innerHTML = `
@@ -172,16 +182,14 @@ function form() {
       ${f.flavor === 'Khác' ? `<input class="txt" id="other" placeholder="Tên vị (vd: Phô mai bơ)" value="${esc(f.other)}" autocomplete="off">` : ''}</section>
     <section class="step"><div class="sh ${ok('size') ? 'done' : ''}"><span class="n">4</span><b>Size</b></div>
       <div class="seg seg2">${SIZES.map(s => `<button data-s="${s}" class="${f.size === s ? 'on' : ''}">${s === 'Small' ? 'S · Small' : 'N · Normal'}</button>`).join('')}</div></section>
-    <section class="step"><div class="sh ${ok('mfd') ? 'done' : ''}"><span class="n">5</span><b>Ngày sản xuất 2 gói</b><small>Ngày mua: hôm nay<br>${vnDay(today)}</small></div>
-      <div class="date two">
-        <label><span>Gói đầu kệ</span><input type="date" id="mfd" max="${today}" min="${MIN_MFD}" value="${esc(f.mfd)}"></label>
-        <label><span>Gói cũ nhất</span><input type="date" id="mfdOld" max="${f.mfd || today}" min="${MIN_MFD}" value="${esc(f.mfdOld)}"></label></div>
-      <div class="ages">${ageBox(f.mfd, 'Tuổi gói đầu kệ')}${ageBox(f.mfdOld, 'Tuổi gói cũ nhất')}</div>
+    <section class="step pack"><div class="sh ${ok('p1') ? 'done' : ''}"><span class="n">5</span><b>Gói 1 · Đầu kệ</b><small>Ngày mua: hôm nay<br>${vnDay(today)}</small></div>
+      <div class="prow"><label class="dl"><span>Ngày sản xuất</span><input type="date" id="mfd" max="${today}" min="${MIN_MFD}" value="${esc(f.mfd)}"></label>${ageBox(f.mfd, 'Tuổi gói 1')}</div>
+      ${shot(1)}</section>
+    <section class="step pack"><div class="sh ${ok('p2') ? 'done' : ''}"><span class="n">6</span><b>Gói 2 · Cũ nhất</b><small>gói có ngày SX<br>cũ nhất trên kệ</small></div>
+      <div class="prow"><label class="dl"><span>Ngày sản xuất</span><input type="date" id="mfdOld" max="${f.mfd || today}" min="${MIN_MFD}" value="${esc(f.mfdOld)}"></label>${ageBox(f.mfdOld, 'Tuổi gói 2')}</div>
       ${f.mfd && f.mfdOld && f.mfdOld > f.mfd ? '<div class="err">Gói cũ nhất phải có ngày SX bằng hoặc trước gói đầu kệ</div>' : ''}
+      ${shot(2)}
       <div class="hint2">Chỉ lấy hàng trên kệ, không lấy trong kho. Không dọn kệ trước khi ghi.</div></section>
-    <section class="step"><div class="sh ${ok('photo') ? 'done' : ''}"><span class="n">6</span><b>Chụp ảnh sản phẩm</b><small>rõ ngày SX</small></div>
-      <div class="shot">${f.photo ? `<div class="pv"><img src="${f.photo}" alt=""><button id="re">Chụp lại</button></div>` : `<label class="pick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Chụp ảnh<input type="file" id="cam" accept="image/*" capture="environment"></label>`}
-      ${f.photo ? `<input type="file" id="cam" accept="image/*" capture="environment">` : ''}</div></section>
     ${foot()}`;
   const m = missing(), b = $('#send');
   b.className = 'send' + (m.length ? ' off' : '');
@@ -246,18 +254,18 @@ document.addEventListener('click', async e => {
   if (t.dataset.f) { f.flavor = t.dataset.f; form(); if (f.flavor === 'Khác' && !f.other) setTimeout(() => { const o = $('#other'); if (o) o.focus(); }, 50); return; }
   if (t.id === 'morefl') { moreFl = true; form(); return; }
   if (t.dataset.s) { f.size = t.dataset.s; form(); return; }
-  if (t.id === 're') { $('#cam').click(); return; }
+  if (t.dataset.re) { $('#cam' + t.dataset.re).click(); return; }
   if (t.dataset.drop) { await DB.del(t.dataset.drop); paintQ(0); return; }
   if (t.id === 'send') {
     const m = missing(); if (m.length) { toast('Còn thiếu: ' + m.join(', ')); return; }
     const today = isoDay(new Date()), id = uid();
     const data = { id, clientAt: new Date().toISOString(), center: st.center, office: `${st.office.code} ${st.office.name}`, brand: f.brand, flavor: f.flavor === 'Khác' ? 'Khác: ' + f.other.trim() : f.flavor, size: f.size,
-      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopTypes()[shopKey()], buyDate: today, photo: f.photo, thumb: f.thumb, device: DEVICE };
+      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopTypes()[shopKey()], buyDate: today, photo: f.photo, thumb: f.thumb, photo2: f.photo2, thumb2: f.thumb2, device: DEVICE };
     await DB.put({ id, t: Date.now(), data });
     const cnt = LS.get('cnt', {}); cnt[st.office.code + '|' + today] = (cnt[st.office.code + '|' + today] || 0) + 1; LS.set('cnt', cnt);
     const sc = LS.get('shopCnt', {}); sc[shopKey()] = (sc[shopKey()] || 0) + 1; LS.set('shopCnt', sc);
     toast(`Đã lưu Shop ${st.shop} · tuổi ${ageOf(f.mfd)} / ${ageOf(f.mfdOld)} ngày · đang gửi nền`);
-    f = { brand: f.brand, flavor: '', other: '', size: '', mfd: '', mfdOld: '', photo: null, thumb: null }; moreFl = false;   // giữ Brand để nhập mẫu tiếp nhanh
+    f = { brand: f.brand, flavor: '', other: '', size: '', mfd: '', mfdOld: '', photo: null, thumb: null, photo2: null, thumb2: null }; moreFl = false;   // giữ Brand để nhập mẫu tiếp nhanh
     form(); window.scrollTo({ top: 0, behavior: 'smooth' }); pump();
   }
 });
@@ -266,9 +274,10 @@ document.addEventListener('input', e => { if (e.target.id === 'other') { f.other
 document.addEventListener('change', async e => {
   if (e.target.id === 'mfd') { f.mfd = e.target.value; form(); return; }
   if (e.target.id === 'mfdOld') { f.mfdOld = e.target.value; form(); return; }
-  if (e.target.id === 'cam' && e.target.files[0]) {
-    const file = e.target.files[0];
-    try { toast('Đang xử lý ảnh…'); f.photo = await shrink(file, 1400, .82); f.thumb = await shrink(file, 240, .6); form(); }
+  if ((e.target.id === 'cam1' || e.target.id === 'cam2') && e.target.files[0]) {
+    const file = e.target.files[0], two = e.target.id === 'cam2';
+    try { toast('Đang xử lý ảnh…'); const big = await shrink(file, 1400, .82), sm = await shrink(file, 240, .6);
+      if (two) { f.photo2 = big; f.thumb2 = sm; } else { f.photo = big; f.thumb = sm; } form(); }
     catch (err) { toast(err.message); }
   }
 });
