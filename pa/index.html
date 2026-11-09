@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ffffff">
 <title>Product Age · Tuổi sản phẩm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* Product Age – app Salesman (09/11/2026, làm lại theo quy trình tại shop):
    Center → Office → Shop (1–10, loại S/A/B) → danh sách mẫu đánh số → bấm 1 mẫu → Gói 1 / Gói 2 (NSX + ảnh) → Lưu → ô mẫu xanh */
@@ -15,7 +15,7 @@
 html, body { margin: 0; background: var(--page); color: var(--ink); font-family: 'Be Vietnam Pro', system-ui, sans-serif; font-size: 16px; }
 body { overflow-x: hidden; min-height: 100dvh; padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
 button, input { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button, label, input { touch-action: manipulation; } button { cursor: pointer; }
 .top { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: calc(10px + env(safe-area-inset-top)) 16px 10px; display: flex; align-items: center; gap: 10px; }
 .top .logo { width: 44px; height: 30px; flex: none; } .top .logo svg { width: 100%; height: 100%; }
 .top .tt { flex: 1; min-width: 0; line-height: 1.15; } .top .tt b { display: block; font-size: 16px; font-weight: 800; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .top .tt small { color: var(--muted); font-size: 12px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -70,7 +70,9 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .pack.ok { border-color: #9fd7b3; }
 .ph { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; } .ph .n { width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--muted); font-size: 13px; font-weight: 800; display: grid; place-items: center; } .pack.ok .ph .n { background: var(--ok); color: #fff; }
 .ph b { font-size: 16px; font-weight: 800; } .ph small { margin-left: auto; color: var(--muted); font-size: 12px; text-align: right; }
-.prow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-bottom: 10px; }
+.prow { margin-bottom: 10px; } .dl em { font-style: normal; font-weight: 500; color: var(--muted); margin-left: 4px; }
+.dl input.dt { height: 50px; font-size: 22px; letter-spacing: .06em; padding: 0 14px; text-align: left; } .dl input.dt::placeholder { color: #c4c4c9; letter-spacing: .02em; font-size: 18px; font-weight: 600; }
+.aget { font-size: 12.5px; color: var(--muted); margin: 5px 0 0 4px; min-height: 17px; } .aget b { color: var(--red-d); } .aget .bad { color: var(--red-d); font-weight: 700; }
 .dl { min-width: 0; display: block; } .dl span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink2); margin: 0 0 5px 2px; }
 .dl input { width: 100%; min-width: 0; height: 54px; border: 1.5px solid var(--line); border-radius: 14px; padding: 0 8px; font-size: 15px; font-weight: 700; background: #fff; appearance: none; -webkit-appearance: none; }
 .dl input:focus { border-color: var(--ink); outline: none; }
@@ -216,7 +218,7 @@ function renderList(scrollToNext) {
   $('#app').innerHTML = h + `<div class="hint2">Chỉ lấy hàng trên kệ, không lấy trong kho. Không dọn kệ trước khi ghi. SKU không có trên kệ: bấm vào rồi chọn “Không có trên kệ”.</div>${foot()}`;
   const full = shopFull(d);
   bar(`<button class="send ${full ? '' : 'dark'}" id="finish">Qua shop khác →${full ? ' <small>· Shop ' + st.shop + ' đủ ✓</small>' : ` <small>· Ostar ${c.OStar || 0}/${SKU_MIN} · Swing ${c.Swing || 0}/${SKU_MIN}</small>`}</button>`);
-  if (scrollToNext) setTimeout(() => { const n = document.querySelector('.item.next'); if (n) n.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60);
+  if (scrollToNext) setTimeout(() => { const n = document.querySelector('.item.next'); if (n) n.scrollIntoView({ block: 'center' }); }, 60);
 }
 function itemBtn(it, v, isNext) {
   const cls = !v ? (isNext ? 'next' : '') : v === 'na' ? 'na' : v.st === 'ok' ? 'done' : 'done sending';
@@ -228,10 +230,26 @@ function itemBtn(it, v, isNext) {
 // ---------- Bước 5: 1 mẫu = Gói 1 (đầu kệ) + Gói 2 (cũ nhất) ----------
 function ageOf(mfd) { return mfd ? Math.round((Date.parse(TODAY()) - Date.parse(mfd)) / 864e5) : null; }
 function badDate(d) { if (!d) return ''; if (d > TODAY()) return 'sau hôm nay'; if (d < MIN_MFD) return 'trước 01/04/2026'; return ''; }
+const pad2 = n => String(n).padStart(2, '0');
+const dmIn = iso => iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}` : '';
+// gõ 4 số ddmm → năm tự lấy năm nay (nếu sau hôm nay thì lùi 1 năm)
+function parseDM(v) { const d = v.replace(/\D/g, ''); if (d.length < 4) return ''; const dd = +d.slice(0, 2), mm = +d.slice(2, 4), y = +TODAY().slice(0, 4);
+  const mk = y => `${y}-${pad2(mm)}-${pad2(dd)}`; let iso = mk(y); if (iso > TODAY()) iso = mk(y - 1);
+  const t = new Date(iso + 'T00:00:00Z'); return (!mm || mm > 12 || !dd || t.getUTCDate() !== dd) ? 'x' : iso; }
+function ageTxt(n) { const d = n === 1 ? f.mfd : f.mfdOld, raw = (f['raw' + n] || '');
+  if (raw === 'x') return '<span class="bad">Ngày không hợp lệ</span>';
+  if (!d) return `Tuổi gói ${n}: tự tính sau khi nhập`;
+  const bad = badDate(d); if (bad) return `<span class="bad">Ngày ${bad}</span>`;
+  if (n === 2 && f.mfd && d > f.mfd) return '<span class="bad">Gói cũ nhất phải có NSX bằng hoặc trước gói đầu kệ</span>';
+  return `${vnDay(d)} · <b>${ageOf(d)} ngày tuổi</b>`; }
+const dateRow = n => `<div class="prow"><label class="dl"><span>Ngày sản xuất<em>gõ ngày + tháng, VD 0210</em></span><input class="dt" id="${n === 1 ? 'mfd' : 'mfdOld'}" type="text" inputmode="numeric" pattern="[0-9/]*" maxlength="5" autocomplete="off" enterkeyhint="${n === 1 ? 'next' : 'done'}" placeholder="dd/mm" value="${dmIn(n === 1 ? f.mfd : f.mfdOld)}"></label><div class="aget" id="age${n}">${ageTxt(n)}</div></div>`;
+function paintPacks() { const ok1 = !!f.mfd && !badDate(f.mfd) && !!f.photo, ok2 = !!f.mfdOld && !badDate(f.mfdOld) && (!f.mfd || f.mfdOld <= f.mfd) && !!f.photo2;
+  const ps = document.querySelectorAll('.pack'); if (ps[0]) ps[0].classList.toggle('ok', ok1); if (ps[1]) ps[1].classList.toggle('ok', ok2);
+  const a1 = $('#age1'), a2 = $('#age2'); if (a1) a1.innerHTML = ageTxt(1); if (a2) a2.innerHTML = ageTxt(2); paintSave(); }
 const ageBox = (d, label) => { const a = ageOf(d), bad = badDate(d);
   return `<div class="age ${d && !bad ? 'has' : ''}"><div class="v">${d && !bad ? a : '–'}<small>ngày</small></div><div class="d">${d ? (bad ? `<b style="color:#c8102e">Ngày ${bad}</b>` : `${label}${a >= 30 ? ` · ~${(a / 30).toFixed(1).replace('.', ',')} tháng` : ''}`) : label}</div></div>`; };
 const CAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
-const shot = n => { const ph = n === 1 ? f.photo : f.photo2;
+const shot = n => { const ph = n === 1 ? (f.pv1 || f.photo) : (f.pv2 || f.photo2);
   return `<div class="shot">${ph ? `<div class="pv"><img src="${ph}" alt=""><button data-re="${n}">Chụp lại</button></div><input type="file" id="cam${n}" accept="image/*" capture="environment">`
     : `<label class="pick">${CAM}Chụp ảnh gói ${n} (rõ ngày SX)<input type="file" id="cam${n}" accept="image/*" capture="environment"></label>`}</div>`; };
 function missing() { const m = [];
@@ -248,16 +266,22 @@ function renderItem() {
     <div class="ihead"><span class="no">${it.other ? '+' : it.no}</span><div><b>${esc(it.other ? it.B.n + ' – vị khác' : it.label)}</b><small>${esc(it.B.g)} · ngày mua hôm nay ${vnDay(today)}</small></div></div>
     ${it.other ? `<input class="txt" id="other" placeholder="Tên vị đang có trên kệ" value="${esc(f.other)}" autocomplete="off"><div class="seg two">${SIZES.map(([z, zs]) => `<button data-sz="${z}" class="${f.size === z ? 'on' : ''}">${zs}</button>`).join('')}</div>` : ''}
     <section class="pack ${ok1 ? 'ok' : ''}"><div class="ph"><span class="n">1</span><b>Gói 1 · Đầu kệ</b><small>gói ở mặt trước kệ</small></div>
-      <div class="prow"><label class="dl"><span>Ngày sản xuất</span><input type="date" id="mfd" max="${today}" min="${MIN_MFD}" value="${esc(f.mfd)}"></label>${ageBox(f.mfd, 'Tuổi gói 1')}</div>${shot(1)}</section>
+      ${dateRow(1)}${shot(1)}</section>
     <section class="pack ${ok2 ? 'ok' : ''}"><div class="ph"><span class="n">2</span><b>Gói 2 · Cũ nhất</b><small>gói có NSX cũ nhất trên kệ</small></div>
-      <div class="prow"><label class="dl"><span>Ngày sản xuất</span><input type="date" id="mfdOld" max="${f.mfd || today}" min="${MIN_MFD}" value="${esc(f.mfdOld)}"></label>${ageBox(f.mfdOld, 'Tuổi gói 2')}</div>
-      ${f.mfd && f.mfdOld && f.mfdOld > f.mfd ? '<div class="err">Gói cũ nhất phải có ngày SX bằng hoặc trước gói đầu kệ</div>' : ''}${shot(2)}</section>
+      ${dateRow(2)}${shot(2)}</section>
     ${it.other ? '' : `<button class="ghost" id="na">Không có trên kệ – bỏ qua mẫu này</button>`}${foot()}`;
   paintSave();
 }
 function paintSave() { const m = missing(); bar(`<button class="send ${m.length ? 'off' : ''}" id="save">${m.length ? `Lưu mẫu <small>· còn thiếu ${m.length}</small>` : 'Lưu mẫu ✓'}</button>`); }
 
 // ---------- ảnh: thu nhỏ trên máy để gửi nhanh ----------
+async function shrinkAll(file) {
+  let src, w, h, done = () => {};
+  try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); w = src.width; h = src.height; done = () => src.close && src.close(); }
+  catch (e) { src = await new Promise((res, rej) => { const img = new Image(), url = URL.createObjectURL(file); img.onload = () => { URL.revokeObjectURL(url); res(img); }; img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Không đọc được ảnh')); }; img.src = url; }); w = src.naturalWidth; h = src.naturalHeight; }
+  const out = (max, q) => { const s = Math.min(1, max / Math.max(w, h)), c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', q); };
+  const r = { big: out(1280, .78), pv: out(560, .7), sm: out(240, .6) }; done(); return r;
+}
 function shrink(file, max, q) {
   return new Promise((res, rej) => { const img = new Image(), url = URL.createObjectURL(file);
     img.onload = () => { const s = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
@@ -275,11 +299,11 @@ async function pump() {
   if (busy) return; busy = true;
   try {
     for (;;) {
-      const items = (await DB.all()).filter(x => !x.failed).sort((a, b) => a.t - b.t);
-      paintQ(items.length); if (!items.length) break;
+      const all = await DB.all(), items = all.filter(x => !x.failed).sort((a, b) => a.t - b.t);
+      paintQ(items.length, all.filter(x => x.failed)); if (!items.length) break;
       const it = items[0]; let r;
       try { r = await (await fetch(API, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ api: 'paSubmit', data: it.data }) })).json(); }
-      catch (e) { lastErr = navigator.onLine ? 'Chưa gửi được, đang thử lại…' : 'Mất mạng – sẽ tự gửi khi có mạng'; paintQ(items.length); setTimeout(() => { busy = false; pump(); }, 8000); return; }
+      catch (e) { lastErr = navigator.onLine ? 'Chưa gửi được, đang thử lại…' : 'Mất mạng – sẽ tự gửi khi có mạng'; paintQ(items.length, all.filter(x => x.failed)); setTimeout(() => { busy = false; pump(); }, 8000); return; }
       lastErr = '';
       if (r && r.ok) { await DB.del(it.id); sentNow++; markSent(it); if (st.screen === 'list') renderList(); }
       else { it.failed = (r && r.error) || 'Lỗi không rõ'; await DB.put(it); }
@@ -287,8 +311,8 @@ async function pump() {
   } finally { busy = false; }
   paintQ(0);
 }
-async function paintQ(n) {
-  const fails = (await DB.all()).filter(x => x.failed); let h = '';
+async function paintQ(n, fl) {
+  const fails = fl || (await DB.all()).filter(x => x.failed); let h = '';
   if (n) h = `<div class="qbar ${lastErr ? 'err' : 'go'}"><i></i>${lastErr || `Đang gửi ${n} mẫu… cứ nhập tiếp`}</div>`;
   else if (sentNow) h = `<div class="qbar ok"><i></i>Đã gửi xong ${sentNow} mẫu ✓</div>`;
   if (fails.length) h += `<div class="fails">${fails.map(x => `<div><span>${esc(x.label || x.data.brand)} · ${esc(x.failed)}</span><button data-drop="${x.id}">Bỏ</button></div>`).join('')}</div>`;
@@ -340,18 +364,22 @@ document.addEventListener('click', async e => {
     f = null; go('list'); renderList(true); pump();
   }
 });
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.id === 'mfd' || e.target.id === 'mfdOld')) { e.preventDefault(); if (e.target.id === 'mfd') { const nx = $('#mfdOld'); if (nx) nx.focus(); } else e.target.blur(); } });
 document.addEventListener('input', e => {
   if (e.target.id === 'qs') { st.q = e.target.value; paintOffices(); }
   if (e.target.id === 'nm') { st.name = e.target.value; paintNameBar(); }
   if (e.target.id === 'other') { f.other = e.target.value; paintSave(); }
+  if (e.target.id === 'mfd' || e.target.id === 'mfdOld') { const el = e.target, n = el.id === 'mfd' ? 1 : 2, d = el.value.replace(/\D/g, '').slice(0, 4);
+    el.value = d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+    const iso = parseDM(d); f['raw' + n] = iso === 'x' ? 'x' : ''; if (n === 1) f.mfd = iso === 'x' ? '' : iso; else f.mfdOld = iso === 'x' ? '' : iso;
+    paintPacks();
+    if (iso && iso !== 'x' && !badDate(iso)) { if (n === 1 && !f.mfdOld) { const nx = $('#mfdOld'); if (nx) nx.focus(); } else el.blur(); } }
 });
 document.addEventListener('change', async e => {
-  if (e.target.id === 'mfd') { f.mfd = e.target.value; renderItem(); return; }
-  if (e.target.id === 'mfdOld') { f.mfdOld = e.target.value; renderItem(); return; }
   if ((e.target.id === 'cam1' || e.target.id === 'cam2') && e.target.files[0]) {
     const file = e.target.files[0], two = e.target.id === 'cam2', y = scrollY;
-    try { toast('Đang xử lý ảnh…'); const big = await shrink(file, 1400, .82), sm = await shrink(file, 240, .6);
-      if (two) { f.photo2 = big; f.thumb2 = sm; } else { f.photo = big; f.thumb = sm; } renderItem(); window.scrollTo(0, y); }
+    try { const lb = e.target.closest('.shot'); if (lb) lb.style.opacity = '.5'; const r = await shrinkAll(file);
+      if (two) { f.photo2 = r.big; f.thumb2 = r.sm; f.pv2 = r.pv; } else { f.photo = r.big; f.thumb = r.sm; f.pv1 = r.pv; } renderItem(); window.scrollTo(0, y); }
     catch (err) { toast(err.message); }
   }
 });
