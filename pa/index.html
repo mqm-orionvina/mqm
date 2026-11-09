@@ -161,7 +161,7 @@ function render() {
     head(st.center, 'Bước 2 · nhập tên');
     const names = LS.get('names', []);
     $('#app').innerHTML = `<h2>Tên của anh/chị</h2><p>Bước 2 · dữ liệu sẽ ghi theo tên này</p>
-      <input class="txt big" id="nm" placeholder="Họ và tên Salesman" value="${esc(st.name)}" autocomplete="name" autocapitalize="words">
+      <input class="txt big" id="nm" placeholder="Họ và Tên" value="${esc(st.name)}" autocomplete="name" autocapitalize="words">
       ${names.length ? `<div class="recent"><small>Tên đã dùng trên máy này</small>${names.map(n => `<button class="chip" data-nm="${esc(n)}">${esc(n)}</button>`).join('')}</div>` : ''}${foot()}`;
     paintNameBar();
     setTimeout(() => { const i = $('#nm'); if (i && !st.name) i.focus(); }, 60);
@@ -184,7 +184,7 @@ function renderShop() {
   head(st.office.name, `${st.center} · ${st.office.code} · ${st.name}`);
   const types = TYPES.map(t => [t, Array.from({ length: SHOPS }, (_, i) => shopType(i + 1)).filter(x => x === t).length]);
   const p = st.pickShop;
-  $('#app').innerHTML = `<div class="who"><div><small>Salesman</small><b>${esc(st.name)}</b><small>${esc(st.center)} · ${esc(st.office.code)} ${esc(st.office.name)}</small></div><button id="logout">Đăng xuất</button></div>
+  $('#app').innerHTML = `<div class="who"><div><small>Họ và Tên</small><b>${esc(st.name)}</b><small>${esc(st.center)} · ${esc(st.office.code)} ${esc(st.office.name)}</small></div><button id="logout">Đăng xuất</button></div>
     <h2>Chọn Shop</h2><p>Mỗi Office 10 shop · 4 S · 3 A · 3 B. Đến shop nào bấm shop đó.</p>
     ${p ? `<div class="typepick" id="tp"><p>Shop ${p} là loại nào? <small>chọn xong vào thẳng danh sách mẫu</small></p><div class="seg">${TYPES.map(t => `<button data-ty="${t}" class="${shopType(p) === t ? 'on' : ''}">Loại ${t}</button>`).join('')}</div></div>` : ''}
     <div class="shopgrid">${Array.from({ length: SHOPS }, (_, i) => { const n = i + 1, d = getDone(n), cnt = Object.values(d).filter(v => v && v !== 'na').length, t = shopType(n), full = shopFull(d);
