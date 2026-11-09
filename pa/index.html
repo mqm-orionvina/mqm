@@ -90,6 +90,13 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .send.off { background: #e5e5e5; color: #9a9a9a; } .send small { font-size: 13px; font-weight: 600; opacity: .9; } .send.dark { background: var(--ink); }
 .toast { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); opacity: 0; transition: .25s; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 14px; font-size: 14.5px; font-weight: 600; z-index: 40; max-width: calc(100% - 32px); text-align: center; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%); }
+.who { display: flex; align-items: center; gap: 10px; background: var(--soft); border-radius: 16px; padding: 10px 12px 10px 14px; margin-bottom: 8px; }
+.who div { flex: 1; min-width: 0; } .who b { display: block; font-size: 16px; } .who small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who button { border: 0; background: #fff; color: var(--red-d); border-radius: 10px; padding: 9px 12px; font-weight: 700; font-size: 13px; box-shadow: 0 1px 2px rgba(0,0,0,.06); flex: none; }
+.txt.big { height: 58px; font-size: 18px; font-weight: 600; margin-top: 4px; }
+.recent { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; } .recent small { flex-basis: 100%; color: var(--muted); font-size: 12px; } .recent .chip { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 9px 14px; font-weight: 600; }
+.shophead .bk { border: 0; background: #fff; width: 38px; height: 38px; border-radius: 10px; font-size: 20px; font-weight: 800; box-shadow: 0 1px 2px rgba(0,0,0,.08); flex: none; }
+.shophead .nmz { margin-left: auto; font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40%; }
 .foot { text-align: center; color: var(--muted); font-size: 12px; padding: 22px 0 6px; }
 </style>
 </head>
@@ -103,7 +110,7 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 const API = 'https://script.google.com/macros/s/AKfycby7R2fwonLjguL1Vh6RyipQ45xhSfv9OPg9Fs-_elgMTUBr8knevf3R6JBPWcSPwajx/exec';
 const MASTER = {"centers":[{"center":"Hà Nội","offices":[{"code":"30CB","name":"Ha Noi(Cầu Giấy)1"},{"code":"30CC","name":"Ha Noi(Đông Anh)1"},{"code":"30CD","name":"Ha Noi(Đống Đa, Ba Đình)"},{"code":"30CE","name":"Ha Noi(Gia Lâm)1"},{"code":"30CF","name":"Ha Noi(Hà Đông)1"},{"code":"30CG","name":"Ha Noi(HBT)1"},{"code":"30CH","name":"Ha Noi(Long Biên)"},{"code":"30CI","name":"Ha Noi(Sóc Sơn)1"},{"code":"30CJ","name":"Ha Noi(Tây Hồ, Hoàn Kiếm)"},{"code":"30CK","name":"Ha Noi(Thanh Trì, Hoàng Mai)"},{"code":"30CL","name":"Ha Noi(Thanh Xuân)1"},{"code":"30CM","name":"Ha Noi(Từ Liêm)1"},{"code":"30CV","name":"Ha Noi(Minimart)"},{"code":"30CN","name":"Ha Tay(Chương Mỹ)"},{"code":"30CO","name":"Ha Tay(Đan Phượng)"},{"code":"30CP","name":"Ha Tay(Quốc Oai)"},{"code":"30CQ","name":"Ha Tay(Sơn Tây)1"},{"code":"30CR","name":"Ha Tay(Thạch Thất)1"},{"code":"30CS","name":"Ha Tay(Thanh Oai)"},{"code":"30CT","name":"Ha Tay(Thường Tín)"},{"code":"30CU","name":"Ha Tay(Ứng Hòa)"}]},{"center":"Bắc Ninh","offices":[{"code":"30AA","name":"Bac Giang(Bắc Giang)"},{"code":"30AB","name":"Bac Giang(Lạng Giang)"},{"code":"30AC","name":"Bac Giang(Lục Ngạn)"},{"code":"30AD","name":"Bac Kan (Bắc Kạn)"},{"code":"30AF","name":"Bac Ninh(Bắc Ninh)"},{"code":"30AG","name":"Bac Ninh(Thuận Thành)"},{"code":"30AH","name":"Bac Ninh(Yên Phong)"},{"code":"30AI","name":"Cao Bang(Cao Bằng)"},{"code":"30AN","name":"Hung Yen(Hưng Yên)1"},{"code":"30AO","name":"Hung Yen(Mỹ Hào)"},{"code":"30AJ","name":"Hai Duong(Chí Linh)"},{"code":"30AK","name":"Hai Duong(Gia Lộc)"},{"code":"30AL","name":"Hai Duong(Hải Dương)"},{"code":"30AM","name":"Hai Duong(Kim Thành)"},{"code":"30AP","name":"Lang Son (Hữu Lũng)"},{"code":"30AQ","name":"Lang Son(Lạng Sơn)"},{"code":"30AR","name":"Thai Nguyen(Đồng Hỷ)"},{"code":"30AS","name":"Thai Nguyen(Phổ Yên)"},{"code":"30AT","name":"Thai Nguyen(Thái Nguyên)"}]},{"center":"Vĩnh Phúc","offices":[{"code":"30EB","name":"Ha Giang(Bắc Quang)"},{"code":"30EC","name":"Ha Giang(Hà Giang)"},{"code":"30ED","name":"Hoa Binh(Hòa Bình)"},{"code":"30EE","name":"Hoa Binh(Kim Bôi)"},{"code":"30EF","name":"Hoa Binh(Tân Lạc)"},{"code":"30EG","name":"Lai Chau (Lai Châu)"},{"code":"30EH","name":"Lao Cai(Bảo Thắng)"},{"code":"30EI","name":"Lao Cai(Lao Cai)"},{"code":"30EJ","name":"Phu Tho(Phú Thọ)"},{"code":"30EK","name":"Phu Tho(Thanh Sơn)"},{"code":"30EL","name":"Phu Tho(Việt Trì)1"},{"code":"30EM","name":"Son La (Mộc Châu)"},{"code":"30EN","name":"Son La (Sơn La)"},{"code":"30EO","name":"Tuyên Quang(Chiêm Hoá)"},{"code":"30EP","name":"Tuyen Quang(Tuyên Quang)"},{"code":"30ER","name":"Vinh Phuc(Phúc Yên)"},{"code":"30ES","name":"Vinh Phuc(Tam Dương)"},{"code":"30ET","name":"Vinh Phuc(Vĩnh Yên)"},{"code":"30EU","name":"Yen Bai(Nghĩa Lộ)"},{"code":"30EV","name":"Yen Bai(Yên Bái)"},{"code":"30EA","name":"Dien Bien(Điện Biên)"}]},{"center":"Hải Phòng","offices":[{"code":"30DA","name":"Ha Nam(Hà Nam)"},{"code":"30DB","name":"Ha Nam(Lý Nhân)"},{"code":"30DD","name":"Hai Phong(Đồ Sơn)"},{"code":"30DE","name":"Hai Phong(Hồng Bàng)"},{"code":"30DF","name":"Hai Phong(Ngô Quyền)"},{"code":"30DG","name":"Hai Phong(Thủy Nguyên)"},{"code":"30DH","name":"Hai Phong(Vĩnh Bảo)"},{"code":"30DI","name":"Nam Định(Giao Thủy)"},{"code":"30DJ","name":"Nam Định(Hải Hậu)"},{"code":"30DK","name":"Nam Định(Nam Định)1"},{"code":"30DL","name":"Nam Định(Nghĩa Hưng)"},{"code":"30DM","name":"Nam Định(Ý Yên)"},{"code":"30DN","name":"Ninh Binh(Ninh Bình)"},{"code":"30DO","name":"Ninh Binh(Tam Điệp)"},{"code":"30DY","name":"Ninh Binh(Yên Khánh)"},{"code":"30DP","name":"Quang Ninh (Tiên Yên)"},{"code":"30DQ","name":"Quang Ninh(Cẩm Phả)"},{"code":"30DR","name":"Quang Ninh(Hạ Long)"},{"code":"30DS","name":"Quang Ninh(Móng Cái)"},{"code":"30DT","name":"Quang Ninh(Uông Bí)"},{"code":"30DU","name":"Thai Binh(Đông Hưng)"},{"code":"30DV","name":"Thai Binh(Hưng Hà)"},{"code":"30DW","name":"Thai Binh(Thái Bình)"},{"code":"30DX","name":"Thai Binh(Tiền Hải)"}]},{"center":"Đà Nẵng","offices":[{"code":"30BG","name":"Hue (Huế)"},{"code":"30BH","name":"Hue (Hương Thủy)"},{"code":"30BI","name":"Hue (Hương Trà)"},{"code":"30BD","name":"Ha Tinh (Hà Tĩnh)"},{"code":"30BE","name":"Ha Tinh (Hồng Lĩnh)"},{"code":"30BF","name":"Ha Tinh (Kỳ Anh)"},{"code":"30BJ","name":"Nghe An (Đô Lương)"},{"code":"30BK","name":"Nghe An (Quỳnh Lưu)"},{"code":"30BL","name":"Nghe An (Thái Hòa)"},{"code":"30BM","name":"Nghe An (Vinh)1"},{"code":"30BN","name":"Nghe An (Vinh)2"},{"code":"30QA","name":"Nghe An (Con Cuông)"},{"code":"30BO","name":"Quang Binh (Đồng Hới)"},{"code":"30BP","name":"Quang Binh (Quảng Trạch)"},{"code":"30BQ","name":"Quang Nam (Điện Bàn)"},{"code":"30BR","name":"Quang Nam (Tam Kỳ)"},{"code":"30QB","name":"Quang Nam (Thăng Bình)"},{"code":"30BS","name":"Quảng Trị (Đông Hà)"},{"code":"30BT","name":"Thanh Hoa(Bỉm Sơn)"},{"code":"30BU","name":"Thanh Hoa(Ngọc Lặc)"},{"code":"30BV","name":"Thanh Hoa(Sầm Sơn)"},{"code":"30BW","name":"Thanh Hoa(Thanh Hóa)1"},{"code":"30BX","name":"Thanh Hoa(Thọ Xuân)"},{"code":"30BY","name":"Thanh Hoa(Tĩnh Gia)"},{"code":"30BZ","name":"Thanh Hoa(Yên Định)"},{"code":"30BA","name":"Da Nang (Hải Châu)"},{"code":"30BB","name":"Da Nang (Liên Chiểu)"},{"code":"30QC","name":"Da Nang (Hòa Khánh)"}]},{"center":"Nha Trang","offices":[{"code":"30IA","name":"Binh Dinh (An Nhơn)"},{"code":"30IB","name":"Binh Dinh (Hoài Nhơn)"},{"code":"30IC","name":"Binh Dinh (Quy Nhơn)"},{"code":"30ID","name":"DakLak (Buôn Hồ)"},{"code":"30IE","name":"DakLak (Buôn Mê Thuột)1"},{"code":"30IF","name":"DakLak (Buôn Mê Thuột)2"},{"code":"30IG","name":"DakLak (Eakar)"},{"code":"30IH","name":"Gia Lai (An Khê)"},{"code":"30II","name":"Gia Lai (Chư Sê)"},{"code":"30IJ","name":"Gia Lai (Pleiku)1"},{"code":"30IK","name":"Khanh Hoa (Cam Ranh)"},{"code":"30IL","name":"Khanh Hoa (Diên Khánh)"},{"code":"30IM","name":"Khanh Hoa (Nha Trang)1"},{"code":"30IN","name":"Khanh Hoa (Nha Trang)2"},{"code":"30IO","name":"Khanh Hoa (Ninh Hòa)"},{"code":"30IP","name":"Kon Tum (Kontum)"},{"code":"30IR","name":"Phu Yen (Chí Thạnh)"},{"code":"30IS","name":"Phu Yen (Tuy Hòa)"},{"code":"30IT","name":"Quang Ngai (Bình Sơn)"},{"code":"30IU","name":"Quang Ngai (Đức Phổ)"},{"code":"30IV","name":"Quang Ngai (Quảng Ngãi)"}]},{"center":"Hồ Chí Minh","offices":[{"code":"30HA","name":"Bình Dương (Bến Cát)"},{"code":"30HB","name":"Bình Dương (Dĩ An)"},{"code":"30HC","name":"Bình Dương (Phú Giáo)"},{"code":"30HD","name":"Bình Dương (Thủ Dầu Một)"},{"code":"30HE","name":"Bình Dương (Thuận An)"},{"code":"30HF","name":"Bình Phước (Bình Long, Đồng Xoài)"},{"code":"30HG","name":"Bình Phước (Phước Long)"},{"code":"30HH","name":"HCM (1,4,3,Phú Nhuận)"},{"code":"30HI","name":"HCM (10,Tân Bình)"},{"code":"30HJ","name":"HCM (7,Nhà Bè)"},{"code":"30HK","name":"HCM (Bình Thạnh)"},{"code":"30HL","name":"HCM (BTBC 1,2)"},{"code":"30HM","name":"HCM (BTBC 3,4)"},{"code":"30HN","name":"HCM (Củ Chi)"},{"code":"30HO","name":"HCM (Gò Vấp)"},{"code":"30HP","name":"HCM (Hóc Môn 1)"},{"code":"30HQ","name":"HCM (Q12.1)"},{"code":"30HR","name":"HCM (Q2,9)"},{"code":"30HS","name":"HCM (Q5,8)"},{"code":"30HT","name":"HCM (Q6,11)"},{"code":"30HU","name":"HCM (Tân Phú)"},{"code":"30HV","name":"HCM (Thủ Đức)"},{"code":"30HX","name":"Long An (Tân An)"},{"code":"30HZ","name":"Tây Ninh (Tây Ninh)"}]},{"center":"Cần Thơ","offices":[{"code":"30FA","name":"An Giang (Châu Đốc)"},{"code":"30FB","name":"An Giang (Long Xuyên)"},{"code":"30FC","name":"Bạc Liêu (TX.Bạc Liêu)"},{"code":"30FD","name":"Bến Tre (Mỏ Cày)"},{"code":"30FE","name":"Bến Tre (TX.Bến Tre)"},{"code":"30FF","name":"Cà Mau (TP.Cà Mau)"},{"code":"30FG","name":"Cần Thơ (Bình Thủy, Phong Điền)"},{"code":"30FH","name":"Cần Thơ (Cái Răng, Ninh Kiều)"},{"code":"30FI","name":"Cần Thơ (Thốt Nốt)"},{"code":"30FM","name":"Hậu Giang (Vị Thanh)"},{"code":"30FN","name":"Kiên Giang (Hòn Đất - Phú Quốc)"},{"code":"30FO","name":"Kiên Giang (Rạch Giá)"},{"code":"30FP","name":"Sóc Trăng (TP Sóc Trăng)"},{"code":"30FQ","name":"Tiền Giang (Cai Lậy)"},{"code":"30FR","name":"Tiền Giang (Gò Công)"},{"code":"30FS","name":"Tiền Giang (Mỹ Tho)"},{"code":"30FT","name":"Trà Vinh (TX.Trà Vinh)"},{"code":"30FU","name":"Vĩnh Long (Bình Minh)"},{"code":"30FV","name":"Vĩnh Long (TP.Vĩnh Long)"},{"code":"30FK","name":"Đồng Tháp (Cao Lãnh)"},{"code":"30FL","name":"Đồng Tháp (Sa Đéc)"}]},{"center":"Đồng Nai","offices":[{"code":"30GA","name":"Bà Rịa (Long Điền)"},{"code":"30GB","name":"Bà Rịa (Vũng Tàu)"},{"code":"30GC","name":"Bà Rịa (Xuyên Mộc)"},{"code":"30GD","name":"Binh Thuan (La Gi)"},{"code":"30GE","name":"Binh Thuan (Phan Thiết)"},{"code":"30GF","name":"Binh Thuan (Tuy Phong)"},{"code":"30GG","name":"DakNong (DakMil)"},{"code":"30GH","name":"DakNong (Gia Nghia)"},{"code":"30GP","name":"Lam Dong (Bảo Lộc)"},{"code":"30GQ","name":"Lam Dong (Đà Lạt)"},{"code":"30GR","name":"Lam Dong (Đức Trọng)"},{"code":"30GS","name":"Ninh Thuan (Phan Rang)"},{"code":"30GI","name":"Đồng Nai (Biên Hoà)"},{"code":"30GJ","name":"Đồng Nai (Long Khánh)"},{"code":"30GK","name":"Đồng Nai (Long Thành)"},{"code":"30GL","name":"Đồng Nai (Tân Phú)"},{"code":"30GM","name":"Đồng Nai (Thống Nhất)"}]}]};
 const LOGO = '<svg viewBox="0 0 150 100" aria-label="ORION"><circle cx="60" cy="54" r="44" fill="#e8222a"/><g fill="#fff"><polygon points="19.4,79.5 21.4,83.7 26.0,83.5 22.7,86.6 24.3,90.9 20.2,88.7 16.7,91.6 17.5,87.1 13.7,84.5 18.2,83.9"/><polygon points="36.0,82.0 37.5,86.0 41.7,86.1 38.4,88.8 39.5,92.9 36.0,90.5 32.5,92.9 33.6,88.8 30.3,86.1 34.5,86.0"/><polygon points="7.3,56.5 10.9,60.8 16.3,59.1 13.4,63.9 16.6,68.5 11.1,67.2 7.8,71.7 7.4,66.1 2.0,64.3 7.2,62.1"/><polygon points="17.4,30.3 21.5,36.1 28.4,34.6 24.2,40.2 27.8,46.3 21.1,44.1 16.4,49.3 16.5,42.3 10.0,39.5 16.7,37.4"/><polygon points="38.3,12.1 42.4,19.5 50.8,18.7 45.0,24.9 48.3,32.6 40.7,29.0 34.4,34.6 35.5,26.2 28.2,21.9 36.5,20.4"/><polygon points="65.5,1.0 69.3,10.1 79.2,10.2 71.7,16.6 74.6,26.0 66.2,20.9 58.2,26.6 60.5,17.0 52.5,11.1 62.4,10.4"/></g><polygon fill="#e8222a" points="126.0,6.0 130.9,19.2 145.0,19.8 134.0,28.6 137.8,42.2 126.0,34.4 114.2,42.2 118.0,28.6 107.0,19.8 121.1,19.2"/></svg>';
-// Danh sách mẫu đúng thứ tự file khảo sát Excel (09/11/2026): mỗi vị size S rồi N; cuối mỗi brand có dòng "khác (ghi tên)"
+// Danh sách mẫu đúng thứ tự file khảo sát Excel (09/11/2026): mỗi vị size Small rồi Normal
 const BRANDS = [
   { b: 'OStar', n: 'Ostar', g: 'ORION', c: '#e8222a', fl: [['Seaweed', 'Tảo'], ['Kim Chi', 'Kim Chi'], ['Natural', 'Tự Nhiên'], ['Salted Egg', 'Trứng Muối']] },
   { b: 'Swing', n: 'Swing', g: 'ORION', c: '#f08a00', fl: [['Newyork Steak', 'Bò NY'], ['Chicken', 'Gà Teri'], ['Cheese', 'Phô Mai'], ['Max Beef', 'Maxx Bò']] },
@@ -111,8 +118,8 @@ const BRANDS = [
   { b: "Lay's Wavy", n: 'Wavy', g: 'PEPSI', c: '#4f8fe0', fl: [['Texas Beef', 'Bò Texas'], ['Cheddar', 'Cheddar']] },
 ];
 const SIZES = [['Small', 'Small (nhỏ)'], ['Normal', 'Normal (vừa)']];   // anh Thái 09/11: ghi rõ chữ, không viết tắt S / N
-const ITEMS = []; BRANDS.forEach(B => { B.fl.forEach(([en, vi]) => SIZES.forEach(([z, zs]) => ITEMS.push({ k: `${B.b}|${en}|${z}`, brand: B.b, flavor: en, size: z, label: `${B.n} ${vi} ${zs}`, vi, B })));
-  ITEMS.push({ k: `${B.b}|Khác`, brand: B.b, other: true, label: `${B.n} khác (ghi tên)`, B }); });
+// cố định 24 mẫu (anh Thái 09/11: bỏ dòng "khác / +")
+const ITEMS = []; BRANDS.forEach(B => { B.fl.forEach(([en, vi]) => SIZES.forEach(([z, zs]) => ITEMS.push({ k: `${B.b}|${en}|${z}`, brand: B.b, flavor: en, size: z, label: `${B.n} ${vi} ${zs}`, vi, B }))); });
 ITEMS.forEach((it, i) => it.no = i + 1);
 const SHOPS = 10, TYPES = ['S', 'A', 'B'], TYPE_NEED = { S: 4, A: 3, B: 3 }, SKU_MIN = 3, MIN_MFD = '2026-04-01';
 const $ = s => document.querySelector(s);
@@ -127,14 +134,15 @@ const DEVICE = LS.get('device', null) || (() => { const d = uid(); LS.set('devic
 const TODAY = () => isoDay(new Date());
 $('#logo').innerHTML = LOGO;
 
-let st = { screen: 'center', center: LS.get('center', ''), office: LS.get('office', null), q: '', shop: LS.get('lastShop', 0), pickShop: 0, item: null };
+let st = { screen: 'center', center: LS.get('center', ''), name: LS.get('name', ''), office: LS.get('office', null), q: '', shop: LS.get('lastShop', 0), pickShop: 0, item: null };
 let f = null;   // mẫu đang nhập
 // trạng thái mẫu theo shop (trên máy này): done[office|shop|ngày][itemKey] = {a1, a2, st: 'q'|'ok', id, nm}; 'na' = không có trên kệ
-const shopKey = (shop = st.shop) => `${st.office.code}|${shop}|${TODAY()}`;
+const who = () => norm(st.name).replace(/\s+/g, ' ').trim();
+const shopKey = (shop = st.shop) => `${who()}|${st.office.code}|${shop}|${TODAY()}`;
 const getDone = (shop) => LS.get('done', {})[shopKey(shop)] || {};
 function setDone(key, v, shop) { const all = LS.get('done', {}), k = shopKey(shop); all[k] = all[k] || {}; if (v == null) delete all[k][key]; else all[k][key] = v; LS.set('done', all); }
-const shopType = (shop = st.shop) => (LS.get('shopType', {})[st.office.code + '|' + shop]) || '';
-function setShopType(t, shop) { const s = LS.get('shopType', {}); s[st.office.code + '|' + shop] = t; LS.set('shopType', s); }
+const shopType = (shop = st.shop) => (LS.get('shopType2', {})[who() + '|' + st.office.code + '|' + shop]) || '';
+function setShopType(t, shop) { const s = LS.get('shopType2', {}); s[who() + '|' + st.office.code + '|' + shop] = t; LS.set('shopType2', s); }
 function brandCount(d) { const c = {}; Object.entries(d).forEach(([k, v]) => { if (v && v !== 'na') { const b = k.split('|')[0]; c[b] = (c[b] || 0) + 1; } }); return c; }
 const shopFull = d => { const c = brandCount(d); return (c.OStar || 0) >= SKU_MIN && (c.Swing || 0) >= SKU_MIN; };
 
@@ -145,18 +153,27 @@ function head(t, s) { $('#ttl').textContent = t; $('#sub').textContent = s; }
 function bar(html) { $('#bar').hidden = !html; $('#barIn').innerHTML = html || ''; }
 
 function render() {
-  $('#back').hidden = st.screen === 'center';
+  $('#back').hidden = st.screen === 'center' || st.screen === 'shop';
   if (st.screen === 'center') {
     head('Product Age', "Tuổi sản phẩm · Ostar & Swing vs Lay's"); bar('');
-    $('#app').innerHTML = `<h2>Chọn Center</h2><p>Bước 1 · chọn Center của anh/chị</p><div class="grid2">${MASTER.centers.map(c => `<button class="cbtn" data-c="${esc(c.center)}"><b>${esc(c.center)}</b><small>${c.offices.length} Office</small></button>`).join('')}</div>${foot()}`;
+    $('#app').innerHTML = `<h2>Chọn Center</h2><p>Bước 1 · chọn Center</p><div class="grid2">${MASTER.centers.map(c => `<button class="cbtn" data-c="${esc(c.center)}"><b>${esc(c.center)}</b><small>${c.offices.length} Office</small></button>`).join('')}</div>${foot()}`;
+  } else if (st.screen === 'name') {
+    head(st.center, 'Bước 2 · nhập tên');
+    const names = LS.get('names', []);
+    $('#app').innerHTML = `<h2>Tên của anh/chị</h2><p>Bước 2 · dữ liệu sẽ ghi theo tên này</p>
+      <input class="txt big" id="nm" placeholder="Họ và tên Salesman" value="${esc(st.name)}" autocomplete="name" autocapitalize="words">
+      ${names.length ? `<div class="recent"><small>Tên đã dùng trên máy này</small>${names.map(n => `<button class="chip" data-nm="${esc(n)}">${esc(n)}</button>`).join('')}</div>` : ''}${foot()}`;
+    paintNameBar();
+    setTimeout(() => { const i = $('#nm'); if (i && !st.name) i.focus(); }, 60);
   } else if (st.screen === 'office') {
-    head(st.center, 'Bước 2 · chọn Office'); bar('');
-    $('#app').innerHTML = `<h2>${esc(st.center)}</h2><p>Bước 2 · chọn Office</p><div class="search"><input id="qs" type="search" placeholder="Tìm Office…" value="${esc(st.q)}" autocomplete="off"></div><div class="list" id="ol"></div>`;
+    head(st.center, `Bước 3 · chọn Office · ${st.name}`); bar('');
+    $('#app').innerHTML = `<h2>${esc(st.center)}</h2><p>Bước 3 · chọn Office</p><div class="search"><input id="qs" type="search" placeholder="Tìm Office…" value="${esc(st.q)}" autocomplete="off"></div><div class="list" id="ol"></div>`;
     paintOffices();
   } else if (st.screen === 'shop') renderShop();
   else if (st.screen === 'list') renderList();
   else renderItem();
 }
+function paintNameBar() { const ok = st.name.trim().length >= 2; bar(`<button class="send ${ok ? 'dark' : 'off'}" id="nameOk">${ok ? 'Tiếp tục → chọn Office' : 'Nhập tên để tiếp tục'}</button>`); }
 function paintOffices() {
   const c = MASTER.centers.find(x => x.center === st.center), q = norm(st.q.trim()), list = c.offices.filter(o => !q || norm(o.name + ' ' + o.code).includes(q));
   $('#ol').innerHTML = list.length ? list.map(o => `<button class="obtn" data-o="${esc(o.code)}"><b>${esc(o.name)}</b><code>${esc(o.code)}</code></button>`).join('') : `<div class="empty">Không thấy Office nào</div>`;
@@ -164,16 +181,17 @@ function paintOffices() {
 
 // ---------- Bước 3: chọn Shop ----------
 function renderShop() {
-  head(st.office.name, `${st.center} · ${st.office.code} · chọn Shop`);
+  head(st.office.name, `${st.center} · ${st.office.code} · ${st.name}`);
   const types = TYPES.map(t => [t, Array.from({ length: SHOPS }, (_, i) => shopType(i + 1)).filter(x => x === t).length]);
   const p = st.pickShop;
-  $('#app').innerHTML = `<h2>Chọn Shop</h2><p>Mỗi Office 10 shop · 4 S · 3 A · 3 B. Đến shop nào bấm shop đó.</p>
-    ${p ? `<div class="typepick" id="tp"><p>Shop ${p} là loại nào? <small>(bắt buộc)</small></p><div class="seg">${TYPES.map(t => `<button data-ty="${t}" class="${shopType(p) === t ? 'on' : ''}">Loại ${t}</button>`).join('')}</div></div>` : ''}
+  $('#app').innerHTML = `<div class="who"><div><small>Salesman</small><b>${esc(st.name)}</b><small>${esc(st.center)} · ${esc(st.office.code)} ${esc(st.office.name)}</small></div><button id="logout">Đăng xuất</button></div>
+    <h2>Chọn Shop</h2><p>Mỗi Office 10 shop · 4 S · 3 A · 3 B. Đến shop nào bấm shop đó.</p>
+    ${p ? `<div class="typepick" id="tp"><p>Shop ${p} là loại nào? <small>chọn xong vào thẳng danh sách mẫu</small></p><div class="seg">${TYPES.map(t => `<button data-ty="${t}" class="${shopType(p) === t ? 'on' : ''}">Loại ${t}</button>`).join('')}</div></div>` : ''}
     <div class="shopgrid">${Array.from({ length: SHOPS }, (_, i) => { const n = i + 1, d = getDone(n), cnt = Object.values(d).filter(v => v && v !== 'na').length, t = shopType(n), full = shopFull(d);
       return `<button class="sbtn ${full ? 'full' : ''} ${p === n ? 'on' : ''}" data-shop="${n}"><span class="h"><b>Shop ${n}</b><em class="${t ? 'set' : ''}">${t ? 'Loại ' + t : 'Loại ?'}</em></span>
         <span class="bar2"><i style="width:${Math.min(100, cnt / 12 * 100)}%"></i></span><small>${full ? 'Đủ ✓ · ' : ''}${cnt} mẫu đã ghi hôm nay</small></button>`; }).join('')}</div>
     <div class="tcount">Loại shop đã chọn ở Office này: ${types.map(([t, n]) => `<b>${t}</b> ${n}/${TYPE_NEED[t]}`).join(' · ')}</div>${foot()}`;
-  bar(p && shopType(p) ? `<button class="send dark" id="goShop">Bắt đầu Shop ${p} · Loại ${shopType(p)} →</button>` : '');
+  bar('');
 }
 
 // ---------- Bước 4: danh sách mẫu của shop ----------
@@ -181,7 +199,7 @@ function renderList(scrollToNext) {
   head(`Shop ${st.shop} · Loại ${shopType()}`, `${st.office.name} · ${st.office.code}`);
   const d = getDone(), c = brandCount(d), extras = Object.entries(d).filter(([k]) => k.includes('|Khác:'));
   const nextNo = (ITEMS.find(it => !it.other && !d[it.k]) || {}).no;
-  let h = `<div class="shophead"><div class="r1"><b>Shop ${st.shop}</b><em>Loại ${esc(shopType())}</em><button id="toShops">Đổi shop</button></div>
+  let h = `<div class="shophead"><div class="r1"><button class="bk" id="toShops" aria-label="Về 10 shop">←</button><b>Shop ${st.shop}</b><em>Loại ${esc(shopType())}</em><span class="nmz">${esc(st.name)}</span></div>
     <div class="bc">${BRANDS.map(B => { const n = c[B.b] || 0, need = B.g === 'ORION'; return `<span class="${need && n >= SKU_MIN ? 'ok' : ''}">${esc(B.n)} ${n}${need ? '/' + SKU_MIN : ''}</span>`; }).join('')}</div></div>`;
   let cur = '';
   ITEMS.forEach(it => {
@@ -195,7 +213,7 @@ function renderList(scrollToNext) {
   });
   $('#app').innerHTML = h + `<div class="hint2">Chỉ lấy hàng trên kệ, không lấy trong kho. Không dọn kệ trước khi ghi. SKU không có trên kệ: bấm vào rồi chọn “Không có trên kệ”.</div>${foot()}`;
   const full = shopFull(d);
-  bar(`<button class="send ${full ? '' : 'off'}" id="finish">${full ? `Xong Shop ${st.shop} → chọn shop tiếp` : `Shop ${st.shop}: cần Ostar ≥ ${SKU_MIN} · Swing ≥ ${SKU_MIN}`}</button>`);
+  bar(`<button class="send ${full ? '' : 'dark'}" id="finish">Qua shop khác →${full ? ' <small>· Shop ' + st.shop + ' đủ ✓</small>' : ` <small>· Ostar ${c.OStar || 0}/${SKU_MIN} · Swing ${c.Swing || 0}/${SKU_MIN}</small>`}</button>`);
   if (scrollToNext) setTimeout(() => { const n = document.querySelector('.item.next'); if (n) n.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60);
 }
 function itemBtn(it, v, isNext) {
@@ -277,6 +295,10 @@ async function paintQ(n) {
 addEventListener('online', () => pump()); setInterval(() => pump(), 30000);
 
 // ---------- sự kiện ----------
+let logoutArm = false;
+function enterShop(n) { st.shop = n; st.pickShop = 0; LS.set('lastShop', n); go('list'); renderList(true); }
+function logout() { ['center', 'name', 'office', 'lastShop'].forEach(k => LS.set(k, k === 'office' ? null : k === 'lastShop' ? 0 : ''));
+  st = { screen: 'center', center: '', name: '', office: null, q: '', shop: 0, pickShop: 0, item: null }; logoutArm = false; go('center'); toast('Đã đăng xuất · dữ liệu đã lưu vẫn được gửi'); }
 function openItem(k) {
   const d = getDone(), v = d[k];
   if (k.includes('|Khác:')) { toast('Mẫu này đã lưu'); return; }
@@ -289,13 +311,15 @@ let redoArm = '';
 function confirmRedo(k) { if (redoArm === k) { redoArm = ''; return true; } redoArm = k; toast('Mẫu này đã lưu. Bấm lần nữa để nhập lại (bản mới thay bản cũ)'); setTimeout(() => { if (redoArm === k) redoArm = ''; }, 4000); return false; }
 document.addEventListener('click', async e => {
   const t = e.target.closest('button'); if (!t) return;
-  if (t.id === 'back') { go(st.screen === 'item' ? 'list' : st.screen === 'list' ? 'shop' : st.screen === 'shop' ? 'office' : 'center'); if (st.screen === 'list') renderList(true); return; }
-  if (t.dataset.c) { st.center = t.dataset.c; st.q = ''; LS.set('center', st.center); go('office'); return; }
+  if (t.id === 'back') { if (st.screen === 'shop') return; go(st.screen === 'item' ? 'list' : st.screen === 'list' ? 'shop' : st.screen === 'office' ? 'name' : 'center'); if (st.screen === 'list') renderList(true); return; }
+  if (t.dataset.c) { st.center = t.dataset.c; st.q = ''; LS.set('center', st.center); go('name'); return; }
   if (t.dataset.o) { const c = MASTER.centers.find(x => x.center === st.center); st.office = c.offices.find(o => o.code === t.dataset.o); LS.set('office', st.office); st.pickShop = 0; go('shop'); return; }
-  if (t.dataset.shop) { const n = +t.dataset.shop; if (shopType(n) && st.pickShop === n) { st.shop = n; LS.set('lastShop', n); go('list'); renderList(true); return; } st.pickShop = n; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-  if (t.dataset.ty) { setShopType(t.dataset.ty, st.pickShop); render(); return; }
-  if (t.id === 'goShop') { st.shop = st.pickShop; LS.set('lastShop', st.shop); go('list'); renderList(true); return; }
-  if (t.id === 'toShops' || t.id === 'finish') { if (t.id === 'finish' && t.classList.contains('off')) { toast(`Shop cần ít nhất ${SKU_MIN} SKU Ostar và ${SKU_MIN} SKU Swing`); return; } st.pickShop = 0; go('shop'); return; }
+  if (t.dataset.shop) { const n = +t.dataset.shop; if (shopType(n)) { enterShop(n); return; } st.pickShop = n; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (t.dataset.ty) { setShopType(t.dataset.ty, st.pickShop); enterShop(st.pickShop); return; }
+  if (t.id === 'logout') { if (logoutArm) { logout(); } else { logoutArm = true; t.textContent = 'Bấm lần nữa để đăng xuất'; setTimeout(() => { logoutArm = false; const b = $('#logout'); if (b) b.textContent = 'Đăng xuất'; }, 3500); } return; }
+  if (t.dataset.nm) { st.name = t.dataset.nm; render(); return; }
+  if (t.id === 'nameOk') { if (st.name.trim().length < 2) { toast('Nhập họ tên trước'); return; } st.name = st.name.trim().replace(/\s+/g, ' '); LS.set('name', st.name); const ns = LS.get('names', []).filter(x => x !== st.name); ns.unshift(st.name); LS.set('names', ns.slice(0, 5)); st.q = ''; go('office'); return; }
+  if (t.id === 'toShops' || t.id === 'finish') { st.pickShop = 0; go('shop'); return; }
   if (t.dataset.it) { openItem(t.dataset.it); return; }
   if (t.dataset.sz) { f.size = t.dataset.sz; renderItem(); return; }
   if (t.dataset.re) { $('#cam' + t.dataset.re).click(); return; }
@@ -306,7 +330,7 @@ document.addEventListener('click', async e => {
     const it = f.it, today = TODAY(), id = uid(), flavor = it.other ? 'Khác: ' + f.other.trim() : it.flavor;
     const key = it.other ? `${it.brand}|Khác:${f.other.trim()}|${f.size}` : it.k, sk = shopKey();
     const data = { id, clientAt: new Date().toISOString(), center: st.center, office: `${st.office.code} ${st.office.name}`, brand: it.brand, flavor, size: f.size,
-      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopType(), buyDate: today, photo: f.photo, thumb: f.thumb, photo2: f.photo2, thumb2: f.thumb2, device: DEVICE, item: it.other ? 'khac' : String(it.no) };
+      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopType(), buyDate: today, photo: f.photo, thumb: f.thumb, photo2: f.photo2, thumb2: f.thumb2, device: DEVICE, sales: st.name, item: it.other ? 'khac' : String(it.no) };
     const label = it.other ? `${it.B.n} ${f.other.trim()} ${f.size === 'Small' ? 'Small (nhỏ)' : 'Normal (vừa)'}` : it.label;
     await DB.put({ id, t: Date.now(), data, label, mark: { sk, key } });
     setDone(key, { a1: ageOf(f.mfd), a2: ageOf(f.mfdOld), st: 'q', id, nm: label });
@@ -316,6 +340,7 @@ document.addEventListener('click', async e => {
 });
 document.addEventListener('input', e => {
   if (e.target.id === 'qs') { st.q = e.target.value; paintOffices(); }
+  if (e.target.id === 'nm') { st.name = e.target.value; paintNameBar(); }
   if (e.target.id === 'other') { f.other = e.target.value; paintSave(); }
 });
 document.addEventListener('change', async e => {
@@ -330,8 +355,12 @@ document.addEventListener('change', async e => {
 });
 
 // mở lại app: vào thẳng danh sách shop của Office đã chọn lần trước
-if (st.center && st.office && MASTER.centers.some(c => c.center === st.center)) st.screen = 'shop';
+if (st.center && st.name && st.office && MASTER.centers.some(c => c.center === st.center)) st.screen = 'shop';
+else if (st.center && st.name && MASTER.centers.some(c => c.center === st.center)) st.screen = 'office';
+else if (st.center && MASTER.centers.some(c => c.center === st.center)) st.screen = 'name';
 render(); pump();
+// nút Back của điện thoại: không thoát khỏi màn 10 shop (chỉ thoát bằng Đăng xuất)
+history.pushState({ pa: 1 }, ''); addEventListener('popstate', () => { history.pushState({ pa: 1 }, ''); if (['item', 'list'].includes(st.screen)) { go(st.screen === 'item' ? 'list' : 'shop'); if (st.screen === 'list') renderList(true); } else if (st.screen === 'office') go('name'); else if (st.screen === 'name') go('center'); });
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 </script>
 </body>
