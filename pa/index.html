@@ -45,6 +45,10 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .sbtn.full { border-color: var(--ok); background: var(--ok-soft); } .sbtn.full .bar2 i { background: var(--ok); } .sbtn.full small { color: var(--ok); font-weight: 700; }
 .sbtn.part { border-color: #e6b800; background: #fff8d6; } .sbtn.part .bar2 i { background: #e0a800; } .sbtn.part small { color: #8a6500; font-weight: 700; }
 .pickbox { background: var(--soft); border-radius: 18px; padding: 10px; margin: 0 0 14px; display: grid; gap: 10px; } .pickbox .sbtn { width: 100%; } .pickbox .typepick { margin: 0; padding: 4px 4px 2px; background: none; } .sbtn.on { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+/* khung chọn loại shop: nền vàng nhạt; ô shop + nút Big / Normal / Small chỉ viền đen (anh Thái 09/11) */
+.pickbox { background: #fff4c2 !important; border: 1.5px solid #f0d36a; }
+.pickbox .sbtn, .pickbox .sbtn.on { background: #fff; border: 1.5px solid #111; box-shadow: none; }
+.pickbox .seg button { background: #fff; border: 1.5px solid #111; }
 .typepick { margin: 0 0 12px; background: var(--soft); border-radius: 18px; padding: 14px; } .typepick p { margin: 0 0 10px; font-weight: 700; } .typepick p small { color: var(--muted); font-weight: 500; }
 .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; } .seg button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; height: 52px; font-size: 16px; font-weight: 800; } .seg button.on { border-color: var(--ink); background: var(--ink); color: #fff; }
 .seg.two { grid-template-columns: 1fr 1fr; }
