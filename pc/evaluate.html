@@ -23,7 +23,10 @@ body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.45 "S
 .hero .brand svg { width: 28px; height: 18px; }
 .hero h1 { margin: 10px 0 4px; font-size: 25px; font-weight: 800; }
 .hero p { margin: 0; opacity: .85; font-size: 13.5px; }
-.who { background: rgba(255,255,255,.14); border: 0; color: #fff; font: inherit; font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.who { background: rgba(255,255,255,.14); border: 0; color: #fff; font: inherit; font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 999px; }
+.whobox { display: flex; align-items: center; gap: 10px; background: #f3f3f5; border-radius: 16px; padding: 10px 12px 10px 14px; margin: 0 0 12px; }
+.whobox div { flex: 1; min-width: 0; } .whobox b { display: block; font-size: 16px; } .whobox small { display: block; color: #8a8a92; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logout { flex: none; border: 1.5px solid #f0c4cb !important; background: #fff; border: 0; color: #c8102e; font: inherit; font-size: 12.5px; font-weight: 800; padding: 6px 12px; border-radius: 999px; cursor: pointer; } .logout.arm { background: #c8102e; color: #fff; box-shadow: 0 0 0 2px #fff; }
 .back { background: none; border: 0; color: #fff; font: inherit; font-weight: 700; padding: 0; cursor: pointer; opacity: .9; }
 .wrap { max-width: 600px; margin: -32px auto 0; padding: 0 14px 120px; }
 .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 18px rgba(0,0,0,.05); }
@@ -153,7 +156,7 @@ const CAUSE_OUT = ['Nhà cung cấp', 'Vận chuyển', 'Kho NPP / đại lý', 
 const OWNERS = ['QA', 'R&D', 'Production', 'PUR', 'SCM', 'Sales', 'MKT', 'Design', 'PI', 'FQS'];
 const I18N = {
   vi: {
-    step: 'MQM ORION VINA · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập tên, bộ phận và chọn brand mình phụ trách.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',
+    step: 'MQM ORION VINA · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập Họ và Tên, bộ phận và chọn brand mình phụ trách. Đổi người: bấm Đăng xuất.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',
     subScore: 'Trả lời từng câu: Ổn hoặc Có vấn đề, chấm điểm, xong bấm Lưu.', back: '← Danh sách',
     ok: 'Ổn', issue: 'Có vấn đề', scoreL: 'Điểm · 1 tốt → 9 kém', pickIssue: 'Chọn vấn đề', desc: 'Diễn giải *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
     causeTitle: 'Nguyên nhân & giải pháp tạm thời', causeSub: 'Theo chuyên môn của bộ phận bạn', causeIn: 'Nguyên nhân nghi ngờ · bên trong', causeOut: 'Nguyên nhân nghi ngờ · bên ngoài',
@@ -162,7 +165,8 @@ const I18N = {
     solution: 'Giải pháp tạm thời *', solutionPh: 'VD: QA kiểm lực seal lô 09/2026; SCM kiểm kho NPP…', owners: 'Bộ phận nên xử lý *', overall: 'Chung', mqmRef: 'Điểm tổng thể (tham khảo)',
     need: 'Còn thiếu: ', nAttr: n => `${n} mục chưa chọn Ổn / Có vấn đề`, nDesc: 'mô tả', nCause: 'nguyên nhân', nSol: 'giải pháp', nOwner: 'bộ phận xử lý', ready: 'Sẵn sàng lưu',
     allOk: 'Tất cả ổn', cause: {}, owner: {}, brandsTitle: 'Brand phụ trách', subBrands: 'Chỉ mẫu của các brand này hiện trong danh sách của bạn.',
-    loading: 'Đang tải…', name: 'Họ tên', namePh: 'VD: Nguyễn Văn A', dept: 'Bộ phận', brands: 'Brand phụ trách', go: 'Vào danh sách mẫu',
+    logout: 'Đăng xuất', logoutArm: 'Bấm lần nữa để đăng xuất', loggedOut: 'Đã đăng xuất. Người khác nhập tên, bộ phận, brand để chấm.',
+    loading: 'Đang tải…', name: 'Họ và Tên', namePh: 'VD: Nguyễn Văn A', dept: 'Bộ phận', brands: 'Brand phụ trách', go: 'Vào danh sách mẫu',
     needName: 'Nhập họ tên và chọn bộ phận', needBrand: 'Chọn ít nhất 1 brand, hoặc bấm Chọn tất cả',
     loadingBrands: 'Đang tải danh sách brand…', noSamplesYet: 'Chưa có mẫu nào được đăng ký. Có thể chọn "Tất cả brand" để nhận mọi mẫu mới.',
     allBrands: 'Tất cả brand', allBrandsNote: '(gồm cả brand đăng ký sau)', chosen: (n, m) => `Đã chọn <b>${n}</b> / ${m} brand`,
@@ -191,6 +195,7 @@ const I18N = {
     allOk: '모두 이상 없음',
     cause: { 'Nguyên liệu': '원료', 'Phụ liệu / bao bì': '부자재 / 포장재', 'Process sản xuất': '생산 공정', 'Bảo quản kho nhà máy': '공장 창고 보관', 'Nhà cung cấp': '협력사',
       'Vận chuyển': '운송', 'Kho NPP / đại lý': '대리점 창고', 'Trưng bày / điểm bán': '매장 진열', 'Thị trường / thời tiết': '시장 / 날씨', 'Chưa rõ': '불명' }, owner: { Production: '생산' }, brandsTitle: '담당 브랜드', subBrands: '선택한 브랜드의 샘플만 목록에 표시됩니다.',
+    logout: '로그아웃', logoutArm: '한 번 더 누르면 로그아웃', loggedOut: '로그아웃되었습니다. 다른 사람은 이름, 부서, 브랜드를 입력하세요.',
     loading: '불러오는 중…', name: '이름', namePh: '예: 홍길동', dept: '부서', brands: '담당 브랜드', go: '샘플 목록으로',
     needName: '이름을 입력하고 부서를 선택하세요', needBrand: '브랜드를 1개 이상 선택하거나 전체 선택을 누르세요',
     loadingBrands: '브랜드 목록을 불러오는 중…', noSamplesYet: '등록된 샘플이 없습니다. "전체 브랜드"를 선택하면 새 샘플을 모두 받습니다.',
@@ -249,7 +254,7 @@ function hero() {
   document.documentElement.lang = lang; document.title = 'MQM · ' + T('title');
   const top = `<div class="top"><div class="brand">${BRAND_SVG}${T('step')}</div><div class="right">
     <div class="lang"><button data-lang="vi" class="${lang === 'vi' ? 'on' : ''}">VI</button><button data-lang="ko" class="${lang === 'ko' ? 'on' : ''}">한국어</button></div>
-    ${me ? `<button class="who" id="who">${esc(me.name)} · ${esc(me.dept)} ▾</button>` : ''}</div></div>`;
+    </div></div>`;
   if (!me) return top + `<h1>${T('title')}</h1><p>${T('subLogin')}</p>`;
   if (view === 'score' && cur) return top + `<h1 style="font-size:20px"><button class="back" id="back">${T('back')}</button></h1><p>${T('subScore')}</p>`;
   if (view === 'brands') return top + `<h1>${T('brandsTitle')}</h1><p>${T('subBrands')}</p>`;
@@ -355,7 +360,8 @@ function bar() {
 }
 function render() {
   $('#hero').innerHTML = hero();
-  $('#app').innerHTML = !me ? viewLogin() : view === 'score' ? viewScore() : view === 'brands' ? viewBrands() : viewList();
+  const wb = me && view !== 'score' ? `<div class="whobox"><div><small>${T('name')}</small><b>${esc(me.name)}</b><small>${esc(me.dept)} · ${me.brands === 'all' ? T('allBrands') : esc(T('nBrands')(me.brands.length))}</small></div><button class="logout" id="logout">${T('logout')}</button></div>` : '';
+  $('#app').innerHTML = !me ? viewLogin() : wb + (view === 'score' ? viewScore() : view === 'brands' ? viewBrands() : viewList());
   bar(); bind();
 }
 function bindPicker() {
@@ -378,7 +384,11 @@ function bind() {
     lang = b.dataset.lang; try { localStorage.setItem('mqm1a-lang', lang); } catch (e) {}
     const y = scrollY; render(); scrollTo(0, y);
   });
-  const who = $('#who'); if (who) who.onclick = () => { draft = { name: me.name, dept: me.dept, brands: me.brands }; view = 'list'; setMe(null); render(); };
+  // Đổi người phải Đăng xuất (bấm 2 lần); đăng xuất xong nhập lại từ đầu, không điền sẵn (anh Thái 09/11)
+  const lo = $('#logout'); if (lo) lo.onclick = () => {
+    if (!lo.classList.contains('arm')) { lo.classList.add('arm'); lo.textContent = T('logoutArm'); clearTimeout(lo._t); lo._t = setTimeout(() => { const b = $('#logout'); if (b) { b.classList.remove('arm'); b.textContent = T('logout'); } }, 3500); return; }
+    draft = { name: '', dept: '', brands: [] }; view = 'list'; cur = null; ev = null; setMe(null); render(); scrollTo(0, 0); toast(T('loggedOut'));
+  };
   const back = $('#back'); if (back) back.onclick = () => { view = 'list'; render(); scrollTo(0, 0); };
   if (!me) {
     const name = $('#name'); name.oninput = () => { draft.name = name.value; };
