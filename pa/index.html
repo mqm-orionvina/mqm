@@ -110,7 +110,7 @@ const BRANDS = [
   { b: "Lay's", n: "Lay's", g: 'PEPSI', c: '#1f4fa3', fl: [['Nori Seaweed', 'Tảo Nori'], ['Natural', 'Tự Nhiên']] },
   { b: "Lay's Wavy", n: 'Wavy', g: 'PEPSI', c: '#4f8fe0', fl: [['Texas Beef', 'Bò Texas'], ['Cheddar', 'Cheddar']] },
 ];
-const SIZES = [['Small', 'S'], ['Normal', 'N']];
+const SIZES = [['Small', 'Small (nhỏ)'], ['Normal', 'Normal (vừa)']];   // anh Thái 09/11: ghi rõ chữ, không viết tắt S / N
 const ITEMS = []; BRANDS.forEach(B => { B.fl.forEach(([en, vi]) => SIZES.forEach(([z, zs]) => ITEMS.push({ k: `${B.b}|${en}|${z}`, brand: B.b, flavor: en, size: z, label: `${B.n} ${vi} ${zs}`, vi, B })));
   ITEMS.push({ k: `${B.b}|Khác`, brand: B.b, other: true, label: `${B.n} khác (ghi tên)`, B }); });
 ITEMS.forEach((it, i) => it.no = i + 1);
@@ -226,7 +226,7 @@ function renderItem() {
   const ok1 = !!f.mfd && !badDate(f.mfd) && !!f.photo, ok2 = !!f.mfdOld && !badDate(f.mfdOld) && (!f.mfd || f.mfdOld <= f.mfd) && !!f.photo2;
   $('#app').innerHTML = `
     <div class="ihead"><span class="no">${it.other ? '+' : it.no}</span><div><b>${esc(it.other ? it.B.n + ' – vị khác' : it.label)}</b><small>${esc(it.B.g)} · ngày mua hôm nay ${vnDay(today)}</small></div></div>
-    ${it.other ? `<input class="txt" id="other" placeholder="Tên vị đang có trên kệ" value="${esc(f.other)}" autocomplete="off"><div class="seg two">${SIZES.map(([z, zs]) => `<button data-sz="${z}" class="${f.size === z ? 'on' : ''}">${zs} · ${z}</button>`).join('')}</div>` : ''}
+    ${it.other ? `<input class="txt" id="other" placeholder="Tên vị đang có trên kệ" value="${esc(f.other)}" autocomplete="off"><div class="seg two">${SIZES.map(([z, zs]) => `<button data-sz="${z}" class="${f.size === z ? 'on' : ''}">${zs}</button>`).join('')}</div>` : ''}
     <section class="pack ${ok1 ? 'ok' : ''}"><div class="ph"><span class="n">1</span><b>Gói 1 · Đầu kệ</b><small>gói ở mặt trước kệ</small></div>
       <div class="prow"><label class="dl"><span>Ngày sản xuất</span><input type="date" id="mfd" max="${today}" min="${MIN_MFD}" value="${esc(f.mfd)}"></label>${ageBox(f.mfd, 'Tuổi gói 1')}</div>${shot(1)}</section>
     <section class="pack ${ok2 ? 'ok' : ''}"><div class="ph"><span class="n">2</span><b>Gói 2 · Cũ nhất</b><small>gói có NSX cũ nhất trên kệ</small></div>
@@ -307,7 +307,7 @@ document.addEventListener('click', async e => {
     const key = it.other ? `${it.brand}|Khác:${f.other.trim()}|${f.size}` : it.k, sk = shopKey();
     const data = { id, clientAt: new Date().toISOString(), center: st.center, office: `${st.office.code} ${st.office.name}`, brand: it.brand, flavor, size: f.size,
       mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopType(), buyDate: today, photo: f.photo, thumb: f.thumb, photo2: f.photo2, thumb2: f.thumb2, device: DEVICE, item: it.other ? 'khac' : String(it.no) };
-    const label = it.other ? `${it.B.n} ${f.other.trim()} ${f.size === 'Small' ? 'S' : 'N'}` : it.label;
+    const label = it.other ? `${it.B.n} ${f.other.trim()} ${f.size === 'Small' ? 'Small (nhỏ)' : 'Normal (vừa)'}` : it.label;
     await DB.put({ id, t: Date.now(), data, label, mark: { sk, key } });
     setDone(key, { a1: ageOf(f.mfd), a2: ageOf(f.mfdOld), st: 'q', id, nm: label });
     toast(`Đã lưu ${label} · tuổi ${ageOf(f.mfd)} / ${ageOf(f.mfdOld)} ngày`);
