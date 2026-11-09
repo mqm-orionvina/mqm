@@ -59,6 +59,7 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .item .st { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; text-align: right; } .item .st b { display: block; font-size: 15px; color: var(--ok); }
 .item.done { border-color: #9fd7b3; background: var(--ok-soft); } .item.done .no { background: var(--ok); color: #fff; } .item.done .nm small { color: var(--ok); }
 .item.sending .st { color: var(--warn); } .item.na { background: var(--soft); border-style: dashed; } .item.na .nm b { color: var(--muted); text-decoration: line-through; } .item.na .no { background: #ddd; color: #fff; }
+.item.fk .nm b { color: #111; } .item.fb .nm b { color: #1f5fc4; } .item.fb .no { color: #1f5fc4; }
 .item.next { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
 .item.add .no { background: #fff; border: 1.5px dashed #bbb; color: var(--muted); }
 /* Trang 1 mẫu */
@@ -119,7 +120,8 @@ const BRANDS = [
 ];
 const SIZES = [['Small', 'Small (nhỏ)'], ['Normal', 'Normal (vừa)']];   // anh Thái 09/11: ghi rõ chữ, không viết tắt S / N
 // cố định 24 mẫu (anh Thái 09/11: bỏ dòng "khác / +")
-const ITEMS = []; BRANDS.forEach(B => { B.fl.forEach(([en, vi]) => SIZES.forEach(([z, zs]) => ITEMS.push({ k: `${B.b}|${en}|${z}`, brand: B.b, flavor: en, size: z, label: `${B.n} ${vi} ${zs}`, vi, B }))); });
+// mỗi flavor 1 màu chữ, xen kẽ đen / xanh (anh Thái 09/11) → fi = thứ tự flavor
+const ITEMS = []; let FI = 0; BRANDS.forEach(B => { B.fl.forEach(([en, vi]) => { const fi = FI++; SIZES.forEach(([z, zs]) => ITEMS.push({ k: `${B.b}|${en}|${z}`, brand: B.b, flavor: en, size: z, label: `${B.n} ${vi} ${zs}`, vi, B, fi })); }); });
 ITEMS.forEach((it, i) => it.no = i + 1);
 const SHOPS = 10, TYPES = ['S', 'A', 'B'], TYPE_NEED = { S: 4, A: 3, B: 3 }, SKU_MIN = 3, MIN_MFD = '2026-04-01';
 const $ = s => document.querySelector(s);
@@ -220,7 +222,7 @@ function itemBtn(it, v, isNext) {
   const cls = !v ? (isNext ? 'next' : '') : v === 'na' ? 'na' : v.st === 'ok' ? 'done' : 'done sending';
   const right = !v ? '' : v === 'na' ? 'Không có' : `<b>${v.a1} / ${v.a2}</b>${v.st === 'ok' ? 'ngày · đã gửi ✓' : 'ngày · đang gửi…'}`;
   const sub = !v ? (isNext ? 'Mẫu tiếp theo – bấm để nhập' : 'Chưa nhập') : v === 'na' ? 'Không có trên kệ' : 'Tuổi gói 1 / gói 2';
-  return `<button class="item ${cls}" data-it="${esc(it.k)}"><span class="no">${v && v !== 'na' ? '✓' : it.no}</span><span class="nm"><b>${esc(it.label)}</b><small>${sub}</small></span><span class="st">${right}</span></button>`;
+  return `<button class="item ${cls} ${it.fi % 2 ? 'fb' : 'fk'}" data-it="${esc(it.k)}"><span class="no">${v && v !== 'na' ? '✓' : it.no}</span><span class="nm"><b>${esc(it.label)}</b><small>${sub}</small></span><span class="st">${right}</span></button>`;
 }
 
 // ---------- Bước 5: 1 mẫu = Gói 1 (đầu kệ) + Gói 2 (cũ nhất) ----------
