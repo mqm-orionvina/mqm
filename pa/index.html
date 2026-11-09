@@ -11,7 +11,7 @@
 :root { --red: #e8222a; --red-d: #c8102e; --ink: #111; --ink2: #444; --muted: #8a8a8a; --line: #ececec; --soft: #f5f5f5; --page: #fff; --ok: #1d7a46; --warn: #b07400; }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; background: var(--page); color: var(--ink); font-family: 'Be Vietnam Pro', system-ui, sans-serif; font-size: 16px; }
-body { min-height: 100dvh; padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+body { overflow-x: hidden; min-height: 100dvh; padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 button, input { font: inherit; color: inherit; }
 .top { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: calc(10px + env(safe-area-inset-top)) 16px 10px; display: flex; align-items: center; gap: 10px; }
 .top .logo { width: 44px; height: 30px; flex: none; } .top .logo svg { width: 100%; height: 100%; }
@@ -58,6 +58,15 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .shot .pick svg { width: 34px; height: 34px; } .shot input { display: none; }
 .shot .pv { position: relative; border-radius: 18px; overflow: hidden; background: #000; } .shot .pv img { display: block; width: 100%; max-height: 300px; object-fit: contain; }
 .shot .pv button { position: absolute; right: 10px; bottom: 10px; border: 0; border-radius: 999px; background: rgba(255,255,255,.95); padding: 10px 14px; font-weight: 700; font-size: 13.5px; }
+.shops { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; } .shops button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; height: 54px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.shops button b { font-size: 17px; font-weight: 800; line-height: 1; } .shops button small { font-size: 11px; color: var(--muted); font-weight: 600; } .shops button.on { border-color: var(--ink); background: var(--ink); color: #fff; } .shops button.on small { color: #ccc; }
+.seg.seg3 { grid-template-columns: repeat(3, 1fr); }
+.brand.b4 button { height: 62px; font-size: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; } .brand.b4 button small { font-size: 10px; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.brand.b4 button.on small { color: #ffd6d6; } .brand.b4 button.pep.on { background: #1f4fa3; border-color: #1f4fa3; } .brand.b4 button.pep.on small { color: #cfe0ff; }
+.txt { width: 100%; height: 50px; margin-top: 10px; border: 1.5px solid var(--ink); border-radius: 14px; padding: 0 14px; font-size: 16px; }
+.date.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .date.two label { min-width: 0; } .date.two label span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink2); margin: 0 0 5px 2px; } .date.two input { font-size: 15px; padding: 0 8px; height: 52px; width: 100%; min-width: 0; }
+.ages { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 10px; } .ages .age { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; } .ages .age .v { font-size: 28px; }
+.hint2 { font-size: 12px; color: var(--muted); margin-top: 8px; }
 .err { color: var(--red-d); font-size: 13px; font-weight: 600; margin-top: 6px; }
 .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,.97); backdrop-filter: blur(8px); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
 .bar .in { max-width: 560px; margin: 0 auto; }
@@ -70,7 +79,7 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 </style>
 </head>
 <body>
-<header class="top"><button class="back" id="back" hidden aria-label="Quay lại">‹</button><span class="logo" id="logo"></span><div class="tt"><b>Product Age</b><small>Tuổi sản phẩm · Ostar & Swing</small></div></header>
+<header class="top"><button class="back" id="back" hidden aria-label="Quay lại">‹</button><span class="logo" id="logo"></span><div class="tt"><b>Product Age</b><small>Tuổi sản phẩm · Ostar & Swing vs Lay's</small></div></header>
 <div id="q"></div>
 <main class="wrap" id="app"></main>
 <div class="bar" id="bar" hidden><div class="in"><button class="send off" id="send">Gửi mẫu</button></div></div>
@@ -85,6 +94,9 @@ const FLAVORS = {
     ['Grilled Ribs', 'Sườn Nướng'], ['Lobster', 'Tôm Hùm'], ['Mayo', 'Mayo'], ['Onion', 'Hành'], ['Bbq Chicken', 'Gà BBQ'], ['Mango Chilli Salt', 'Xoài Muối Ớt']],
   Swing: [['Newyork Steak', 'Bò New York'], ['Chicken', 'Gà Teri'], ['Cheese', 'Phô Mai'], ['Max Beef', 'Maxx Bò'], ['Max Spicy', 'Maxx Cay'], ['Beef Jerky', 'Bò Khô'],
     ['Black Pepper Beef', 'Bò Tiêu Đen'], ['Honey Butter', 'Bơ Mật Ong'], ['Roasted Seaweed', 'Rong Biển Nướng'], ['Tacos', 'Tacos'], ['Tom Yum', 'Tom Yum'], ['Tomato Pizza', 'Pizza Cà Chua']],
+  // Đối thủ PEPSI theo mẫu khảo sát: Lay's Tảo Nori / Tự Nhiên, Lay's Wavy Bò Texas / Cheddar (+ Khác ghi tên)
+  "Lay's": [['Nori Seaweed', 'Tảo Nori'], ['Natural', 'Tự Nhiên']],
+  "Lay's Wavy": [['Texas Beef', 'Bò Texas'], ['Cheddar', 'Cheddar']],
 };
 const SIZES = ['Small', 'Normal', 'Big', 'Family'];
 const $ = s => document.querySelector(s);
@@ -98,8 +110,9 @@ const uid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2,
 const DEVICE = LS.get('device', null) || (() => { const d = uid(); LS.set('device', d); return d; })();
 $('#logo').innerHTML = LOGO;
 
-let st = { screen: 'center', center: LS.get('center', ''), office: LS.get('office', null), q: '' };
-let f = { brand: LS.get('brand', ''), flavor: '', size: '', mfd: '', photo: null, thumb: null }, moreFl = false;
+let st = { screen: 'center', center: LS.get('center', ''), office: LS.get('office', null), q: '', shop: 0 };
+if (st.office) st.shop = LS.get('shop', {})[st.office.code] || 0;
+let f = { brand: LS.get('brand', ''), flavor: '', other: '', size: '', mfd: '', mfdOld: '', photo: null, thumb: null }, moreFl = false;
 
 function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('show'), 2600); }
 function go(s) { st.screen = s; render(); window.scrollTo(0, 0); }
@@ -122,35 +135,60 @@ function paintOffices(c) {
 const foot = () => `<div class="foot">ORION · Product Age · không cần đăng nhập</div>`;
 
 function ageOf(mfd) { if (!mfd) return null; const a = Math.round((Date.parse(isoDay(new Date())) - Date.parse(mfd)) / 864e5); return a; }
-function missing() { const m = []; if (!f.brand) m.push('Brand'); if (!f.flavor) m.push('Flavor'); if (!f.size) m.push('Size'); if (!f.mfd) m.push('Ngày sản xuất'); else { const a = ageOf(f.mfd); if (a < 0) m.push('Ngày SX sau hôm nay'); else if (a > 730) m.push('Ngày SX quá 2 năm'); } if (!f.photo) m.push('Ảnh'); return m; }
+// Theo mẫu khảo sát Excel (anh Thái 09/11): mỗi Office 10 shop (4 S · 3 A · 3 B); mỗi SKU ghi NSX 2 gói: Đầu kệ và Cũ nhất; ngày hợp lệ từ 01/04/2026
+const MIN_MFD = '2026-04-01', SHOPS = 10, TYPES = ['S', 'A', 'B'], TYPE_NEED = { S: 4, A: 3, B: 3 };
+const BRANDS = [['OStar', 'Ostar', 'ORION'], ['Swing', 'Swing', 'ORION'], ["Lay's", "Lay's", 'PEPSI'], ["Lay's Wavy", "Lay's Wavy", 'PEPSI']];
+const bName = b => (BRANDS.find(x => x[0] === b) || [b, b])[1];
+const shopKey = () => st.office.code + '|' + st.shop, shopTypes = () => LS.get('shopType', {});
+function badDate(d) { if (!d) return ''; if (d > isoDay(new Date())) return 'sau hôm nay'; if (d < MIN_MFD) return 'trước 01/04/2026'; return ''; }
+function missing() { const m = [];
+  if (!st.shop) m.push('Shop'); else if (!shopTypes()[shopKey()]) m.push('Loại shop');
+  if (!f.brand) m.push('Brand'); if (!f.flavor) m.push('Flavor'); else if (f.flavor === 'Khác' && !f.other.trim()) m.push('Tên vị khác'); if (!f.size) m.push('Size');
+  if (!f.mfd) m.push('Ngày SX đầu kệ'); else if (badDate(f.mfd)) m.push('Ngày đầu kệ ' + badDate(f.mfd));
+  if (!f.mfdOld) m.push('Ngày SX cũ nhất'); else if (badDate(f.mfdOld)) m.push('Ngày cũ nhất ' + badDate(f.mfdOld)); else if (f.mfd && f.mfdOld > f.mfd) m.push('Gói cũ nhất mới hơn đầu kệ');
+  if (!f.photo) m.push('Ảnh'); return m; }
+const ageBox = (d, label) => { const a = ageOf(d), bad = badDate(d);
+  return `<div class="age ${d && !bad ? 'has' : ''}"><div class="v">${d && !bad ? a : '–'}<small>ngày</small></div><div class="d"><b>${label}</b><br>${d ? (bad ? `<b style="color:#c8102e">Ngày ${bad} – kiểm tra lại</b>` : `SX ${vnDay(d)}${a >= 30 ? ` · ~${(a / 30).toFixed(1).replace('.', ',')} tháng` : ''}`) : 'chọn ngày in trên bao bì'}</div></div>`; };
 
 function form() {
-  const fl = FLAVORS[f.brand] || [], a = ageOf(f.mfd), today = isoDay(new Date());
-  const ok = k => ({ brand: !!f.brand, flavor: !!f.flavor, size: !!f.size, mfd: !!f.mfd && a >= 0 && a <= 730, photo: !!f.photo })[k];
+  const fl = FLAVORS[f.brand] || [], today = isoDay(new Date()), types = shopTypes(), ty = st.shop ? types[shopKey()] : '';
+  const sent = LS.get('shopCnt', {});
+  const ok = k => ({ shop: !!(st.shop && ty), brand: !!f.brand, flavor: !!f.flavor && (f.flavor !== 'Khác' || !!f.other.trim()), size: !!f.size,
+    mfd: !!f.mfd && !!f.mfdOld && !badDate(f.mfd) && !badDate(f.mfdOld) && f.mfdOld <= f.mfd, photo: !!f.photo })[k];
+  const tCount = TYPES.map(t => [t, Object.entries(types).filter(([k, v]) => k.startsWith(st.office.code + '|') && v === t).length]);
   const cnt = (LS.get('cnt', {})[st.office.code + '|' + today]) || 0;
   $('#app').innerHTML = `
     <div class="where"><div><small>${esc(st.center)} · ${esc(st.office.code)}</small><b>${esc(st.office.name)}</b></div><button id="chg">Đổi</button></div>
-    <div class="cnt">Hôm nay đã gửi <b>${cnt}</b> mẫu ở Office này</div>
-    <section class="step"><div class="sh ${ok('brand') ? 'done' : ''}"><span class="n">1</span><b>Brand</b></div>
-      <div class="brand">${['OStar', 'Swing'].map(b => `<button data-b="${b}" class="${f.brand === b ? 'on' : ''}">${b === 'OStar' ? 'Ostar' : 'Swing'}</button>`).join('')}</div></section>
-    <section class="step"><div class="sh ${ok('flavor') ? 'done' : ''}"><span class="n">2</span><b>Flavor</b>${f.brand ? `<small>${fl.length} vị ${f.brand === 'OStar' ? 'Ostar' : 'Swing'}</small>` : ''}</div>
-      <div class="chips">${f.brand ? (() => { const all = moreFl || fl.findIndex(x => x[0] === f.flavor) >= 4, list = all ? fl : fl.slice(0, 4);
+    <div class="cnt">Hôm nay đã gửi <b>${cnt}</b> mẫu ở Office này · loại shop đã chọn: ${tCount.map(([t, n]) => `<b>${t}</b> ${n}/${TYPE_NEED[t]}`).join(' · ')}</div>
+    <section class="step"><div class="sh ${ok('shop') ? 'done' : ''}"><span class="n">1</span><b>Shop</b><small>10 shop / Office<br>4 S · 3 A · 3 B</small></div>
+      <div class="shops">${Array.from({ length: SHOPS }, (_, i) => { const n = i + 1, k = st.office.code + '|' + n, t = types[k], c = sent[k] || 0;
+        return `<button data-shop="${n}" class="${st.shop === n ? 'on' : ''}"><b>${n}</b><small>${t || '–'}${c ? ' · ' + c : ''}</small></button>`; }).join('')}</div>
+      ${st.shop ? `<div class="seg seg3" style="margin-top:10px">${TYPES.map(t => `<button data-ty="${t}" class="${ty === t ? 'on' : ''}">Loại ${t}</button>`).join('')}</div>` : ''}</section>
+    <section class="step"><div class="sh ${ok('brand') ? 'done' : ''}"><span class="n">2</span><b>Brand</b></div>
+      <div class="brand b4">${BRANDS.map(([v, n, g]) => `<button data-b="${esc(v)}" class="${f.brand === v ? 'on' : ''} ${g === 'PEPSI' ? 'pep' : ''}"><small>${g}</small>${esc(n)}</button>`).join('')}</div></section>
+    <section class="step"><div class="sh ${ok('flavor') ? 'done' : ''}"><span class="n">3</span><b>Flavor</b>${f.brand ? `<small>${fl.length} vị ${esc(bName(f.brand))}</small>` : ''}</div>
+      <div class="chips">${f.brand ? (() => { const main = Math.min(4, fl.length), all = moreFl || fl.findIndex(x => x[0] === f.flavor) >= main, list = all ? fl : fl.slice(0, main);
         return list.map(([en, vi]) => `<button data-f="${esc(en)}" class="${f.flavor === en ? 'on' : ''}">${esc(vi)}${vi !== en ? `<small>${esc(en)}</small>` : ''}</button>`).join('')
-          + (all ? '' : `<button id="morefl" style="border-style:dashed">+ Vị khác (${fl.length - 4})</button>`); })() : `<span class="hint">Chọn Brand trước</span>`}</div></section>
-    <section class="step"><div class="sh ${ok('size') ? 'done' : ''}"><span class="n">3</span><b>Size</b></div>
+          + (all || fl.length <= main ? '' : `<button id="morefl" style="border-style:dashed">+ Vị khác (${fl.length - main})</button>`)
+          + `<button data-f="Khác" class="${f.flavor === 'Khác' ? 'on' : ''}">Khác<small>ghi tên</small></button>`; })() : `<span class="hint">Chọn Brand trước</span>`}</div>
+      ${f.flavor === 'Khác' ? `<input class="txt" id="other" placeholder="Tên vị (vd: Phô mai bơ)" value="${esc(f.other)}" autocomplete="off">` : ''}</section>
+    <section class="step"><div class="sh ${ok('size') ? 'done' : ''}"><span class="n">4</span><b>Size</b></div>
       <div class="seg">${SIZES.map(s => `<button data-s="${s}" class="${f.size === s ? 'on' : ''}">${s}</button>`).join('')}</div></section>
-    <section class="step"><div class="sh ${ok('mfd') ? 'done' : ''}"><span class="n">4</span><b>Ngày sản xuất</b><small>Ngày mua: hôm nay<br>${vnDay(today)}</small></div>
-      <div class="date"><label><input type="date" id="mfd" max="${today}" min="${isoDay(new Date(Date.now() - 730 * 864e5))}" value="${esc(f.mfd)}"></label>
-      <div class="age ${f.mfd && a >= 0 ? 'has' : ''}"><div class="v">${f.mfd && a >= 0 ? a : '–'}<small>ngày</small></div><div class="d">${f.mfd ? (a < 0 ? '<b style="color:#c8102e">Ngày SX sau hôm nay – kiểm tra lại</b>' : `<b>Tuổi sản phẩm</b><br>SX ${vnDay(f.mfd)} → mua ${vnDay(today)}${a >= 30 ? ` · khoảng ${(a / 30).toFixed(1).replace('.', ',')} tháng` : ''}`) : 'Chọn ngày in trên bao bì,<br>tuổi = hôm nay − ngày SX'}</div></div></div></section>
-    <section class="step"><div class="sh ${ok('photo') ? 'done' : ''}"><span class="n">5</span><b>Chụp ảnh sản phẩm</b><small>rõ ngày SX</small></div>
+    <section class="step"><div class="sh ${ok('mfd') ? 'done' : ''}"><span class="n">5</span><b>Ngày sản xuất 2 gói</b><small>Ngày mua: hôm nay<br>${vnDay(today)}</small></div>
+      <div class="date two">
+        <label><span>Gói đầu kệ</span><input type="date" id="mfd" max="${today}" min="${MIN_MFD}" value="${esc(f.mfd)}"></label>
+        <label><span>Gói cũ nhất</span><input type="date" id="mfdOld" max="${f.mfd || today}" min="${MIN_MFD}" value="${esc(f.mfdOld)}"></label></div>
+      <div class="ages">${ageBox(f.mfd, 'Tuổi gói đầu kệ')}${ageBox(f.mfdOld, 'Tuổi gói cũ nhất')}</div>
+      ${f.mfd && f.mfdOld && f.mfdOld > f.mfd ? '<div class="err">Gói cũ nhất phải có ngày SX bằng hoặc trước gói đầu kệ</div>' : ''}
+      <div class="hint2">Chỉ lấy hàng trên kệ, không lấy trong kho. Không dọn kệ trước khi ghi.</div></section>
+    <section class="step"><div class="sh ${ok('photo') ? 'done' : ''}"><span class="n">6</span><b>Chụp ảnh sản phẩm</b><small>rõ ngày SX</small></div>
       <div class="shot">${f.photo ? `<div class="pv"><img src="${f.photo}" alt=""><button id="re">Chụp lại</button></div>` : `<label class="pick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Chụp ảnh<input type="file" id="cam" accept="image/*" capture="environment"></label>`}
       ${f.photo ? `<input type="file" id="cam" accept="image/*" capture="environment">` : ''}</div></section>
     ${foot()}`;
   const m = missing(), b = $('#send');
   b.className = 'send' + (m.length ? ' off' : '');
-  b.innerHTML = m.length ? `Gửi mẫu <small>· còn thiếu ${m.length}</small>` : 'Gửi mẫu →';
+  b.innerHTML = m.length ? `Gửi mẫu <small>· còn thiếu ${m.length}</small>` : `Gửi mẫu · Shop ${st.shop} →`;
 }
-
 // ---------- ảnh: thu nhỏ trên máy để gửi nhanh ----------
 function shrink(file, max, q) {
   return new Promise((res, rej) => {
@@ -202,10 +240,12 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('button'); if (!t) return;
   if (t.id === 'back') { go(st.screen === 'form' ? 'office' : 'center'); return; }
   if (t.dataset.c) { st.center = t.dataset.c; st.q = ''; LS.set('center', st.center); go('office'); return; }
-  if (t.dataset.o) { const c = MASTER.centers.find(x => x.center === st.center); st.office = c.offices.find(o => o.code === t.dataset.o); LS.set('office', st.office); go('form'); return; }
+  if (t.dataset.o) { const c = MASTER.centers.find(x => x.center === st.center); st.office = c.offices.find(o => o.code === t.dataset.o); LS.set('office', st.office); st.shop = LS.get('shop', {})[st.office.code] || 0; go('form'); return; }
+  if (t.dataset.shop) { st.shop = +t.dataset.shop; const s = LS.get('shop', {}); s[st.office.code] = st.shop; LS.set('shop', s); form(); return; }
+  if (t.dataset.ty) { const s = LS.get('shopType', {}); s[shopKey()] = t.dataset.ty; LS.set('shopType', s); form(); return; }
   if (t.id === 'chg') { go('office'); return; }
   if (t.dataset.b) { if (f.brand !== t.dataset.b) { f.flavor = ''; moreFl = false; } f.brand = t.dataset.b; LS.set('brand', f.brand); form(); return; }
-  if (t.dataset.f) { f.flavor = t.dataset.f; form(); return; }
+  if (t.dataset.f) { f.flavor = t.dataset.f; form(); if (f.flavor === 'Khác' && !f.other) setTimeout(() => { const o = $('#other'); if (o) o.focus(); }, 50); return; }
   if (t.id === 'morefl') { moreFl = true; form(); return; }
   if (t.dataset.s) { f.size = t.dataset.s; form(); return; }
   if (t.id === 're') { $('#cam').click(); return; }
@@ -213,17 +253,21 @@ document.addEventListener('click', async e => {
   if (t.id === 'send') {
     const m = missing(); if (m.length) { toast('Còn thiếu: ' + m.join(', ')); return; }
     const today = isoDay(new Date()), id = uid();
-    const data = { id, clientAt: new Date().toISOString(), center: st.center, office: `${st.office.code} ${st.office.name}`, brand: f.brand, flavor: f.flavor, size: f.size, mfd: f.mfd, buyDate: today, photo: f.photo, thumb: f.thumb, device: DEVICE };
+    const data = { id, clientAt: new Date().toISOString(), center: st.center, office: `${st.office.code} ${st.office.name}`, brand: f.brand, flavor: f.flavor === 'Khác' ? 'Khác: ' + f.other.trim() : f.flavor, size: f.size,
+      mfd: f.mfd, mfdOld: f.mfdOld, shop: st.shop, shopType: shopTypes()[shopKey()], buyDate: today, photo: f.photo, thumb: f.thumb, device: DEVICE };
     await DB.put({ id, t: Date.now(), data });
     const cnt = LS.get('cnt', {}); cnt[st.office.code + '|' + today] = (cnt[st.office.code + '|' + today] || 0) + 1; LS.set('cnt', cnt);
-    toast(`Đã lưu · tuổi ${ageOf(f.mfd)} ngày · đang gửi nền`);
-    f = { brand: f.brand, flavor: '', size: '', mfd: '', photo: null, thumb: null }; moreFl = false;   // giữ Brand để nhập mẫu tiếp nhanh
+    const sc = LS.get('shopCnt', {}); sc[shopKey()] = (sc[shopKey()] || 0) + 1; LS.set('shopCnt', sc);
+    toast(`Đã lưu Shop ${st.shop} · tuổi ${ageOf(f.mfd)} / ${ageOf(f.mfdOld)} ngày · đang gửi nền`);
+    f = { brand: f.brand, flavor: '', other: '', size: '', mfd: '', mfdOld: '', photo: null, thumb: null }; moreFl = false;   // giữ Brand để nhập mẫu tiếp nhanh
     form(); window.scrollTo({ top: 0, behavior: 'smooth' }); pump();
   }
 });
-document.addEventListener('input', e => { if (e.target.id === 'qs') { st.q = e.target.value; paintOffices(MASTER.centers.find(x => x.center === st.center)); } });
+document.addEventListener('input', e => { if (e.target.id === 'other') { f.other = e.target.value; const m = missing(), b = $('#send'); b.className = 'send' + (m.length ? ' off' : ''); b.innerHTML = m.length ? `Gửi mẫu <small>· còn thiếu ${m.length}</small>` : `Gửi mẫu · Shop ${st.shop} →`; return; }
+  if (e.target.id === 'qs') { st.q = e.target.value; paintOffices(MASTER.centers.find(x => x.center === st.center)); } });
 document.addEventListener('change', async e => {
   if (e.target.id === 'mfd') { f.mfd = e.target.value; form(); return; }
+  if (e.target.id === 'mfdOld') { f.mfdOld = e.target.value; form(); return; }
   if (e.target.id === 'cam' && e.target.files[0]) {
     const file = e.target.files[0];
     try { toast('Đang xử lý ảnh…'); f.photo = await shrink(file, 1400, .82); f.thumb = await shrink(file, 240, .6); form(); }
