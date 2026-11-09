@@ -73,6 +73,9 @@ h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4p
 .ph { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; } .ph .n { width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--muted); font-size: 13px; font-weight: 800; display: grid; place-items: center; } .pack.ok .ph .n { background: var(--ok); color: #fff; }
 .ph b { font-size: 16px; font-weight: 800; } .ph small { margin-left: auto; color: var(--muted); font-size: 12px; text-align: right; }
 .prow { margin-bottom: 10px; } .dl em { font-style: normal; font-weight: 500; color: var(--muted); margin-left: 4px; }
+.dsel { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; }
+.dsel select { width: 100%; min-width: 0; height: 52px; border: 1.5px solid var(--line); border-radius: 14px; padding: 0 30px 0 12px; font: inherit; font-size: 18px; font-weight: 800; color: var(--ink); background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23777' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center; appearance: none; -webkit-appearance: none; }
+.dsel select.empty { color: #b9b9bf; font-weight: 600; font-size: 16px; } .dsel select:focus { border-color: var(--ink); outline: none; }
 .dl input.dt { height: 50px; font-size: 22px; letter-spacing: .06em; padding: 0 14px; text-align: left; } .dl input.dt::placeholder { color: #c4c4c9; letter-spacing: .02em; font-size: 18px; font-weight: 600; }
 .aget { font-size: 12.5px; color: var(--muted); margin: 5px 0 0 4px; min-height: 17px; } .aget b { color: var(--red-d); } .aget .bad { color: var(--red-d); font-weight: 700; }
 .dl { min-width: 0; display: block; } .dl span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink2); margin: 0 0 5px 2px; }
@@ -255,7 +258,23 @@ function ageTxt(n) { const d = n === 1 ? f.mfd : f.mfdOld, raw = (f['raw' + n] |
   const bad = badDate(d); if (bad) return `<span class="bad">Ngày ${bad}</span>`;
   if (n === 2 && f.mfd && d > f.mfd) return '<span class="bad">Gói cũ nhất phải có NSX bằng hoặc trước gói đầu kệ</span>';
   return `${vnDay(d)} · <b>${ageOf(d)} ngày tuổi</b>`; }
-const dateRow = n => `<div class="prow"><label class="dl"><span>Ngày sản xuất<em>gõ ngày + tháng, VD 0210</em></span><input class="dt" id="${n === 1 ? 'mfd' : 'mfdOld'}" type="text" inputmode="numeric" pattern="[0-9/]*" maxlength="5" autocomplete="off" enterkeyhint="${n === 1 ? 'next' : 'done'}" placeholder="dd/mm" value="${dmIn(n === 1 ? f.mfd : f.mfdOld)}"></label><div class="aget" id="age${n}">${ageTxt(n)}</div></div>`;
+// Ngày SX: 3 ô chọn Ngày / Tháng / Năm (anh Thái 09/11 – không gõ bàn phím, tránh mất ngày trên Android)
+const dpOf = n => f['p' + n] || (f['p' + n] = { d: '', m: '', y: TODAY().slice(0, 4) });
+const yearsSel = () => { const y = +TODAY().slice(0, 4); return [y, y - 1]; };
+const dateRow = n => { const p = dpOf(n), opt = (v, t, cur) => `<option value="${v}" ${String(cur) === String(v) ? 'selected' : ''}>${t}</option>`;
+  return `<div class="prow"><div class="dl"><span>Ngày sản xuất</span><div class="dsel">
+    <select data-dp="${n}" data-k="d" class="${p.d ? '' : 'empty'}" aria-label="Ngày">${opt('', 'Ngày', p.d)}${Array.from({ length: 31 }, (_, i) => opt(i + 1, i + 1, p.d)).join('')}</select>
+    <select data-dp="${n}" data-k="m" class="${p.m ? '' : 'empty'}" aria-label="Tháng">${opt('', 'Tháng', p.m)}${Array.from({ length: 12 }, (_, i) => opt(i + 1, 'Th ' + (i + 1), p.m)).join('')}</select>
+    <select data-dp="${n}" data-k="y" aria-label="Năm">${yearsSel().map(y => opt(y, y, p.y)).join('')}</select></div></div>
+    <div class="aget" id="age${n}">${ageTxt(n)}</div></div>`; };
+function setDP(n) { const p = dpOf(n); let iso = '', raw = '';
+  if (p.d && p.m && p.y) { iso = `${p.y}-${pad2(p.m)}-${pad2(p.d)}`; const t = new Date(iso + 'T00:00:00Z'); if (t.getUTCDate() !== +p.d) { iso = ''; raw = 'x'; } }
+  f['raw' + n] = raw; if (n === 1) f.mfd = iso; else f.mfdOld = iso; }
+// bản nháp mẫu đang nhập: giữ khi đi chụp ảnh / trình duyệt tải lại trang
+const DRAFT = 'pa.draft';
+function saveDraft() { if (!f || !f.it) return; try { sessionStorage.setItem(DRAFT, JSON.stringify(Object.assign({}, f, { it: f.it.k, sk: shopKey(), shop: st.shop }))); } catch (e) { try { sessionStorage.setItem(DRAFT, JSON.stringify({ it: f.it.k, sk: shopKey(), shop: st.shop, p1: f.p1, p2: f.p2, mfd: f.mfd, mfdOld: f.mfdOld, size: f.size })); } catch (e2) {} } }
+function loadDraft(k) { try { const d = JSON.parse(sessionStorage.getItem(DRAFT) || 'null'); if (d && d.it === k && d.sk === shopKey(d.shop)) { d.it = ITEMS.find(x => x.k === k); return d; } } catch (e) {} return null; }
+const dropDraft = () => { try { sessionStorage.removeItem(DRAFT); } catch (e) {} };
 function paintPacks() { const ok1 = !!f.mfd && !badDate(f.mfd) && !!f.photo, ok2 = !!f.mfdOld && !badDate(f.mfdOld) && (!f.mfd || f.mfdOld <= f.mfd) && !!f.photo2;
   const ps = document.querySelectorAll('.pack'); if (ps[0]) ps[0].classList.toggle('ok', ok1); if (ps[1]) ps[1].classList.toggle('ok', ok2);
   const a1 = $('#age1'), a2 = $('#age2'); if (a1) a1.innerHTML = ageTxt(1); if (a2) a2.innerHTML = ageTxt(2); paintSave(); }
@@ -304,7 +323,7 @@ function sizes(src, w, h) { const out = (max, q) => { const s = Math.min(1, max 
 function setPhoto(n, r) { if (n === 2) { f.photo2 = r.big; f.thumb2 = r.sm; f.pv2 = r.pv; } else { f.photo = r.big; f.thumb = r.sm; f.pv1 = r.pv; } }
 function snap() { const v = $('#camv'); if (!v.videoWidth || !f) return; const r = sizes(v, v.videoWidth, v.videoHeight), n = camN, y = scrollY;
   const ov = $('#camov'); ov.classList.add('flash'); setTimeout(() => ov.classList.remove('flash'), 120);
-  setPhoto(n, r); if (n === 1 && !f.photo2) { ov.hidden = true; } else ov.hidden = true;
+  setPhoto(n, r); saveDraft(); if (n === 1 && !f.photo2) { ov.hidden = true; } else ov.hidden = true;
   renderItem(); window.scrollTo(0, y); toast(`Đã chụp gói ${n} ✓`); }
 document.addEventListener('visibilitychange', () => { if (document.hidden) stopCam(); });
 async function shrinkAll(file) {
@@ -361,7 +380,7 @@ function openItem(k) {
   if (k.includes('|Khác:')) { toast('Mẫu này đã lưu'); return; }
   const it = ITEMS.find(x => x.k === k);
   if (v && v !== 'na' && !confirmRedo(k)) return;
-  f = { it, other: '', size: it.other ? '' : it.size, mfd: '', mfdOld: '', photo: null, thumb: null, photo2: null, thumb2: null };
+  f = loadDraft(k) || { it, other: '', size: it.other ? '' : it.size, mfd: '', mfdOld: '', photo: null, thumb: null, photo2: null, thumb2: null };
   go('item');
 }
 let redoArm = '';
@@ -383,7 +402,7 @@ document.addEventListener('click', async e => {
   if (t.id === 'camshot') { snap(); return; }
   if (t.id === 'camx') { $('#camov').hidden = true; return; }
   if (t.dataset.drop) { await DB.del(t.dataset.drop); paintQ(0); return; }
-  if (t.id === 'na') { setDone(f.it.k, 'na'); toast(`${f.it.label}: không có trên kệ`); go('list'); renderList(true); return; }
+  if (t.id === 'na') { dropDraft(); setDone(f.it.k, 'na'); toast(`${f.it.label}: không có trên kệ`); go('list'); renderList(true); return; }
   if (t.id === 'save') {
     const m = missing(); if (m.length) { toast('Còn thiếu: ' + m.join(', ')); return; }
     const it = f.it, today = TODAY(), id = uid(), flavor = it.other ? 'Khác: ' + f.other.trim() : it.flavor;
@@ -394,25 +413,20 @@ document.addEventListener('click', async e => {
     await DB.put({ id, t: Date.now(), data, label, mark: { sk, key } });
     setDone(key, { a1: ageOf(f.mfd), a2: ageOf(f.mfdOld), st: 'q', id, nm: label });
     toast(`Đã lưu ${label} · tuổi ${ageOf(f.mfd)} / ${ageOf(f.mfdOld)} ngày`);
-    f = null; go('list'); renderList(true); pump();
+    f = null; dropDraft(); go('list'); renderList(true); pump();
   }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.id === 'mfd' || e.target.id === 'mfdOld')) { e.preventDefault(); if (e.target.id === 'mfd') { const nx = $('#mfdOld'); if (nx) nx.focus(); } else e.target.blur(); } });
 document.addEventListener('input', e => {
   if (e.target.id === 'qs') { st.q = e.target.value; paintOffices(); }
   if (e.target.id === 'nm') { st.name = e.target.value; paintNameBar(); }
   if (e.target.id === 'other') { f.other = e.target.value; paintSave(); }
-  if (e.target.id === 'mfd' || e.target.id === 'mfdOld') { const el = e.target, n = el.id === 'mfd' ? 1 : 2, d = el.value.replace(/\D/g, '').slice(0, 4);
-    el.value = d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
-    const iso = parseDM(d); f['raw' + n] = iso === 'x' ? 'x' : ''; if (n === 1) f.mfd = iso === 'x' ? '' : iso; else f.mfdOld = iso === 'x' ? '' : iso;
-    paintPacks();
-    if (iso && iso !== 'x' && !badDate(iso)) { if (n === 1 && !f.mfdOld) { const nx = $('#mfdOld'); if (nx) nx.focus(); } else el.blur(); } }
 });
 document.addEventListener('change', async e => {
+  if (e.target.dataset && e.target.dataset.dp && f) { const n = +e.target.dataset.dp; dpOf(n)[e.target.dataset.k] = e.target.value; e.target.classList.toggle('empty', !e.target.value); setDP(n); paintPacks(); saveDraft(); return; }
   if ((e.target.id === 'cam1' || e.target.id === 'cam2') && e.target.files[0]) {
     const file = e.target.files[0], two = e.target.id === 'cam2', y = scrollY;
     try { const lb = e.target.closest('.shot'); if (lb) lb.style.opacity = '.5'; const r = await shrinkAll(file);
-      setPhoto(two ? 2 : 1, r); renderItem(); window.scrollTo(0, y); }
+      setPhoto(two ? 2 : 1, r); saveDraft(); renderItem(); window.scrollTo(0, y); }
     catch (err) { toast(err.message); }
   }
 });
@@ -421,6 +435,7 @@ document.addEventListener('change', async e => {
 if (st.center && st.name && st.office && MASTER.centers.some(c => c.center === st.center)) st.screen = 'shop';
 else if (st.center && st.name && MASTER.centers.some(c => c.center === st.center)) st.screen = 'office';
 else if (st.center && MASTER.centers.some(c => c.center === st.center)) st.screen = 'name';
+if (st.screen === 'shop') { try { const d = JSON.parse(sessionStorage.getItem(DRAFT) || 'null'); if (d && d.shop && shopType(d.shop) && d.sk === shopKey(d.shop)) { st.shop = d.shop; const df = loadDraft(d.it); if (df) { f = df; st.screen = 'item'; } } } catch (e) {} }
 render(); pump();
 // nút Back của điện thoại: không thoát khỏi màn 10 shop (chỉ thoát bằng Đăng xuất)
 history.pushState({ pa: 1 }, ''); addEventListener('popstate', () => { history.pushState({ pa: 1 }, ''); if (['item', 'list'].includes(st.screen)) { go(st.screen === 'item' ? 'list' : 'shop'); if (st.screen === 'list') renderList(true); } else if (st.screen === 'office') go('name'); else if (st.screen === 'name') go('center'); });
