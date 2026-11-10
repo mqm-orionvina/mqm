@@ -322,7 +322,7 @@ function viewList() {
       <ol>${cq.map(q => `<li><span class="tag">${esc(q.g)}</span> ${esc(q.text)}</li>`).join('')}</ol><p class="hint">${T('cqHint')}</p></details>` : '';
   const gs = TABS[curTab()].groups, ts = tabsFor(me.dept);
   return `<div class="etabs">${ts.map(t => `<button class="${t === curTab() ? 'on' : ''}" data-etab="${t}">${esc(TABS[t][lang] || TABS[t].vi)}</button>`).join('')}</div>
-    <div class="stat" style="margin-bottom:12px">${PC.monthSelect(months, cycle)}<span>${esc(T('qFor')(me.dept, gs))}</span></div>${cq.length ? '' : `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`}${cqBox}
+    <div class="stat" style="margin-bottom:12px">${PC.monthSelect(months, cycle)}<span>${esc(T('qFor')(me.dept, gs))}</span></div>${cq.length ? '' : `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`}
     <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'all' ? 'on' : ''}" data-show="all">${T('all')}</button></div>
     <div class="stat"><span>${T('left')(todo, pool.length, esc(nb))}</span><button class="linkbtn" id="editBrands">${T('changeBrands')}</button></div>
     ${xs.length ? xs.map(s => { const n = doneBy(s.id).length, m = mine(s.id);
