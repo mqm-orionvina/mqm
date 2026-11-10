@@ -6,78 +6,104 @@
 <meta name="theme-color" content="#ffffff">
 <title>MQM ORION VINA · Cải thiện</title>
 <style>
-:root { --red: #c8102e; --ink: #111; --muted: #6b6b6b; --line: #e6e6e6; --soft: #f3f3f3; }
+:root { --red: #c8102e; --ink: #111; --muted: #6b6b6b; --line: #e6e6e6; --soft: #f3f3f3; --ok: #2e9b4f; }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; background: #fff; color: var(--ink); font: 15px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
-.head { max-width: 1000px; margin: 0 auto; padding: 28px 20px 10px; text-align: center; }
+.head { max-width: 1100px; margin: 0 auto; padding: 26px 20px 6px; text-align: center; }
 .head .k { color: var(--red); font-weight: 800; font-size: 12px; letter-spacing: .2em; }
-.head h1 { font-size: clamp(30px, 5vw, 46px); letter-spacing: -.035em; line-height: 1.08; margin: 10px 0 8px; }
-.head p { margin: 0 auto; color: #5f5f5f; font-size: 16px; max-width: 620px; }
-.wrap { max-width: 1000px; margin: 0 auto; padding: 10px 16px 80px; }
-.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0 16px; }
-.chip { border: 0; background: #efefef; color: #111; border-radius: 999px; padding: 9px 15px; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+.head h1 { font-size: clamp(30px, 5vw, 44px); letter-spacing: -.035em; line-height: 1.08; margin: 10px 0 8px; }
+.head p { margin: 0 auto; color: #5f5f5f; font-size: 15.5px; max-width: 680px; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 10px 16px 80px; }
+.stabs { display: flex; gap: 6px; background: #f1f1f1; border-radius: 999px; padding: 5px; margin: 14px auto 16px; max-width: 760px; }
+.stabs button { flex: 1; border: 0; background: none; font: inherit; font-weight: 800; font-size: 14.5px; padding: 11px 8px; border-radius: 999px; cursor: pointer; color: #555; }
+.stabs button.on { background: #111; color: #fff; } .stabs button small { font-weight: 700; opacity: .7; margin-left: 4px; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0 14px; }
+.chip { border: 0; background: #efefef; color: #111; border-radius: 999px; padding: 8px 14px; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; }
 .chip.on { background: #111; color: #fff; } .chip small { opacity: .65; margin-left: 4px; font-weight: 600; }
-.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
-.kpi { background: #f7f7f7; border-radius: 22px; padding: 14px 16px; } .kpi small { display: block; color: var(--muted); font-weight: 600; font-size: 12.5px; } .kpi b { font-size: 26px; }
-.kpi.red b { color: var(--red); }
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.kpi { background: #f7f7f7; border-radius: 22px; padding: 14px 16px; } .kpi small { display: block; color: var(--muted); font-weight: 600; font-size: 12.5px; } .kpi b { font-size: 26px; } .kpi.red b { color: var(--red); }
 .note { border: 1.5px solid #ececec; border-radius: 22px; padding: 12px 16px; margin-bottom: 14px; font-size: 14px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .note.key { background: #111; color: #fff; border-color: #111; }
-.item { border: 1.5px solid #ececec; border-radius: 28px; padding: 18px 20px; margin-bottom: 12px; }
+.bar1 { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; } .bar1 .sp { margin-right: auto; color: var(--muted); font-size: 13.5px; }
+.item { border: 1.5px solid #ececec; border-radius: 26px; padding: 16px 20px; margin-bottom: 12px; }
 .item.done { border-color: #111; } .item.late { border-color: #f0c4cc; }
 .item .top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
 .item .top b { font-size: 16px; } .item .top span { color: var(--muted); font-size: 13px; }
-.item .what { margin: 8px 0 4px; font-size: 14.5px; }
-.item .meta { color: var(--muted); font-size: 13px; margin: 2px 0; } .item .meta i { font-style: normal; color: #111; font-weight: 600; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; margin-top: 8px; }
+.wl { margin: 4px 0 0; padding-left: 18px; font-size: 14px; } .wl li { margin: 3px 0; } .wl .g { display: inline-block; font-size: 11px; font-weight: 800; background: #f1f1f1; border-radius: 999px; padding: 1px 8px; margin-right: 4px; }
+.wl .tg { color: var(--red); font-weight: 700; } .wl .nt { color: #444; }
+.meta { color: var(--muted); font-size: 13px; margin: 4px 0; } .meta i { font-style: normal; color: #111; font-weight: 600; }
+.lb { font-size: 12px; font-weight: 800; color: var(--muted); margin: 10px 0 6px; display: block; letter-spacing: .02em; }
+.ph { display: flex; gap: 6px; flex-wrap: wrap; } .ph a { width: 76px; height: 76px; border-radius: 14px; background: #eee center/cover; display: block; }
+.owners { display: flex; gap: 6px; flex-wrap: wrap; } .owners button { border: 1.5px solid #ddd; background: #fff; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; color: #555; }
+.owners button.on { background: #111; border-color: #111; color: #fff; } .owners .ro { background: #111; color: #fff; border-radius: 999px; padding: 4px 11px; font-size: 12.5px; font-weight: 700; }
+.row { display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 12px; flex-wrap: wrap; } .row small { color: var(--muted); margin-right: auto; }
+.btn { border: 0; background: var(--red); color: #fff; font: inherit; font-weight: 700; font-size: 14.5px; padding: 11px 18px; border-radius: 999px; cursor: pointer; }
+.btn:disabled { opacity: .45; cursor: default; } .btn.gray { background: #efefef; color: #111; } .btn.dark { background: #111; } .btn.okc { background: var(--ok); }
+.x { border: 0; background: #efefef; width: 34px; height: 34px; border-radius: 50%; font-size: 18px; cursor: pointer; } .x:hover { background: #fde8e6; color: var(--red); }
 .pill { display: inline-block; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: #efefef; }
 .pill.s0 { background: #fff; color: var(--red); box-shadow: inset 0 0 0 1.5px #f0c4cc; } .pill.s1 { background: #efefef; color: #111; } .pill.s2 { background: #111; color: #fff; }
-.pill.late { background: var(--red); color: #fff; }
-.seg { display: grid; grid-template-columns: repeat(3, 1fr); background: #f1f1f1; border-radius: 16px; padding: 4px; gap: 4px; margin: 12px 0 10px; }
-.seg button { border: 0; background: none; padding: 11px 6px; border-radius: 12px; font: inherit; font-weight: 700; font-size: 14px; color: var(--muted); cursor: pointer; }
+.pill.late { background: var(--red); color: #fff; } .pill.sent { background: #e7f6ec; color: #1d6b36; }
+/* Form kết quả cải tiến */
+.form { background: #fafafa; border-radius: 20px; padding: 14px 16px; margin-top: 12px; }
+.form h4 { margin: 0 0 8px; font-size: 14.5px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); background: #ececec; border-radius: 16px; padding: 4px; gap: 4px; margin: 0 0 6px; }
+.seg button { border: 0; background: none; padding: 10px 6px; border-radius: 12px; font: inherit; font-weight: 700; font-size: 14px; color: var(--muted); cursor: pointer; }
 .seg button.on { background: #fff; color: #111; box-shadow: 0 1px 4px rgba(0,0,0,.12); } .seg button.on.s2 { background: #111; color: #fff; } .seg button.on.s0 { color: var(--red); }
-.label { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 10px 0 6px; display: block; }
-textarea { width: 100%; font: inherit; font-size: 15px; padding: 12px 14px; border: 2px solid #cdcdcd; border-radius: 16px; min-height: 90px; resize: vertical; }
-textarea:focus { outline: none; border-color: #0074e8; box-shadow: 0 0 0 4px rgba(0,116,232,.18); }
-.ev { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-.ev .f { position: relative; width: 88px; height: 88px; border-radius: 16px; background: #f3f3f3 center/cover; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #555; text-align: center; padding: 6px; overflow: hidden; word-break: break-all; }
+.f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+textarea, input.in { width: 100%; font: inherit; font-size: 14.5px; padding: 10px 12px; border: 2px solid #d6d6d6; border-radius: 14px; background: #fff; }
+textarea { min-height: 70px; resize: vertical; }
+textarea:focus, input.in:focus { outline: none; border-color: #0074e8; box-shadow: 0 0 0 4px rgba(0,116,232,.18); }
+.ev { display: flex; gap: 8px; flex-wrap: wrap; }
+.ev .f { position: relative; width: 80px; height: 80px; border-radius: 14px; background: #f0f0f0 center/cover; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #555; text-align: center; padding: 6px; overflow: hidden; word-break: break-all; }
 .ev .f.new { outline: 2px dashed #111; }
-.ev .f button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; font-size: 14px; line-height: 1; }
-.ev label.add { width: 88px; height: 88px; border-radius: 16px; border: 2px dashed #cdcdcd; display: grid; place-items: center; cursor: pointer; color: var(--muted); font-weight: 700; font-size: 12px; text-align: center; }
-.row { display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 12px; flex-wrap: wrap; } .row small { color: var(--muted); margin-right: auto; }
-.btn { border: 0; background: var(--red); color: #fff; font: inherit; font-weight: 700; font-size: 15px; padding: 12px 20px; border-radius: 999px; cursor: pointer; }
-.btn:disabled { opacity: .45; cursor: default; } .btn.gray { background: #efefef; color: #111; }
-.plan { background: #f7f7f7; border-radius: 16px; padding: 10px 14px; margin-top: 8px; font-size: 14px; white-space: pre-wrap; }
-.empty { text-align: center; color: var(--muted); padding: 30px 10px; border: 1.5px solid #ececec; border-radius: 28px; }
+.ev .f button { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; font-size: 13px; line-height: 1; }
+.ev label.add { width: 80px; height: 80px; border-radius: 14px; border: 2px dashed #cdcdcd; display: grid; place-items: center; cursor: pointer; color: var(--muted); font-weight: 700; font-size: 12px; text-align: center; background: #fff; }
+.res { background: #f7f7f7; border-radius: 16px; padding: 10px 14px; margin-top: 10px; font-size: 14px; } .res p { margin: 3px 0; } .res b { font-weight: 700; }
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; border: 1.5px solid #ececec; border-radius: 26px; }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #111; color: #fff; padding: 12px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; z-index: 99; max-width: 90vw; text-align: center; }
-@media (max-width: 760px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .item { padding: 16px; border-radius: 24px; } }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 90; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal .box { background: #fff; border-radius: 26px; padding: 22px; width: 100%; max-width: 640px; max-height: 88vh; overflow: auto; }
+.modal h3 { margin: 0 0 6px; font-size: 20px; } .modal table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; } .modal td, .modal th { text-align: left; padding: 7px 6px; border-bottom: 1px solid #eee; } .modal .miss { color: var(--red); }
+@media (max-width: 860px) { .grid2, .f2 { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 </head>
 <body>
 <div class="pc-bar" id="pcbar"></div>
-<header class="head"><div class="k">MQM ORION VINA · CẢI THIỆN</div><h1>Tiến độ cải thiện</h1>
-  <p id="sub">Sau khi kết thúc đánh giá, mỗi bộ phận nhận mail kèm link vào đây: chọn Chưa / Đang / Đã cải thiện, ghi hướng giải quyết và tải evidence.</p></header>
+<header class="head"><div class="k">MQM ORION VINA · CẢI THIỆN</div><h1>Cải thiện</h1>
+  <p id="sub">Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.</p></header>
 <main class="wrap" id="app"><div class="empty">Đang tải…</div></main>
 <div class="toast" id="toast" hidden></div>
-<script src="pc.js?v=20261110"></script>
+<script src="pc.js?v=20261110b"></script>
 <script>
-// Tab 5 · Cải thiện (anh Thái 05/11/2026). Ai cũng xem. Sửa được khi mở bằng link riêng của bộ phận trong mail (?c=tháng&d=bộ phận&k=khoá)
-// hoặc khi đăng nhập Host / quản lý. Evidence: ảnh / PDF lưu vào thư mục Drive "MQM ORION VINA - Evidence" (ảnh có ảnh nhỏ để xem ngay).
-const STATUS = ['Chưa cải thiện', 'Đang cải thiện', 'Đã cải thiện'];
+// Tab Cải thiện (anh Thái 10/11/2026) · 3 sub-tab:
+// 1 Danh sách cải thiện: mọi lượt chấm có vấn đề (mẫu, vấn đề, bộ phận đánh giá, nguyên nhân, ảnh, bộ phận nên xử lý — sửa được) → FQS bấm Xác nhận
+// 2 Đã xác nhận: × đưa về danh sách 1 (khi chưa gửi mail) · Gửi email các bộ phận (link vào sub-tab 3) · Tải Excel (vấn đề + email người nhận, người gửi, CC)
+// 3 Tiến độ cải thiện: theo bộ phận xử lý; link bộ phận chỉ thấy việc của mình; form kết quả cải tiến + evidence
+// Sub-tab 1, 2 và xem mọi tiến độ: đăng nhập FQS / Host / quản lý.
+const STATUS = ['Chưa xử lý', 'Đang xử lý', 'Đã xử lý'];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const dmy = s => { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; };
+const fmtAt = s => { const d = new Date(s); return isNaN(d) ? '' : d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }); };
 const toast = t => { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(el._t); el._t = setTimeout(() => { el.hidden = true; }, 4500); };
 const url = new URLSearchParams(location.search);
 const LINK = { c: url.get('c') || '', d: url.get('d') || '', k: url.get('k') || '' };
-// Link bộ phận: giữ khoá trên máy này theo tháng + bộ phận, bỏ khỏi thanh địa chỉ
 (() => { if (!LINK.k) { try { const x = JSON.parse(sessionStorage.getItem('mqmImproveKey') || 'null'); if (x) Object.assign(LINK, x); } catch (e) {} return; }
   try { sessionStorage.setItem('mqmImproveKey', JSON.stringify(LINK)); } catch (e) {} history.replaceState(null, '', location.pathname + (LINK.c ? '?c=' + encodeURIComponent(LINK.c) : '')); })();
-let D = null, cycle = LINK.c || PC.month(), fDept = LINK.d || '', fSt = 'all', keyDept = '';
-const edits = {};   // aid → {status, plan, files:[{name,data,thumb}], remove:[]}
+const IMP = ['FQS', 'HOST', 'ADMIN'];
+const canImp = () => { const u = PC.user(); return !!u && IMP.includes(u.role); };
+let stab = url.get('tab') === 'prog' || LINK.k ? 'prog' : (() => { try { return sessionStorage.getItem('mqmImpTab') || 'list'; } catch (e) { return 'list'; } })();
+let cycle = LINK.c || PC.month(), I = null, A = null, months = [], keyDept = '', fDept = LINK.d || '', fSt = 'all', busy = false;
+const ownEdit = {};   // iid → owners đang sửa ở sub-tab 1
+const edits = {};     // aid → form kết quả cải tiến đang sửa
 const today = new Date().toISOString().slice(0, 10);
-const canEdit = it => (keyDept && keyDept === it.who) || PC.can('improve');
 const late = it => it.status !== STATUS[2] && it.when && it.when < today;
+const driveUrl = id => `https://drive.google.com/file/d/${encodeURIComponent(id)}/view`;
+const photos = ps => (ps || []).length ? `<div class="ph">${ps.map(p => `<a href="${driveUrl(p.id)}" target="_blank" rel="noopener" style="${p.t ? `background-image:url(${p.t})` : ''}" title="Mở ảnh"></a>`).join('')}</div>` : '<span class="meta">Không có ảnh</span>';
+const whatList = w => (w || []).length ? `<ol class="wl">${w.map(x => `<li><span class="g">${esc(x.g)}</span>${esc(x.q)}${x.tags.length ? ` · <span class="tg">${esc(x.tags.join(', '))}</span>` : ''}${x.note ? ` · <span class="nt">${esc(x.note)}</span>` : ''}</li>`).join('')}</ol>` : '';
 
-// Ảnh: thu nhỏ còn cạnh dài 1600px gửi đi + ảnh nhỏ 200px để xem ngay; PDF gửi nguyên (tối đa 8 MB)
+// Ảnh / PDF evidence
 const readAs = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); });
 const shrink = (src, max, q) => new Promise(ok => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
   c.width = Math.round(im.width * s); c.height = Math.round(im.height * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', q)); }; im.onerror = () => ok(''); im.src = src; });
@@ -87,48 +113,132 @@ async function prep(f) {
   const raw = await readAs(f); return { name: f.name.replace(/\.\w+$/, '') + '.jpg', data: await shrink(raw, 1600, .85), thumb: await shrink(raw, 200, .6) };
 }
 
-function card(it) {
-  const e = edits[it.aid], st = e ? e.status : it.status, si = STATUS.indexOf(st), ed = canEdit(it), lt = late(it);
+// ---------- Sub-tab 1: Danh sách cải thiện ----------
+function issueHead(x) {
+  return `<div class="top"><b>${esc(x.sku || x.sampleId)}</b><span>Mẫu ${esc(x.sampleId)}${x.origin && x.origin !== 'ORION' ? ' · đối thủ' : ''}${x.mfd ? ' · NSX ' + dmy(x.mfd) : ''} · Bộ phận đánh giá: <b style="color:#111">${esc(x.from)}</b></span></div>`;
+}
+function issueBody(x) {
+  return `<div class="grid2"><div><span class="lb">VẤN ĐỀ</span>${whatList(x.what)}
+      <span class="lb">NGUYÊN NHÂN NGHI NGỜ</span><div class="meta"><i>${esc((x.cause || []).join(', ') || '—')}</i></div>
+      ${x.solution ? `<span class="lb">GIẢI PHÁP TẠM THỜI</span><div class="meta"><i>${esc(x.solution)}</i></div>` : ''}</div>
+    <div><span class="lb">ẢNH MINH HOẠ</span>${photos(x.photos)}</div></div>`;
+}
+function listTab() {
+  const xs = I.candidates;
+  if (!xs.length) return `<div class="empty">Chưa có vấn đề nào chờ xác nhận ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`;
+  return `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề. Sửa bộ phận nên xử lý (bấm để thêm / bỏ) rồi bấm <b>Xác nhận bởi FQS</b> để chuyển sang "Đã xác nhận".</span></div>` +
+    xs.map(x => { const ow = ownEdit[x.iid] || x.owners;
+      return `<div class="item">${issueHead(x)}${issueBody(x)}
+        <span class="lb">BỘ PHẬN NÊN XỬ LÝ</span><div class="owners" data-own="${esc(x.iid)}">${I.owners.map(o => `<button class="${ow.includes(o) ? 'on' : ''}" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+        <div class="row"><small>Chấm lúc ${esc(fmtAt(x.at))}</small><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>✓ Xác nhận bởi FQS</button></div></div>`; }).join('');
+}
+// ---------- Sub-tab 2: Đã xác nhận ----------
+function confTab() {
+  const xs = I.confirmed, todo = xs.filter(x => !x.mailedAt).length;
+  return `<div class="bar1"><span class="sp">${xs.length} vấn đề đã xác nhận · ${todo} chưa gửi mail. Người gửi: <b>${esc(I.sender || '—')}</b> · CC: <b>${esc(I.cc || 'chưa cài (Config improveCc)')}</b></span>
+      <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button><button class="btn" id="mail" ${todo ? '' : 'disabled'}>✉ Gửi email cho các bộ phận</button></div>` +
+    (xs.length ? xs.map(x => `<div class="item">${issueHead(x)}${issueBody(x)}
+      <span class="lb">BỘ PHẬN XỬ LÝ</span><div class="owners">${x.owners.map(o => `<span class="ro">${esc(o)}</span>`).join('')}</div>
+      <div class="row"><small>Xác nhận bởi ${esc(x.by)} · ${esc(fmtAt(x.at))}</small>${x.mailedAt ? `<span class="pill sent">✓ Đã gửi mail ${esc(fmtAt(x.mailedAt))}</span>` : `<span class="pill">Chưa gửi mail</span><button class="x" data-unc="${esc(x.iid)}" title="Đưa về Danh sách cải thiện">×</button>`}</div></div>`).join('')
+      : `<div class="empty">Chưa có vấn đề nào được xác nhận. Xác nhận ở "Danh sách cải thiện".</div>`);
+}
+async function mailFlow() {
+  if (busy) return; busy = true;
+  try {
+    const p = await PC.post('issueMail', { cycle: I.cycle, send: false }); if (!p.ok) throw new Error(p.error);
+    const box = document.createElement('div'); box.className = 'modal';
+    box.innerHTML = `<div class="box"><h3>Gửi email cho các bộ phận</h3><p class="meta" style="margin:0">${PC.monthLabel(p.cycle)} · ${p.total} vấn đề · hạn xử lý <b>${dmy(p.deadline)}</b> (2 tuần)</p>
+      <table><thead><tr><th>Bộ phận</th><th>Số vấn đề</th><th>Email nhận</th></tr></thead><tbody>${p.depts.map(g => `<tr><td><b>${esc(g.dept)}</b></td><td>${g.n}</td><td class="${g.email ? '' : 'miss'}">${esc(g.email || 'Chưa có email, gửi về ' + (p.admin || 'quản lý'))}</td></tr>`).join('')}</tbody></table>
+      <p class="meta">Người gửi: <b>${esc(p.sender)}</b> · CC: <b>${esc(p.cc || '— (chưa cài)')}</b></p>
+      <p class="meta">Mỗi bộ phận nhận 1 mail: danh sách vấn đề + nút vào <b>Tiến độ cải thiện</b> (link riêng, chỉ thấy việc của bộ phận đó).</p>
+      <div class="row"><button class="btn gray" id="mNo">Huỷ</button><button class="btn" id="mOk">Xác nhận & gửi mail</button></div></div>`;
+    document.body.appendChild(box);
+    $('#mNo').onclick = () => box.remove();
+    $('#mOk').onclick = async () => { const ok = $('#mOk'); ok.disabled = true; ok.textContent = 'Đang gửi…';
+      try { const r = await PC.post('issueMail', { cycle: I.cycle, send: true }); if (!r.ok) throw new Error(r.error);
+        box.remove(); toast(`Đã gửi mail cho ${r.sent.length} bộ phận${r.noEmail.length ? ` · ${r.noEmail.join(', ')} chưa có email, đã gửi về quản lý` : ''}.`); await load();
+      } catch (x) { ok.disabled = false; ok.textContent = 'Xác nhận & gửi mail'; toast('Chưa gửi được: ' + x.message); } };
+  } catch (x) { toast('Không tổng hợp được: ' + x.message); }
+  busy = false;
+}
+async function confXls() {
+  const txt = w => (w || []).map(x => `${x.g}: ${x.q}${x.tags.length ? ' [' + x.tags.join(', ') + ']' : ''}${x.note ? ' – ' + x.note : ''}`).join('\n');
+  const rows = [['Mã mẫu', 'SKU', 'NSX', 'Vấn đề', 'Bộ phận đánh giá', 'Nguyên nhân nghi ngờ', 'Giải pháp tạm thời', 'Bộ phận xử lý', 'Email người nhận', 'Người gửi', 'CC', 'Xác nhận bởi', 'Đã gửi mail']]
+    .concat(I.confirmed.flatMap(x => x.owners.map(o => [x.sampleId, x.sku, dmy(x.mfd), txt(x.what), x.from, (x.cause || []).join(', '), x.solution, o, I.depts[o] || '(chưa có)', I.sender, I.cc, x.by, x.mailedAt ? fmtAt(x.mailedAt) : 'Chưa'])));
+  try { await PC.xlsx(`${PC.yymm(I.cycle)}_MQM_Danh_sach_cai_thien.xlsx`, [{ name: 'Đã xác nhận', rows, widths: [10, 26, 11, 50, 12, 26, 30, 12, 26, 24, 30, 14, 14] }]); } catch (e) { toast('Chưa tải được Excel: ' + e.message); }
+}
+// ---------- Sub-tab 3: Tiến độ cải thiện + form kết quả cải tiến ----------
+function touch(aid) { const it = A.items.find(x => x.aid === aid); return edits[aid] = edits[aid] || { status: it.status, rootFix: it.rootFix, plan: it.plan, prevent: it.prevent, owner: it.owner, doneDate: it.doneDate, files: [], remove: [] }; }
+function progCard(it) {
+  const e = edits[it.aid], v = e || it, st = v.status, si = STATUS.indexOf(st), lt = late(it);
   const ev = it.evidence.filter(f => !(e && e.remove.includes(f.id)));
   return `<div class="item ${st === STATUS[2] ? 'done' : lt ? 'late' : ''}" data-aid="${esc(it.aid)}">
-    <div class="top"><b>${esc(it.sku || it.sampleId)}</b><span>${esc(it.aid)} · mẫu ${esc(it.sampleId)} · ghi nhận: ${esc(it.from || '—')}</span></div>
-    <p class="what">${esc(it.what)}</p>
-    ${it.cause ? `<p class="meta">Nguyên nhân nghi ngờ: <i>${esc(it.cause)}</i></p>` : ''}${it.suggest ? `<p class="meta">Giải pháp tạm thời đề xuất: <i>${esc(it.suggest)}</i></p>` : ''}
-    <p class="meta">Bộ phận xử lý: <i>${esc(it.who)}</i> · Hạn: <i>${dmy(it.when)}</i> <span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}</p>
-    ${ed ? `<div class="seg" data-st="${esc(it.aid)}">${STATUS.map((s, i) => `<button class="s${i} ${s === st ? 'on' : ''}" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div>
-      <span class="label">Hướng giải quyết</span><textarea data-plan="${esc(it.aid)}" placeholder="VD: QA kiểm lực seal lô 10/2026, đổi màng ghép từ tuần 46…">${esc(e ? e.plan : it.plan)}</textarea>
-      <span class="label">Evidence (ảnh / PDF)</span>
+    <div class="top"><b>${esc(it.sku || it.sampleId)}</b><span>${esc(it.aid)} · mẫu ${esc(it.sampleId)} · bộ phận đánh giá: ${esc(it.from || '—')}</span></div>
+    <div class="grid2"><div><span class="lb">VẤN ĐỀ</span>${it.detail.length ? whatList(it.detail) : `<p class="meta" style="white-space:pre-wrap"><i>${esc(it.what)}</i></p>`}
+      ${it.cause ? `<span class="lb">NGUYÊN NHÂN NGHI NGỜ</span><div class="meta"><i>${esc(it.cause)}</i></div>` : ''}${it.suggest ? `<span class="lb">GIẢI PHÁP TẠM THỜI ĐỀ XUẤT</span><div class="meta"><i>${esc(it.suggest)}</i></div>` : ''}</div>
+      <div><span class="lb">ẢNH MINH HOẠ</span>${photos(it.photos)}<p class="meta" style="margin-top:10px">Bộ phận xử lý: <i>${esc(it.who)}</i> · Hạn: <i>${dmy(it.when)}</i> <span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}</p></div></div>
+    <div class="form"><h4>Kết quả cải tiến</h4>
+      <div class="seg" data-st="${esc(it.aid)}">${STATUS.map((s, i) => `<button class="s${i} ${s === st ? 'on' : ''}" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+      <div class="f2"><div><span class="lb">NGUYÊN NHÂN GỐC (ĐÃ XÁC ĐỊNH)</span><textarea data-f="rootFix" data-a="${esc(it.aid)}" placeholder="VD: lực seal máy đóng gói line 3 thấp hơn tiêu chuẩn">${esc(v.rootFix)}</textarea></div>
+        <div><span class="lb">HÀNH ĐỘNG KHẮC PHỤC ĐÃ LÀM ${st === STATUS[2] ? '*' : ''}</span><textarea data-f="plan" data-a="${esc(it.aid)}" placeholder="VD: chỉnh nhiệt độ seal, kiểm 100% lô 10/2026">${esc(v.plan)}</textarea></div>
+        <div><span class="lb">BIỆN PHÁP PHÒNG NGỪA TÁI DIỄN</span><textarea data-f="prevent" data-a="${esc(it.aid)}" placeholder="VD: thêm bước kiểm lực seal đầu ca vào checklist QA">${esc(v.prevent)}</textarea></div>
+        <div><span class="lb">NGƯỜI PHỤ TRÁCH</span><input class="in" data-f="owner" data-a="${esc(it.aid)}" value="${esc(v.owner)}" placeholder="Họ tên · bộ phận">
+          <span class="lb">NGÀY HOÀN THÀNH (DỰ KIẾN / THỰC TẾ)</span><input class="in" type="date" data-f="doneDate" data-a="${esc(it.aid)}" value="${esc(v.doneDate)}"></div></div>
+      <span class="lb">EVIDENCE (ẢNH / PDF)</span>
       <div class="ev">${ev.map(f => `<div class="f" style="${f.t ? `background-image:url(${f.t})` : ''}" title="${esc(f.n)}">${f.t ? '' : esc(f.n)}<button data-rm="${esc(f.id)}" aria-label="Bỏ">×</button></div>`).join('')}
         ${(e ? e.files : []).map((f, i) => `<div class="f new" style="${f.thumb ? `background-image:url(${f.thumb})` : ''}">${f.thumb ? '' : esc(f.name)}<button data-rmn="${i}" aria-label="Bỏ">×</button></div>`).join('')}
         <label class="add">+ Thêm<br>ảnh / PDF<input type="file" accept="image/*,application/pdf" multiple hidden data-file="${esc(it.aid)}"></label></div>
-      <div class="row"><small>${it.updatedAt ? `Cập nhật ${esc(new Date(it.updatedAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }))}${it.by ? ' · ' + esc(it.by) : ''}` : ''}</small>
-        <button class="btn" data-save="${esc(it.aid)}" ${e ? '' : 'disabled'}>Lưu</button></div>`
-    : `${it.plan ? `<div class="plan"><b>Hướng giải quyết:</b> ${esc(it.plan)}</div>` : ''}${ev.length ? `<div class="ev">${ev.map(f => `<div class="f" style="${f.t ? `background-image:url(${f.t})` : ''}" title="${esc(f.n)}">${f.t ? '' : esc(f.n)}</div>`).join('')}</div>` : ''}`}</div>`;
+      <div class="row"><small>${it.updatedAt && it.by ? `Cập nhật ${esc(fmtAt(it.updatedAt))} · ${esc(it.by)}` : ''}</small><button class="btn dark" data-save="${esc(it.aid)}" ${e ? '' : 'disabled'}>💾 Lưu kết quả cải tiến</button></div></div></div>`;
 }
-function render() {
-  const all = D.items, depts = [...new Set(all.map(x => x.who))].sort();
+function progTab() {
+  if (A.locked) return `<div class="empty">Tiến độ cải thiện chỉ hiện cho bộ phận được giao: mở link trong mail gửi bộ phận bạn. FQS / Host / quản lý: đăng nhập để xem tất cả.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
+  const all = A.items, depts = [...new Set(all.map(x => x.who))].sort();
   const pool = all.filter(x => !fDept || x.who === fDept), xs = pool.filter(x => fSt === 'all' || (fSt === 'late' ? late(x) : x.status === fSt));
   const n = s => pool.filter(x => x.status === s).length;
-  $('#app').innerHTML = `${keyDept ? `<div class="note key"><span>Bạn đang mở bằng link của bộ phận <b>${esc(keyDept)}</b>: cập nhật được các việc của ${esc(keyDept)}.</span></div>`
-      : PC.can('improve') ? '' : `<div class="note"><span>Chỉ xem. Bộ phận mở link trong mail để cập nhật; Host / quản lý đăng nhập để cập nhật.</span><button class="chip" id="login">Đăng nhập</button></div>`}
-    <div class="filters">${PC.monthSelect(D.months, D.cycle)}
-      <button class="chip ${!fDept ? 'on' : ''}" data-d="">Mọi bộ phận<small>${all.length}</small></button>
-      ${depts.map(d => `<button class="chip ${fDept === d ? 'on' : ''}" data-d="${esc(d)}">${esc(d)}<small>${all.filter(x => x.who === d).length}</small></button>`).join('')}</div>
-    <div class="kpis"><div class="kpi"><small>Việc cần cải thiện</small><b>${pool.length}</b></div><div class="kpi red"><small>Chưa cải thiện</small><b>${n(STATUS[0])}</b></div>
-      <div class="kpi"><small>Đang cải thiện</small><b>${n(STATUS[1])}</b></div><div class="kpi"><small>Đã cải thiện</small><b>${n(STATUS[2])}</b></div><div class="kpi red"><small>Quá hạn</small><b>${pool.filter(late).length}</b></div></div>
+  return `${keyDept ? `<div class="note key"><span>Bộ phận <b>${esc(keyDept)}</b>: đây là các việc cần xử lý của bộ phận bạn. Cập nhật trạng thái, ghi kết quả cải tiến, đính kèm evidence rồi bấm Lưu.</span></div>` : ''}
+    ${keyDept ? '' : `<div class="filters"><button class="chip ${!fDept ? 'on' : ''}" data-d="">Mọi bộ phận<small>${all.length}</small></button>${depts.map(d => `<button class="chip ${fDept === d ? 'on' : ''}" data-d="${esc(d)}">${esc(d)}<small>${all.filter(x => x.who === d).length}</small></button>`).join('')}</div>`}
+    <div class="kpis"><div class="kpi"><small>Việc cần xử lý</small><b>${pool.length}</b></div><div class="kpi red"><small>${STATUS[0]}</small><b>${n(STATUS[0])}</b></div>
+      <div class="kpi"><small>${STATUS[1]}</small><b>${n(STATUS[1])}</b></div><div class="kpi"><small>${STATUS[2]}</small><b>${n(STATUS[2])}</b></div><div class="kpi red"><small>Quá hạn</small><b>${pool.filter(late).length}</b></div></div>
     <div class="filters">${[['all', 'Tất cả'], [STATUS[0], STATUS[0]], [STATUS[1], STATUS[1]], [STATUS[2], STATUS[2]], ['late', 'Quá hạn']].map(([v, t]) => `<button class="chip ${fSt === v ? 'on' : ''}" data-s="${esc(v)}">${t}</button>`).join('')}</div>
-    ${xs.length ? xs.map(card).join('') : `<div class="empty">${all.length ? 'Không có việc nào theo lựa chọn này.' : `Chưa có việc cải thiện cho ${PC.monthLabel(D.cycle).toLowerCase()}. Việc sẽ hiện sau khi Host / quản lý bấm "Kết thúc đánh giá" ở Report.`}</div>`}`;
+    ${xs.length ? xs.map(progCard).join('') : `<div class="empty">${all.length ? 'Không có việc nào theo lựa chọn này.' : 'Chưa có việc nào. Việc hiện ở đây sau khi FQS xác nhận và bấm "Gửi email cho các bộ phận".'}</div>`}`;
+}
+function render() {
+  const showLists = !keyDept;
+  if (!showLists) stab = 'prog';
+  const tabs = showLists ? `<div class="stabs"><button class="${stab === 'list' ? 'on' : ''}" data-tab="list">1 · Danh sách cải thiện${I ? `<small>${I.candidates.length}</small>` : ''}</button>
+    <button class="${stab === 'conf' ? 'on' : ''}" data-tab="conf">2 · Đã xác nhận${I ? `<small>${I.confirmed.length}</small>` : ''}</button><button class="${stab === 'prog' ? 'on' : ''}" data-tab="prog">3 · Tiến độ cải thiện</button></div>` : '';
+  let body;
+  if (stab === 'prog') body = A ? progTab() : '<div class="empty">Đang tải…</div>';
+  else if (!canImp()) body = `<div class="empty">Danh sách cải thiện dành cho FQS / Host / quản lý. Đăng nhập để xem, xác nhận và gửi mail.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
+  else if (!I) body = '<div class="empty">Đang tải…</div>';
+  else body = stab === 'list' ? listTab() : confTab();
+  $('#app').innerHTML = `${showLists ? `<div class="filters">${PC.monthSelect(months, cycle)}</div>` : ''}${tabs}${body}`;
   bind();
 }
-function touch(aid) { const it = D.items.find(x => x.aid === aid); return edits[aid] = edits[aid] || { status: it.status, plan: it.plan, files: [], remove: [] }; }
+const keep = () => { const y = scrollY; render(); scrollTo(0, y); };
 function bind() {
   const ms = $('#month'); if (ms) ms.onchange = () => { cycle = ms.value; PC.setMonth(cycle); load(); };
-  const lg = $('#login'); if (lg) lg.onclick = async () => { const u = await PC.login('Đăng nhập để cập nhật tiến độ'); if (u && !PC.can('improve', u)) toast('Tài khoản này chỉ xem được.'); PC.bar($('#pcbar'), 'Cải thiện'); render(); };
+  document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { stab = b.dataset.tab; try { sessionStorage.setItem('mqmImpTab', stab); } catch (e) {} render(); });
+  const lg = $('#login'); if (lg) lg.onclick = async () => { PC.logout(); const u = await PC.login('Đăng nhập · Cải thiện'); if (u && !IMP.includes(u.role)) toast('Tài khoản này không có quyền ở mục Cải thiện.'); PC.bar($('#pcbar'), 'Cải thiện'); load(); };
+  // sub-tab 1
+  document.querySelectorAll('[data-own]').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const iid = g.dataset.own, x = I.candidates.find(c => c.iid === iid), cur = (ownEdit[iid] || x.owners).slice(), i = cur.indexOf(b.dataset.o);
+    i >= 0 ? cur.splice(i, 1) : cur.push(b.dataset.o); ownEdit[iid] = cur; keep(); }));
+  document.querySelectorAll('[data-conf]').forEach(b => b.onclick = async () => {
+    const iid = b.dataset.conf, x = I.candidates.find(c => c.iid === iid); b.disabled = true; b.textContent = 'Đang xác nhận…';
+    try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid, owners: ownEdit[iid] || x.owners }); if (!r.ok) throw new Error(r.error); I = r; delete ownEdit[iid]; toast('Đã xác nhận · chuyển sang "Đã xác nhận"'); keep(); }
+    catch (e) { toast('Chưa xác nhận được: ' + e.message); b.disabled = false; b.textContent = '✓ Xác nhận bởi FQS'; } });
+  // sub-tab 2
+  document.querySelectorAll('[data-unc]').forEach(b => b.onclick = async () => { b.disabled = true;
+    try { const r = await PC.post('issueUnconfirm', { cycle: I.cycle, iid: b.dataset.unc }); if (!r.ok) throw new Error(r.error); I = r; toast('Đã đưa về Danh sách cải thiện'); keep(); }
+    catch (e) { toast('Chưa đưa về được: ' + e.message); b.disabled = false; } });
+  const ml = $('#mail'); if (ml) ml.onclick = mailFlow;
+  const xl = $('#xls'); if (xl) xl.onclick = confXls;
+  // sub-tab 3
   document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { fDept = b.dataset.d; render(); });
   document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { fSt = b.dataset.s; render(); });
-  const keep = () => { const y = scrollY; render(); scrollTo(0, y); };
   document.querySelectorAll('[data-st]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.onclick = () => { touch(sg.dataset.st).status = b.dataset.v; keep(); }));
-  document.querySelectorAll('[data-plan]').forEach(t => t.oninput = () => { touch(t.dataset.plan).plan = t.value; const s = document.querySelector(`[data-save="${t.dataset.plan}"]`); if (s) s.disabled = false; });
+  document.querySelectorAll('[data-f]').forEach(t => { const on = () => { touch(t.dataset.a)[t.dataset.f] = t.value; const s = document.querySelector(`[data-save="${t.dataset.a}"]`); if (s) s.disabled = false; }; t.oninput = on; t.onchange = on; });
   document.querySelectorAll('[data-file]').forEach(inp => inp.onchange = async () => {
     const e = touch(inp.dataset.file);
     for (const f of [...inp.files].slice(0, 5)) { try { e.files.push(await prep(f)); } catch (x) { toast(x.message); } }
@@ -138,21 +248,27 @@ function bind() {
   document.querySelectorAll('[data-rmn]').forEach(b => b.onclick = () => { const aid = b.closest('.item').dataset.aid; touch(aid).files.splice(+b.dataset.rmn, 1); keep(); });
   document.querySelectorAll('[data-save]').forEach(b => b.onclick = async () => {
     const aid = b.dataset.save, e = edits[aid]; if (!e) return;
+    if (e.status === STATUS[2] && !String(e.plan || '').trim()) return toast('Đã xử lý thì cần ghi hành động khắc phục đã làm.');
     b.disabled = true; b.textContent = e.files.length ? 'Đang tải evidence…' : 'Đang lưu…';
     try {
-      const r = await PC.post('actionUpdate', { cycle: D.cycle, aid, status: e.status, plan: e.plan, files: e.files, remove: e.remove, k: keyDept ? LINK.k : '', name: keyDept });
+      const r = await PC.post('actionUpdate', Object.assign({ cycle: A.cycle, aid, k: keyDept ? LINK.k : '' }, e));
       if (!r.ok) throw new Error(r.error);
-      D.items = D.items.map(x => x.aid === aid ? r.item : x); delete edits[aid]; toast('Đã lưu ' + aid); keep();
-    } catch (x) { b.disabled = false; b.textContent = 'Lưu'; toast('Chưa lưu được: ' + x.message); }
+      A.items = A.items.map(x => x.aid === aid ? r.item : x); delete edits[aid]; toast('Đã lưu kết quả cải tiến ' + aid); keep();
+    } catch (x) { b.disabled = false; b.textContent = '💾 Lưu kết quả cải tiến'; toast('Chưa lưu được: ' + x.message); }
   });
 }
 async function load() {
   $('#app').innerHTML = '<div class="empty">Đang tải…</div>';
   try {
-    const q = (cycle ? '&cycle=' + encodeURIComponent(cycle) : '') + (LINK.d && LINK.k && (!LINK.c || LINK.c === cycle) ? '&d=' + encodeURIComponent(LINK.d) + '&k=' + encodeURIComponent(LINK.k) : '');
-    D = await PC.get('actions' + q); if (!D.ok) throw new Error(D.error);
-    cycle = D.cycle; keyDept = D.dept || '';
-    $('#sub').textContent = `${PC.monthLabel(D.cycle)}${D.ended ? ` · kết thúc đánh giá ${dmy(D.ended)}` : ''}. Chọn Chưa / Đang / Đã cải thiện, ghi hướng giải quyết và tải evidence.`;
+    const q = (cycle ? '&cycle=' + encodeURIComponent(cycle) : '');
+    const kq = LINK.d && LINK.k && (!LINK.c || LINK.c === cycle || !cycle) ? '&d=' + encodeURIComponent(LINK.d) + '&k=' + encodeURIComponent(LINK.k) : '';
+    const tq = canImp() ? '&t=' + encodeURIComponent(PC.token()) : '';
+    const [a, i] = await Promise.all([PC.get('actions' + q + kq + tq), canImp() && !kq ? PC.get('issues' + q + tq) : Promise.resolve(null)]);
+    if (!a.ok) throw new Error(a.error);
+    A = a; cycle = a.cycle; months = a.months || []; keyDept = a.dept || '';
+    I = i && i.ok ? i : null; if (i && !i.ok) toast(i.error);
+    $('#sub').textContent = keyDept ? `${PC.monthLabel(a.cycle)} · việc cần xử lý của bộ phận ${keyDept}. Cập nhật trạng thái và kết quả cải tiến, kèm evidence.`
+      : `${PC.monthLabel(a.cycle)} · Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.`;
     render();
   } catch (x) { $('#app').innerHTML = `<div class="empty">Không tải được (${esc(x.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }

@@ -14,7 +14,7 @@ const PC = {
   save(tok, user) { try { localStorage.setItem('mqmPcToken', tok); localStorage.setItem('mqmPcUser', JSON.stringify(user)); } catch (e) {} },
   logout() { try { localStorage.removeItem('mqmPcToken'); localStorage.removeItem('mqmPcUser'); } catch (e) {} },
   // Vai trò được vào từng phần: RD / MKT vào Setup, HOST vào Đăng ký mẫu, ADMIN vào cả hai; Đánh giá thì ai cũng vào
-  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'FQS', 'ADMIN'].includes(u.role) : part === 'register' || part === 'improve' ? ['HOST', 'ADMIN'].includes(u.role) : true; },
+  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'FQS', 'ADMIN'].includes(u.role) : part === 'register' ? ['HOST', 'ADMIN'].includes(u.role) : part === 'improve' ? ['FQS', 'HOST', 'ADMIN'].includes(u.role) : true; },
   roleName: { RD: 'RD', MKT: 'MKT', FQS: 'FQS', HOST: 'Host · đăng ký mẫu', ADMIN: 'Quản lý' },
   // Chu kỳ theo tháng (yyyy-MM). Tháng đang xem dùng chung cho Đánh giá / Report / Cải thiện, lưu trên máy này
   monthLabel(c) { const m = String(c || '').match(/^(\d{4})-(\d{2})$/); return m ? `Tháng ${+m[2]}/${m[1]}` : String(c || ''); },
@@ -160,7 +160,9 @@ PC.PC_ONLY = ['setup.html', 'report.html', 'improve.html'];
 (() => {
   const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
   if (!PC.isPhone()) return;
-  if (PC.PC_ONLY.includes(page)) {
+  // link bộ phận trong mail Cải thiện (?k=…) vẫn mở được trên điện thoại
+  const deptLink = page === 'improve.html' && (/[?&]k=/.test(location.search) || (() => { try { return !!sessionStorage.getItem('mqmImproveKey'); } catch (e) { return false; } })());
+  if (PC.PC_ONLY.includes(page) && !deptLink) {
     document.documentElement.classList.add('pc-only-block');
     const show = () => { const d = document.createElement('div'); d.className = 'pc-only';
       d.innerHTML = `<div><span class="pc-logo">${PC_LOGO}</span><b>Mục này dùng trên máy tính</b><p>Trên điện thoại chỉ dùng được <b>Đánh giá mẫu</b> và <b>Đăng ký mẫu</b>. Mở link này trên máy tính để dùng mục này.</p>

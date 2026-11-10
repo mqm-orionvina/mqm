@@ -113,7 +113,7 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 <div class="pc-bar" id="pcbar"></div>
 <header class="head"><div class="k">MQM ORION VINA · REPORT</div><h1>Kết quả đánh giá</h1><p id="sub">Fact từ các lượt đánh giá của chu kỳ hiện tại. Ai cũng xem được.</p></header>
 <main class="wrap" id="app"><div class="card empty">Đang tải…</div></main>
-<script src="pc.js?v=20261110"></script>
+<script src="pc.js?v=20261110b"></script>
 <script>
 // MQM ORION VINA · Report: chỉ Fact (đếm, tỉ lệ, lỗi gặp nhiều, ghi nhận vấn đề). Deepdive làm sau.
 // Dữ liệu từ API report: mẫu đăng ký, lượt chấm (chỉ bộ phận, không có tên người chấm), câu trả lời câu hỏi chu kỳ.
@@ -178,9 +178,10 @@ function heat(evals, extra) {
 }
 
 // Kết thúc đánh giá (host / quản lý): xem trước số vấn đề theo bộ phận → xác nhận → gửi mail từng bộ phận, hạn cải thiện 2 tuần
+// 10/11: kết thúc đánh giá chuyển sang tab Cải thiện (FQS xác nhận danh sách → gửi mail bộ phận)
 function endCard() {
-  return `<div class="card"><div class="end"><div><h2>Kết thúc đánh giá</h2><p>${R.ended ? `Đã kết thúc lúc ${esc(String(R.ended).slice(0, 16).replace('T', ' '))}. Có thể gửi lại nếu cần.` : 'Khi mọi người đã chấm xong: tổng hợp vấn đề theo từng bộ phận nên xử lý và gửi mail cho bộ phận đó, kèm thời gian cải thiện 2 tuần.'} Chỉ Host / quản lý thực hiện.</p></div>
-    <button class="btn ${R.ended ? 'gray' : ''}" id="endBtn">${R.ended ? 'Gửi lại mail' : 'Kết thúc đánh giá'}</button></div></div>`;
+  return `<div class="card"><div class="end"><div><h2>Kết thúc đánh giá</h2><p>Khi mọi người đã chấm xong: vào <b>Cải thiện</b> để FQS xác nhận danh sách vấn đề, chọn bộ phận xử lý và gửi mail cho từng bộ phận.</p></div>
+    <a class="btn" href="improve.html" style="text-decoration:none">Mở Cải thiện →</a></div></div>`;
 }
 async function endFlow() {
   if (!PC.can('register')) { if (PC.user()) PC.logout(); const u = await PC.login('Đăng nhập để kết thúc đánh giá'); if (!u) return; if (!PC.can('register', u)) return toastMsg('Tài khoản này không có quyền kết thúc đánh giá.'); PC.bar($('#pcbar'), 'Report'); }

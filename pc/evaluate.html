@@ -117,6 +117,24 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 .miss { margin-top: 14px; } .miss h3 { margin: 0 0 6px; font-size: 14px; color: var(--muted); }
 .sample.na { opacity: .55; cursor: not-allowed; background: #f6f5f3; } .sample.na .th { background: #ececec; }
 .tag.na { background: #fdecee; color: #d93a2b; } .tag.low { background: #fff6dc; color: #8a6200; }
+
+/* 10/11: tab Bao bì / Cảm quan, câu hỏi chung 1 khung, Có vấn đề (trái, đỏ) · Ổn (phải, xanh), ảnh minh chứng */
+.etabs { display: flex; gap: 6px; margin: 0 0 12px; } .etabs button { flex: 1; border: 0; background: #efefef; color: #111; font: inherit; font-weight: 800; font-size: 14.5px; padding: 12px 10px; border-radius: 999px; cursor: pointer; }
+.etabs button.on { background: #111; color: #fff; }
+.scorenote { background: #fff8e6 !important; border: 1.5px solid #f3d27a !important; font-size: 14px; font-weight: 600; }
+.qbox .qg { font-size: 12.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #c8102e; margin: 16px 0 4px; } .qbox .qg:first-of-type { margin-top: 4px; }
+.qrow { border-top: 1px solid #eee; padding: 12px 0; } .qbox .qg + .qrow { border-top: 0; }
+.qrow .qt { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; font-weight: 600; margin-bottom: 8px; } .qrow .qt span { color: var(--muted); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.yn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.yn button { border: 2px solid #e6e6e6; background: #fff; border-radius: 999px; padding: 10px 6px; font: inherit; font-weight: 800; font-size: 14.5px; color: #6b6b6b; cursor: pointer; }
+.yn button.is.on { background: #d93a2b !important; border-color: #d93a2b !important; color: #fff !important; }
+.yn button.ok.on { background: #2e9b4f !important; border-color: #2e9b4f !important; color: #fff !important; }
+.yn button.is:hover { border-color: #f0b4ad; } .yn button.ok:hover { border-color: #a9d8b7; }
+.qrow.bad .qt { color: #b3261e; }
+.qrow .pick .scale button { height: 36px; font-size: 14px; }
+.shot2 { width: 100%; border: 2px dashed #cdcdcd; background: #fafafa; border-radius: 20px; padding: 16px; font: inherit; font-weight: 800; font-size: 15px; color: #111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ph3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; } .ph3 div { position: relative; aspect-ratio: 1; border-radius: 14px; background: #eee center/cover; }
+.ph3 button { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -125,14 +143,21 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 <main class="wrap" id="app"><div class="card empty">…</div></main>
 <div class="bar" id="bar" hidden></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js?v=20261110"></script>
+<input type="file" accept="image/*" capture="environment" id="cam" hidden>
+<script src="pc.js?v=20261110b"></script>
 <script>
 // MQM 1A · App đánh giá mẫu. Nhập tên + bộ phận → chọn brand mình phụ trách → chọn mẫu → chấm theo bộ câu hỏi của bộ phận.
 // Dữ liệu ghi vào Google Sheet "MQM 1A - Đánh giá mẫu" qua Apps Script (Api.gs), gọi không kèm tài khoản Google.
 // Nút VI / 한국어 chỉ đổi chữ hiển thị; giá trị ghi vào Sheet (tên lỗi, so với đối thủ) giữ nguyên để bảng tổng hợp không lẫn 2 thứ tiếng.
 // Bộ phận chấm. Chuyên môn (EXPERT) mới ghi nguyên nhân & giải pháp tạm thời; bộ phận khác chỉ trả lời câu hỏi (anh Thái 05/11/2026)
 const DEPTS = ['FQS', 'R&D', 'MKT', 'PI', 'Design', 'ENG', 'Pro', 'QA', 'Sales', 'SCM', 'PUR', 'Khác'];
-const EXPERT = ['ENG', 'Design', 'PI', 'MKT', 'Pro', 'R&D', 'FQS'];
+// Nhóm chuyên gia (anh Thái 10/11): MKT, PI, Design, R&D — chỉ nhóm này ghi nguyên nhân & giải pháp (nhận định chung)
+const EXPERT = ['MKT', 'PI', 'Design', 'R&D'];
+// Tab đánh giá theo bộ phận: MKT 2 tab (Bao bì + Cảm quan) · PI, Design: Bao bì · R&D và bộ phận khác: Cảm quan
+const TABS = { pkg: { vi: 'Đánh giá bao bì', ko: '포장 평가', groups: ['Bao bì', 'In ấn'] }, sen: { vi: 'Đánh giá cảm quan', ko: '관능 평가', groups: ['Ngoại quan', 'Cấu trúc', 'Hương vị'] } };
+const tabsFor = d => d === 'MKT' ? ['pkg', 'sen'] : ['PI', 'Design'].includes(d) ? ['pkg'] : ['sen'];
+let etab = (() => { try { return localStorage.getItem('mqm-pc-eval-tab') || ''; } catch (e) { return ''; } })();
+const curTab = () => { const ts = me ? tabsFor(me.dept) : ['sen']; if (!ts.includes(etab)) etab = ts[0]; return etab; };
 // Chỉ còn câu hỏi của tháng (bỏ 4 ô Package / Appearance / Texture / Flavor cố định). Thứ tự từ ngoài vào trong.
 // MKT / PI / Design: câu hỏi Bao bì, In ấn · R&D: Ngoại quan, Cấu trúc, Hương vị · bộ phận khác: tất cả
 const G = PC.GROUPS;
@@ -147,7 +172,7 @@ const GTAGS = {
 };
 const GKO = { 'Bao bì': '포장', 'In ấn': '인쇄', 'Ngoại quan': '외관', 'Cấu trúc': '식감', 'Hương vị': '맛' };
 const isExpert = () => me && EXPERT.includes(me.dept);
-const cqFor = () => { if (!me) return cqAll; const gs = DEPT_GROUPS[me.dept] || G;
+const cqFor = () => { if (!me) return cqAll; const gs = TABS[curTab()].groups;
   return cqAll.map(q => Object.assign({}, q, { g: q.g || PC.groupOf(q.q), text: q.text || PC.stripG(q.q) })).filter(q => gs.includes(q.g))
     .map((q, i) => [q, i]).sort((a, b) => G.indexOf(a[0].g) - G.indexOf(b[0].g) || a[1] - b[1]).map(x => x[0]); };
 // Định tính: mỗi mục ghi "Ổn" hoặc "Có vấn đề" + mô tả; có vấn đề thì ghi nguyên nhân nghi ngờ (trong / ngoài), giải pháp, bộ phận xử lý. Điểm 1–9 chỉ để tham khảo.
@@ -159,7 +184,8 @@ const I18N = {
     step: 'MQM ORION VINA · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập Họ và Tên, bộ phận và chọn brand mình phụ trách. Đổi người: bấm Đăng xuất.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',
     subScore: 'Trả lời từng câu: Ổn hoặc Có vấn đề, chấm điểm, xong bấm Lưu.', back: '← Danh sách',
     ok: 'Ổn', issue: 'Có vấn đề', scoreL: 'Điểm · 1 tốt → 9 kém', pickIssue: 'Chọn vấn đề', desc: 'Diễn giải *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
-    causeTitle: 'Nguyên nhân & giải pháp tạm thời', causeSub: 'Theo chuyên môn của bộ phận bạn', causeIn: 'Nguyên nhân nghi ngờ · bên trong', causeOut: 'Nguyên nhân nghi ngờ · bên ngoài',
+    causeTitle: 'Nguyên nhân & giải pháp tạm thời (nhận định chung)', causeSub: 'Nhóm chuyên gia', causeIn: 'Nguyên nhân nghi ngờ · bên trong', causeOut: 'Nguyên nhân nghi ngờ · bên ngoài',
+    scoreNote: 'Điểm không quan trọng do số lượng người chấm không nhiều, Nhận xét mới có giá trị.', qWord: 'câu', photoT: 'Ảnh minh chứng', photoBtn: 'Chụp ảnh minh chứng', photoMax: 'Tối đa 3 ảnh',
     noQ: m => `Chưa có câu hỏi đánh giá cho ${m}. Chờ RD / MKT / FQS setup xong.`, qHint: 'Từ ngoài vào trong: nhìn bao bì, in ấn trước rồi mới mở gói xem ngoại quan, cấu trúc, hương vị.',
     qFor: (d, gs) => `${d} chấm câu hỏi: ${gs.join(' · ')}`, month: 'Tháng',
     solution: 'Giải pháp tạm thời *', solutionPh: 'VD: QA kiểm lực seal lô 09/2026; SCM kiểm kho NPP…', owners: 'Bộ phận nên xử lý *', overall: 'Chung', mqmRef: 'Điểm tổng thể (tham khảo)',
@@ -188,6 +214,7 @@ const I18N = {
     subScore: '부서 전문성으로 문제를 서술해 주세요. 점수는 참고용입니다.', back: '← 목록',
     ok: '이상 없음', issue: '문제 있음', scoreL: '점수 · 1 양호 → 9 불량', pickIssue: '문제 선택', desc: '설명 *', descPh: '예: 봉지 납작, 모서리 눅눅, 이전 로트보다 맛이 약함…', refScore: '참고 점수 (선택) · 1 양호 → 9 불량',
     causeTitle: '원인 및 임시 대책', causeSub: '소속 부서 전문성 기준', causeIn: '추정 원인 · 내부', causeOut: '추정 원인 · 외부',
+    scoreNote: '평가자 수가 많지 않아 점수보다 의견이 중요합니다.', qWord: '문항', photoT: '증빙 사진', photoBtn: '증빙 사진 촬영', photoMax: '최대 3장',
     noQ: m => `${m} 평가 질문이 아직 없습니다. RD / MKT / FQS setup을 기다려 주세요.`, qHint: '바깥에서 안으로: 포장 · 인쇄를 먼저 보고, 개봉 후 외관 · 식감 · 맛.',
     qFor: (d, gs) => `${d} 평가 질문: ${gs.join(' · ')}`, month: '월',
     solution: '대책 제안 *', solutionPh: '예: QA 09/2026 로트 실링 점검; SCM 대리점 창고 점검…', owners: '처리 부서 *', overall: '종합', mqmRef: '종합 점수 (참고)',
@@ -238,7 +265,7 @@ let cycle = '', months = [], current = '';
 let samples = [], evals = [], loaded = false, loadErr = '', view = 'list', cur = null, ev = null, filt = { show: 'todo', q: '' };
 let draft = { name: me ? me.name : '', dept: me ? me.dept : '', brands: me ? me.brands : [] };   // đang nhập ở màn hình đầu / đổi brand
 const doneBy = id => evals.filter(e => e.sampleId === id);
-const mine = id => me && evals.some(e => e.sampleId === id && String(e.name).toLowerCase() === me.name.toLowerCase());
+const mine = id => me && evals.some(e => e.sampleId === id && String(e.name).toLowerCase() === me.name.toLowerCase() && (!e.gs || !e.gs.length || e.gs.some(g => TABS[curTab()].groups.includes(g))));
 // Brand có trong các mẫu đã đăng ký, chia ORION / đối thủ, kèm số mẫu
 function brandGroups() {
   const m = {};
@@ -293,8 +320,9 @@ function viewList() {
   // Câu hỏi của chu kỳ: xem trước ngay ở danh sách (kể cả khi chưa có mẫu); chấm khi mở từng mẫu
   const cqBox = cq.length ? `<details class="card cqprev" open><summary><b>${T('cqTitle')}</b> <span>${T('cqSub')(cq.length)}</span></summary>
       <ol>${cq.map(q => `<li><span class="tag">${esc(q.g)}</span> ${esc(q.text)}</li>`).join('')}</ol><p class="hint">${T('cqHint')}</p></details>` : '';
-  const gs = DEPT_GROUPS[me.dept] || G;
-  return `<div class="stat" style="margin-bottom:12px">${PC.monthSelect(months, cycle)}<span>${esc(T('qFor')(me.dept, gs))}</span></div>${cq.length ? '' : `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`}${cqBox}
+  const gs = TABS[curTab()].groups, ts = tabsFor(me.dept);
+  return `<div class="etabs">${ts.map(t => `<button class="${t === curTab() ? 'on' : ''}" data-etab="${t}">${esc(TABS[t][lang] || TABS[t].vi)}</button>`).join('')}</div>
+    <div class="stat" style="margin-bottom:12px">${PC.monthSelect(months, cycle)}<span>${esc(T('qFor')(me.dept, gs))}</span></div>${cq.length ? '' : `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`}${cqBox}
     <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'all' ? 'on' : ''}" data-show="all">${T('all')}</button></div>
     <div class="stat"><span>${T('left')(todo, pool.length, esc(nb))}</span><button class="linkbtn" id="editBrands">${T('changeBrands')}</button></div>
     ${xs.length ? xs.map(s => { const n = doneBy(s.id).length, m = mine(s.id);
@@ -335,20 +363,22 @@ function viewScore() {
       <small>${s.sku ? esc(s.sku) + ' · ' : ''}${T('mfdShort')} ${dmy(s.mfd)} · ${T('buyShort')} ${dmy(s.buyDate)} · ${esc(L('market', s.market))}</small></div></div>`;
   if (!cq.length) return head + `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`;
   let n = 0;
-  return head + `${mine(s.id) ? `<div class="card note">${T('already')}</div>` : ''}
-    <div class="stat"><span>${esc(T('qHint'))}</span><button class="linkbtn" id="allOk">${T('allOk')}</button></div>
-    ${G.filter(g => cq.some(q => q.g === g)).map(g => `<div class="gtitle">${esc(gName(g))}</div>` + cq.filter(q => q.g === g).map(q => { const x = ev.xq[q.id]; n++;
-      return `<div class="card attr ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}"><h3>${n}. ${esc(q.text)} <span>${esc(q.team)}</span></h3>
-      ${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}
-      <div class="seg okis" data-xq="${esc(q.id)}"><button class="${x.st === 'ok' ? 'on ok' : ''}" data-v="ok">✓ ${T('ok')}</button><button class="${x.st === 'issue' ? 'on is' : ''}" data-v="issue">! ${T('issue')}</button></div>
-      ${x.st ? `<div class="pick"><span class="label">${T('scoreL')}</span>${scale(q.id)}</div>` : ''}
+  return head + `<div class="card scorenote">⚠ ${T('scoreNote')}</div>${mine(s.id) ? `<div class="card note">${T('already')}</div>` : ''}
+    <div class="card qbox"><div class="stat" style="margin:0 0 4px"><b style="font-size:15px">${esc(TABS[curTab()][lang] || TABS[curTab()].vi)} · ${cq.length} ${T('qWord')}</b><button class="linkbtn" id="allOk">${T('allOk')}</button></div>
+    ${G.filter(g => cq.some(q => q.g === g)).map(g => `<div class="qg">${esc(gName(g))}</div>` + cq.filter(q => q.g === g).map(q => { const x = ev.xq[q.id]; n++;
+      return `<div class="qrow ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}"><div class="qt"><div>${n}. ${esc(q.text)}${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}</div><span>${esc(q.team)}</span></div>
+      <div class="yn" data-xq="${esc(q.id)}"><button class="is ${x.st === 'issue' ? 'on' : ''}" data-v="issue">! ${T('issue')}</button><button class="ok ${x.st === 'ok' ? 'on' : ''}" data-v="ok">✓ ${T('ok')}</button></div>
       ${x.st === 'issue' ? `<span class="label" style="margin-top:12px">${T('pickIssue')}</span><div class="chips" data-t="${esc(q.id)}">${(GTAGS[g] || []).map(t => `<button class="chip sm ${x.tags.includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
-        <span class="label" style="margin-top:12px">${T('desc')}</span><textarea data-xd="${esc(q.id)}" placeholder="${esc(T('descPh'))}">${esc(x.d)}</textarea>` : ''}</div>`; }).join('')).join('')}
+        <span class="label" style="margin-top:12px">${T('desc')}</span><textarea data-xd="${esc(q.id)}" placeholder="${esc(T('descPh'))}">${esc(x.d)}</textarea>` : ''}
+      ${x.st ? `<div class="pick"><span class="label">${T('scoreL')}</span>${scale(q.id)}</div>` : ''}</div>`; }).join('')).join('')}</div>
     ${anyIssue() && isExpert() ? `<div class="card attr cause"><h3>${T('causeTitle')} <span>${T('causeSub')}</span></h3>
       <span class="label">${T('causeIn')}</span>${pick('causeIn', CAUSE_IN, 'cause')}
       <span class="label" style="margin-top:12px">${T('causeOut')}</span>${pick('causeOut', CAUSE_OUT, 'cause')}
       <span class="label" style="margin-top:12px">${T('solution')}</span><textarea id="solution" placeholder="${esc(T('solutionPh'))}">${esc(ev.solution)}</textarea>
-      <span class="label" style="margin-top:12px">${T('owners')}</span>${pick('owners', OWNERS, 'owner')}</div>` : ''}`;
+      <span class="label" style="margin-top:12px">${T('owners')}</span>${pick('owners', OWNERS, 'owner')}</div>` : ''}
+    <div class="card"><h3 style="margin:0 0 10px;font-size:15px">${T('photoT')}</h3>
+      ${ev.photos.length < 3 ? `<button class="shot2" id="shot">📷 ${T('photoBtn')}</button>` : ''}
+      <div class="ph3">${ev.photos.map((p, i) => `<div style="background-image:url(${p.thumb})"><button data-delph="${i}" aria-label="×">×</button></div>`).join('')}</div></div>`;
 }
 function bar() {
   const b = $('#bar'), on = view === 'score' && me && cq.length;
@@ -414,6 +444,7 @@ function bind() {
     const ms = $('#month'); if (ms) ms.onchange = () => { cycle = ms.value; PC.setMonth(cycle); loadAll(); };
     const q = $('#q'); if (q) q.oninput = () => { filt.q = q.value; const p = q.selectionStart; render(); const n = $('#q'); n.focus(); n.setSelectionRange(p, p); };
     document.querySelectorAll('[data-show]').forEach(b => b.onclick = () => { filt.show = b.dataset.show; render(); });
+    document.querySelectorAll('[data-etab]').forEach(b => b.onclick = () => { etab = b.dataset.etab; try { localStorage.setItem('mqm-pc-eval-tab', etab); } catch (e) {} cq = cqFor(); render(); });
     document.querySelectorAll('.sample').forEach(b => b.onclick = () => open(b.dataset.id));
     const eb = $('#editBrands'); if (eb) eb.onclick = () => { draft.brands = me.brands; view = 'brands'; render(); scrollTo(0, 0); };
     return;
@@ -435,10 +466,12 @@ function bind() {
     const a = ev[pg.dataset.pick], x = b.dataset.x, i = a.indexOf(x); i >= 0 ? a.splice(i, 1) : a.push(x); b.classList.toggle('on', i < 0); bar();
   }));
   const so = $('#solution'); if (so) so.oninput = () => { ev.solution = so.value; bar(); };
+  const sh = $('#shot'); if (sh) sh.onclick = () => $('#cam').click();
+  document.querySelectorAll('[data-delph]').forEach(b => b.onclick = () => { ev.photos.splice(+b.dataset.delph, 1); keep(); });
 }
 function open(id) {
   cur = samples.find(s => s.id === id); if (!cur) return;
-  ev = { sampleId: id, causeIn: [], causeOut: [], solution: '', owners: [], xq: Object.fromEntries(cq.map(q => [q.id, { st: '', d: '', score: null, tags: [] }])) };
+  ev = { sampleId: id, causeIn: [], causeOut: [], solution: '', owners: [], photos: [], xq: Object.fromEntries(cq.map(q => [q.id, { st: '', d: '', score: null, tags: [] }])) };
   view = 'score'; render(); scrollTo(0, 0);
 }
 async function save() {
@@ -446,7 +479,7 @@ async function save() {
   try {
     const iss = anyIssue(), ex = isExpert() && iss;
     const data = { mode: 'q', cycle, sampleId: ev.sampleId, name: me.name, dept: me.dept,
-      causeIn: ex ? ev.causeIn : [], causeOut: ex ? ev.causeOut : [], solution: ex ? ev.solution.trim() : '', owners: ex ? ev.owners : [],
+      causeIn: ex ? ev.causeIn : [], causeOut: ex ? ev.causeOut : [], solution: ex ? ev.solution.trim() : '', owners: ex ? ev.owners : [], photos: ev.photos.map(p => ({ data: p.data, thumb: p.thumb })),
       extra: cq.map(q => { const x = ev.xq[q.id]; return { id: q.id, team: q.team, g: q.g, q: q.g + ' · ' + q.text, st: x.st, score: x.score || '', tags: x.st === 'issue' ? x.tags : [], d: x.st === 'issue' ? x.d.trim() : '' }; }) };
     const r = await api.post('saveEval', data);
     if (!r.ok) throw new Error(r.error || '?');
@@ -468,6 +501,10 @@ async function loadAll() {
   } catch (err) { loadErr = err.message; }
   render();
 }
+const shrinkImg = (src, max, q) => new Promise(res => { const im = new Image(); im.onload = () => { const k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+  c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q)); }; im.onerror = () => res(''); im.src = src; });
+$('#cam').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (!f || !ev) return; if (ev.photos.length >= 3) return toast(T('photoMax'));
+  const fr = new FileReader(); fr.onload = async () => { const data = await shrinkImg(fr.result, 1280, .75), thumb = await shrinkImg(fr.result, 240, .6); if (data) { ev.photos.push({ data, thumb }); const y = scrollY; render(); scrollTo(0, y); } }; fr.readAsDataURL(f); };
 (async () => {
   PC.bar($('#pcbar'), 'Đánh giá mẫu');
   cycle = PC.month();
