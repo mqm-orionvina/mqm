@@ -152,3 +152,76 @@ const PC = {
   .pc-bar~* input:focus,.pc-bar~* select:focus,.pc-bar~* textarea:focus{border-color:#0074e8!important;box-shadow:0 0 0 4px rgba(0,116,232,.18)!important}`;
   document.head.appendChild(s);
 })();
+
+// ---------- 10/11/2026 (anh Thái) ----------
+// 1) Chỉ Đánh giá + Đăng ký mẫu dùng trên điện thoại; Setup, Report, Cải thiện dùng trên máy tính
+PC.isPhone = () => /Android|iPhone|iPod|Mobile|Zalo/i.test(navigator.userAgent) && Math.min(screen.width, screen.height) < 768;
+PC.PC_ONLY = ['setup.html', 'report.html', 'improve.html'];
+(() => {
+  const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  if (!PC.isPhone()) return;
+  if (PC.PC_ONLY.includes(page)) {
+    document.documentElement.classList.add('pc-only-block');
+    const show = () => { const d = document.createElement('div'); d.className = 'pc-only';
+      d.innerHTML = `<div><span class="pc-logo">${PC_LOGO}</span><b>Mục này dùng trên máy tính</b><p>Trên điện thoại chỉ dùng được <b>Đánh giá mẫu</b> và <b>Đăng ký mẫu</b>. Mở link này trên máy tính để dùng mục này.</p>
+        <a class="pc-main" href="evaluate.html">Đánh giá mẫu</a><a class="pc-ghost" href="register.html">Đăng ký mẫu</a><a class="pc-fine" href="./">Về trang chủ</a></div>`;
+      document.body.appendChild(d); };
+    document.body ? show() : document.addEventListener('DOMContentLoaded', show);
+    // dừng script của trang (không gọi API, không hỏi đăng nhập)
+    PC.guard = () => new Promise(() => {}); PC.login = () => new Promise(() => {});
+  }
+  if (page === 'index.html' || page === '') document.addEventListener('DOMContentLoaded', () => PC.PC_ONLY.forEach(h => {
+    const a = document.querySelector(`a[href="${h}"]`); if (!a) return; a.classList.add('pc-onlytile'); const t = a.querySelector('.tag'); if (t) t.textContent = 'Dùng trên máy tính'; }));
+})();
+// 2) Phần giải thích / hướng dẫn (.hint) đổi thành dấu ? cạnh tiêu đề; rê chuột (hoặc chạm) để xem
+(() => {
+  const OK_TAGS = ['B', 'STRONG', 'I', 'EM', 'CODE', 'BR'];
+  let tip = null;
+  const showTip = q => { if (!tip) { tip = document.createElement('div'); tip.className = 'pc-tip'; document.body.appendChild(tip); }
+    tip.textContent = q.dataset.tip; tip.style.display = 'block';
+    const r = q.getBoundingClientRect(), w = Math.min(320, innerWidth - 24); tip.style.width = 'auto'; tip.style.maxWidth = w + 'px';
+    const tw = tip.offsetWidth, th = tip.offsetHeight; let x = r.left + r.width / 2 - tw / 2; x = Math.max(12, Math.min(innerWidth - tw - 12, x));
+    let y = r.bottom + 8; if (y + th > innerHeight - 8) y = r.top - th - 8; tip.style.left = x + 'px'; tip.style.top = y + 'px'; };
+  const hideTip = () => { if (tip) tip.style.display = 'none'; };
+  const conv = h => {
+    if (h.dataset.pcq || h.classList.contains('nohelp') || !h.textContent.trim()) return;
+    if ([...h.querySelectorAll('*')].some(e => !OK_TAGS.includes(e.tagName))) return;
+    h.dataset.pcq = 1;
+    const q = document.createElement('span'); q.className = 'pc-q'; q.tabIndex = 0; q.textContent = '?'; q.dataset.tip = h.textContent.replace(/\s+/g, ' ').trim(); q.setAttribute('aria-label', q.dataset.tip);
+    let t = h.previousElementSibling;
+    if (!(t && /^(H1|H2|H3|H4|LABEL)$/.test(t.tagName) || t && t.classList.contains('label'))) { const box = h.closest('section,.card,.field,.gsec,details,div'); t = box && box.querySelector('h2,h3,h4,.label,summary'); }
+    if (t && !t.querySelector(':scope > .pc-q')) { t.appendChild(q); h.style.display = 'none'; }
+    else if (!t) { h.replaceWith(q); }
+    else h.style.display = 'none';
+  };
+  const scan = root => { if (root.nodeType !== 1) return; if (root.classList && root.classList.contains('hint')) conv(root); root.querySelectorAll && root.querySelectorAll('.hint').forEach(conv); };
+  const go = () => { scan(document.body); new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(scan))).observe(document.body, { childList: true, subtree: true }); };
+  document.body ? go() : document.addEventListener('DOMContentLoaded', go);
+  document.addEventListener('mouseover', e => { const q = e.target.closest && e.target.closest('.pc-q'); if (q) showTip(q); });
+  document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('.pc-q')) hideTip(); });
+  document.addEventListener('focusin', e => { if (e.target.classList && e.target.classList.contains('pc-q')) showTip(e.target); });
+  document.addEventListener('focusout', e => { if (e.target.classList && e.target.classList.contains('pc-q')) hideTip(); });
+  document.addEventListener('click', e => { const q = e.target.closest && e.target.closest('.pc-q'); if (q) { e.preventDefault(); e.stopPropagation(); showTip(q); } }, true);
+  addEventListener('scroll', hideTip, { passive: true });
+})();
+// 3) Xuất Excel (.xlsx) bằng SheetJS, tải khi cần
+PC.xlsx = async (file, sheets) => {
+  if (!window.XLSX) await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = res; s.onerror = () => rej(new Error('Không tải được thư viện Excel')); document.head.appendChild(s); });
+  const wb = XLSX.utils.book_new();
+  sheets.forEach(({ name, rows, widths }) => { const ws = XLSX.utils.aoa_to_sheet(rows); if (widths) ws['!cols'] = widths.map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name.slice(0, 31)); });
+  XLSX.writeFile(wb, file);
+};
+PC.yymm = c => { const m = String(c || '').match(/^\d{2}(\d{2})-(\d{2})$/); return m ? m[1] + m[2] : ''; };
+(() => {
+  const s = document.createElement('style');
+  s.textContent = `
+  .pc-q{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#e9e9e9;color:#111;font:800 12px/1 "Segoe UI",system-ui,Arial,sans-serif;cursor:help;margin-left:8px;vertical-align:middle;flex:none;user-select:none;letter-spacing:0}
+  .pc-q:hover,.pc-q:focus{background:#111;color:#fff;outline:none}
+  .pc-tip{position:fixed;z-index:200;display:none;background:#111;color:#fff;padding:9px 13px;border-radius:12px;font:500 13px/1.5 "Segoe UI",system-ui,Arial,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none;white-space:normal}
+  .pc-only-block body>*:not(.pc-only):not(.pc-bar){display:none!important}
+  .pc-only{position:fixed;inset:0;background:#fff;z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;font:15px/1.5 "Segoe UI",system-ui,Arial,sans-serif;color:#111;text-align:center}
+  .pc-only>div{max-width:380px;display:flex;flex-direction:column;gap:12px;align-items:stretch}.pc-only .pc-logo{align-self:center}.pc-only>div>b{font-size:24px;letter-spacing:-.02em}.pc-only p{margin:0;color:#5f5f5f}
+  .pc-only .pc-main{display:flex;align-items:center;justify-content:center;text-decoration:none}.pc-only .pc-fine{text-decoration:none}
+  a.pc-onlytile{opacity:.45;pointer-events:none}`;
+  document.head.appendChild(s);
+})();

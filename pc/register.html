@@ -103,6 +103,36 @@ select:disabled { background-color: #f6f5f3; color: #aaa; }
 .p-ok { background: #e7f6ec; color: #1d6b36; } .p-low { background: #fff6dc; color: #8a6200; } .p-none { background: #fdecee; color: #d93a2b; }
 .prog table { width: 100%; border-collapse: collapse; font-size: 13.5px; } .prog td { padding: 6px 4px; border-bottom: 1px solid var(--line); }
 .prog summary { cursor: pointer; font-weight: 700; font-size: 13.5px; }
+
+/* 10/11: cân đối lại trên máy tính (2 cột), lịch chọn ngày cỡ lớn, giờ SX, Line SX, kết thúc đăng ký */
+@media (min-width: 900px) {
+  .wrap { max-width: 1040px !important; } .bar .in { max-width: 1040px; }
+  .fgrid, .sgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 14px; align-items: start; }
+}
+.mkt { font-weight: 700; }
+.lnin { margin-top: 0; }
+.big[hidden] { display: none !important; }
+.big { position: fixed; inset: 0; background: rgba(20,20,24,.55); z-index: 30; display: flex; align-items: center; justify-content: center; padding: 14px; }
+.big .bx { background: #fff; border-radius: 26px; width: 100%; max-width: 460px; padding: 18px 18px 16px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+.big h3 { margin: 0 0 10px; font-size: 18px; text-align: center; }
+.big .nav { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.big .nav button { width: 48px; height: 48px; border-radius: 50%; border: 0; background: #efefef; font-size: 22px; font-weight: 800; cursor: pointer; flex: none; }
+.big .nav select { flex: 1; min-height: 48px !important; font: inherit; font-size: 17px; font-weight: 800; text-align: center; padding: 0 30px 0 12px; }
+.big .wd, .big .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.big .wd span { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); }
+.big .days button { height: 52px; border: 0; border-radius: 14px; background: #f3f3f3; font: inherit; font-size: 19px; font-weight: 700; cursor: pointer; color: #111; }
+.big .days button:hover { background: #e2e2e2; } .big .days button.on { background: #c8102e; color: #fff; } .big .days button.td { box-shadow: inset 0 0 0 2px #111; }
+.big .days button:disabled { opacity: .25; cursor: default; } .big .days i { display: block; }
+.big .tv { display: block; width: 100%; font-size: 40px !important; font-weight: 800; text-align: center; height: 72px; margin-bottom: 10px; }
+.big .hg, .big .mg { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 10px; }
+.big .hg button, .big .mg button { height: 46px; border: 0; border-radius: 12px; background: #f3f3f3; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; }
+.big .hg button.on, .big .mg button.on { background: #111; color: #fff; }
+.big .sm2 { font-size: 12px; font-weight: 700; color: var(--muted); margin: 2px 0 6px; }
+.big .act { display: flex; gap: 8px; margin-top: 12px; } .big .act .btn { flex: 1; }
+.endlist { width: 100%; border-collapse: collapse; font-size: 13.5px; } .endlist th { text-align: left; font-size: 12px; color: var(--muted); padding: 6px; background: #f6f6f6; } .endlist td { padding: 7px 6px; border-bottom: 1px solid var(--line); }
+.endlist td.id { font-weight: 800; color: var(--red); white-space: nowrap; }
+.tools2 { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.planq { font-weight: 800; }
 </style>
 </head>
 <body>
@@ -114,10 +144,12 @@ select:disabled { background-color: #f6f5f3; color: #aaa; }
   <div class="ok"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
   <div id="doneHead"></div><div class="code" id="doneCode"></div><p id="doneTxt"></p>
   <button class="btn" id="next"></button>
+  <button class="btn ghost" id="endDone" style="margin-top:8px"></button>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="big" id="big" hidden></div>
 <input type="file" accept="image/*" capture="environment" id="cam" hidden>
-<script src="pc.js?v=20261105"></script>
+<script src="pc.js?v=20261110"></script>
 <script>
 // MQM 1A · Sample Register: đăng ký mẫu bằng quét barcode. Tên + bộ phận mua (nhớ) → quét → Brand / Vị / SKU tự ra → NSX, ngày mua, ảnh → lưu.
 // Barcode ORION: barcodes.json (từ Rule.xlsx, cùng thư mục). Barcode học thêm (đối thủ…): tab Barcodes trong Google Sheet, qua Apps Script.
@@ -129,7 +161,8 @@ const OTHER = '__other__';
 const I18N = {
   vi: {
     step: 'MQM ORION VINA · ĐĂNG KÝ MẪU', progH: 'Tiến độ mẫu theo danh sách final', pOk: n => `${n} SKU đủ`, pLow: n => `${n} thiếu`, pNone: n => `${n} chưa có`, pList: 'Xem từng SKU', pNoPlan: 'Chưa có danh sách mẫu final (RD / MKT chưa lưu setup).', title: 'Sample Register', subSetup: 'Nhập tên và bộ phận mua một lần, sau đó chỉ cần quét barcode.', subScan: 'Quét barcode trên gói mẫu.', subForm: 'Kiểm tra sản phẩm, nhập ngày và chụp ảnh.',
-    name: 'Tên người mua', namePh: 'VD: Nguyễn Văn A', dept: 'Bộ phận mua', deptOther: 'Nhập bộ phận', market: 'Nơi mua', fac: 'Nhà máy sản xuất', start: 'Bắt đầu quét', needSetup: 'Nhập tên và chọn bộ phận',
+    name: 'Tên người mua', namePh: 'VD: Nguyễn Văn A', dept: 'Bộ phận mua', deptOther: 'Nhập bộ phận', market: 'Nơi mua', fac: 'Nhà máy sản xuất', chooseMk: 'Chọn nơi mua…', secSrc: 'Nơi mua & sản xuất', line: 'Line sản xuất', linePh: 'VD: Line 3', mfdTime: 'Giờ sản xuất', timeH: 'Giờ', timeM: 'Phút', pickDate: 'Chọn ngày', pickTime: 'Chọn giờ sản xuất', clear: 'Xoá', okBtn: 'Xong', wd: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+    planXls: '⬇ Tải Excel danh sách mẫu', endBtn: 'Kết thúc đăng ký', endH: 'Kết thúc đăng ký', endSub: n => `Bạn đã đăng ký ${n} mẫu trong tháng này. Tải file Excel các mẫu đã nhập kèm mã đã cấp.`, endXls: '⬇ Tải Excel mẫu đã nhập', endMore: 'Đăng ký tiếp', endWait: n => `Còn ${n} mẫu đang gửi lên, đợi gửi xong rồi tải để có đủ mã.`, endLoading: 'Đang tải danh sách mẫu đã nhập…', endNone: 'Chưa có mẫu nào.', xlsErr: 'Chưa tải được Excel: ', qtyCol: 'Số gói / kênh', start: 'Bắt đầu quét', needSetup: 'Nhập tên và chọn bộ phận',
     scan: 'Quét barcode', scanning: 'Đưa barcode vào khung…', camErr: 'Không mở được camera. Cho phép camera trong trình duyệt, hoặc nhập barcode bên dưới.', stop: 'Dừng quét',
     manualPh: 'Hoặc nhập số barcode', lookup: 'Tra cứu', noCode: 'Không có / không quét được barcode? Nhập tay', noCodeTag: 'Nhập tay', noCodeHint: 'Chọn Brand, Vị, SKU của gói này:', badCode: 'Barcode chưa đúng (8–14 chữ số)',
     found: 'Đã nhận diện', many: 'Barcode này trùng nhiều sản phẩm, chọn đúng sản phẩm:', unknown: 'Barcode mới, chưa có trong danh mục. Chọn sản phẩm (app sẽ nhớ cho lần sau):', rescan: 'Quét lại', change: 'Đổi sản phẩm',
@@ -140,11 +173,12 @@ const I18N = {
     missing: 'Còn thiếu: ', ready: 'Sẵn sàng lưu', save: 'Lưu mẫu', saving: 'Đang lưu…', m_prod: 'sản phẩm', m_market: 'nơi mua', m_fac: 'nhà máy', m_mfd: 'NSX', m_buy: 'ngày mua', m_photo: 'ảnh',
     doneHead: 'Đã lưu. Mã mẫu (ghi lên gói):', next: 'Quét mẫu tiếp theo', queued: 'Đang gửi lên hệ thống, mã sẽ hiện sau vài giây. Có thể quét mẫu tiếp ngay.', sending: 'Đang gửi…', failed: 'Lỗi', recent: 'Vừa đăng ký', saveErr: 'Chưa lưu được: ',
     loadErr: e => `Không tải được danh mục: ${e}. Kiểm tra mạng rồi tải lại trang.`, loading: 'Đang tải danh mục…', learned: 'Đã ghi nhớ barcode mới',
-    opt: { Other: 'Other', North: 'Miền Bắc', South: 'Miền Nam', ORION: 'ORION', 'Đối thủ': 'Đối thủ' },
+    opt: { Other: 'Other', North: 'Miền Bắc', South: 'Miền Nam', ORION: 'ORION', 'Đối thủ': 'Đối thủ', 'MT|North': 'MT Bắc', 'MT|South': 'MT Nam', 'TT|North': 'TT Bắc', 'TT|South': 'TT Nam' },
   },
   ko: {
     step: 'MQM ORION VINA · 샘플 등록', progH: '최종 목록 기준 샘플 현황', pOk: n => `충분 ${n}`, pLow: n => `부족 ${n}`, pNone: n => `없음 ${n}`, pList: 'SKU별 보기', pNoPlan: '최종 샘플 목록이 아직 없습니다 (RD / MKT 설정 미저장).', title: 'Sample Register', subSetup: '이름과 구매 부서를 한 번 입력하면, 이후에는 바코드만 스캔하면 됩니다.', subScan: '샘플 포장의 바코드를 스캔하세요.', subForm: '제품을 확인하고 날짜와 사진을 입력하세요.',
-    name: '구매자 이름', namePh: '예: 홍길동', dept: '구매 부서', deptOther: '부서 입력', market: '구매처', fac: '생산 공장', start: '스캔 시작', needSetup: '이름과 부서를 입력하세요',
+    name: '구매자 이름', namePh: '예: 홍길동', dept: '구매 부서', deptOther: '부서 입력', market: '구매처', fac: '생산 공장', chooseMk: '구매처 선택…', secSrc: '구매처 · 생산', line: '생산 라인', linePh: '예: Line 3', mfdTime: '제조 시간', timeH: '시', timeM: '분', pickDate: '날짜 선택', pickTime: '제조 시간 선택', clear: '지우기', okBtn: '완료', wd: ['월', '화', '수', '목', '금', '토', '일'],
+    planXls: '⬇ 샘플 목록 Excel', endBtn: '등록 종료', endH: '등록 종료', endSub: n => `이번 달 ${n}개 샘플을 등록했습니다. 코드가 포함된 Excel을 받으세요.`, endXls: '⬇ 등록 샘플 Excel', endMore: '계속 등록', endWait: n => `${n}개 전송 중입니다. 완료 후 받으세요.`, endLoading: '불러오는 중…', endNone: '샘플 없음.', xlsErr: 'Excel 오류: ', qtyCol: '채널별 수량', start: '스캔 시작', needSetup: '이름과 부서를 입력하세요',
     scan: '바코드 스캔', scanning: '바코드를 프레임에 맞추세요…', camErr: '카메라를 열 수 없습니다. 브라우저에서 카메라를 허용하거나 아래에 바코드를 입력하세요.', stop: '스캔 중지',
     manualPh: '또는 바코드 번호 입력', lookup: '조회', noCode: '바코드가 없거나 스캔 불가? 직접 입력', noCodeTag: '직접 입력', noCodeHint: '이 제품의 브랜드 · 맛 · SKU를 선택하세요:', badCode: '바코드가 올바르지 않습니다 (8–14자리)',
     found: '인식 완료', many: '여러 제품에 같은 바코드가 있습니다. 맞는 제품을 선택하세요:', unknown: '새 바코드입니다. 제품을 선택하세요 (다음부터 자동 인식):', rescan: '다시 스캔', change: '제품 변경',
@@ -155,7 +189,7 @@ const I18N = {
     missing: '미입력: ', ready: '저장 준비 완료', save: '샘플 저장', saving: '저장 중…', m_prod: '제품', m_market: '구매처', m_fac: '공장', m_mfd: '제조일', m_buy: '구매일', m_photo: '사진',
     doneHead: '저장 완료. 샘플 코드 (포장에 기재):', next: '다음 샘플 스캔', queued: '시스템으로 전송 중입니다. 몇 초 후 코드가 표시됩니다. 바로 다음 샘플을 스캔해도 됩니다.', sending: '전송 중…', failed: '오류', recent: '최근 등록', saveErr: '저장 실패: ',
     loadErr: e => `목록을 불러오지 못했습니다: ${e}. 네트워크 확인 후 새로고침하세요.`, loading: '목록을 불러오는 중…', learned: '새 바코드를 기억했습니다',
-    opt: { Other: '기타', North: '북부 (Miền Bắc)', South: '남부 (Miền Nam)', ORION: 'ORION', 'Đối thủ': '경쟁사' },
+    opt: { Other: '기타', North: '북부 (Miền Bắc)', South: '남부 (Miền Nam)', ORION: 'ORION', 'Đối thủ': '경쟁사', 'MT|North': 'MT 북부', 'MT|South': 'MT 남부', 'TT|North': 'TT 북부', 'TT|South': 'TT 남부' },
   },
 };
 let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
@@ -173,9 +207,11 @@ let plan = null;
 const loadPlan = () => api.get('plan').then(r => { if (r.ok) { plan = r; if (view === 'scan') render(); } }).catch(() => {});
 // Người mua: lưu trên máy (tên, bộ phận). Nơi mua (mã North / South, hiện Miền Bắc / Miền Nam) và nhà máy chọn theo từng mẫu, gợi sẵn theo mẫu trước
 const FACTORIES = ['Yên Phong', 'Mỹ Phước'];
+const MARKETS = ['MT|North', 'MT|South', 'TT|North', 'TT|South'];
 let me = null;   // gán sau khi đăng nhập: {name, dept}
 const saveMe = v => { me = v; try { localStorage.setItem('mqm1a-scan-me', JSON.stringify(v)); } catch (e) {} };
-let lastMarket = (() => { try { return localStorage.getItem('mqm1a-scan-market') || ''; } catch (e) { return ''; } })();
+let lastMarket = (() => { try { const v = localStorage.getItem('mqm1a-scan-market') || ''; return MARKETS.includes(v) ? v : ''; } catch (e) { return ''; } })();
+let lastLine = (() => { try { return localStorage.getItem('mqm1a-scan-line') || ''; } catch (e) { return ''; } })();
 let lastFac = (() => { try { return localStorage.getItem('mqm1a-scan-fac') || ''; } catch (e) { return ''; } })();
 let draft = { name: '', dept: '', deptOther: '' };
 
@@ -208,7 +244,7 @@ function onCode(code) {
   if (!validCode(code)) { toast(T('badCode')); return; }
   stopScan();
   const r = lookup(code);
-  cur = { barcode: code, cands: r.cands, pick: r.cands.length === 1 ? 0 : -1, learn: r.cands.length !== 1, market: lastMarket, fac: lastFac, origin: 'ORION', brand: '', flavor: '', flavorOther: '', sku: '', skuOther: '', mfd: '', buyDate: today(), photos: [] };
+  cur = { barcode: code, cands: r.cands, pick: r.cands.length === 1 ? 0 : -1, learn: r.cands.length !== 1, market: lastMarket, fac: lastFac, line: lastLine, origin: 'ORION', brand: '', flavor: '', flavorOther: '', sku: '', skuOther: '', mfd: '', mfdTime: '', buyDate: today(), photos: [] };
   if (r.cands.length === 1) applyCand(0);
   if (navigator.vibrate) navigator.vibrate(60);
   view = 'form'; render(); scrollTo(0, 0);
@@ -216,7 +252,7 @@ function onCode(code) {
 // Không quét được / gói không có barcode: vào thẳng form, chọn Brand · Vị · SKU bằng tay (không ghi nhớ barcode)
 function manualEntry() {
   stopScan();
-  cur = { barcode: '', cands: [], pick: -1, learn: false, market: lastMarket, fac: lastFac, origin: 'ORION', brand: '', flavor: '', flavorOther: '', sku: '', skuOther: '', mfd: '', buyDate: today(), photos: [] };
+  cur = { barcode: '', cands: [], pick: -1, learn: false, market: lastMarket, fac: lastFac, line: lastLine, origin: 'ORION', brand: '', flavor: '', flavorOther: '', sku: '', skuOther: '', mfd: '', mfdTime: '', buyDate: today(), photos: [] };
   view = 'form'; render(); scrollTo(0, 0);
 }
 function applyCand(i) {
@@ -264,9 +300,9 @@ function hero() {
   document.documentElement.lang = lang; document.title = 'MQM · ' + T('title');
   $('#hero').innerHTML = `<div class="top"><div class="brand"><svg viewBox="0 0 46 30" fill="#fff"><ellipse cx="13" cy="15" rx="12" ry="13"/><ellipse cx="33" cy="15" rx="12" ry="13"/><circle cx="16" cy="12" r="4" fill="#c8102e"/><circle cx="36" cy="12" r="4" fill="#c8102e"/></svg>${T('step')}</div>
     <div class="right"><div class="lang"><button data-lang="vi" class="${lang === 'vi' ? 'on' : ''}">VI</button><button data-lang="ko" class="${lang === 'ko' ? 'on' : ''}">한국어</button></div>
-    ${view === 'form' || (view === 'setup' && me) ? `<button class="who" id="back">← ${T('back')}</button>` : ''}</div></div>
+    ${view === 'form' || view === 'end' || (view === 'setup' && me) ? `<button class="who" id="back">← ${T('back')}</button>` : ''}</div></div>
     <h1>${T('title')}</h1><p>${view === 'setup' ? T('subSetup') : view === 'form' ? T('subForm') : T('subScan')}</p>`;
-  $('#next').textContent = T('next'); $('#doneHead').textContent = T('doneHead');
+  $('#next').textContent = T('next'); $('#endDone').textContent = T('endBtn'); $('#doneHead').textContent = T('doneHead');
 }
 function viewSetup() {
   return `<div class="card">
@@ -276,21 +312,31 @@ function viewSetup() {
     <button class="btn full" id="go">${T('start')}</button></div>`;
 }
 function viewScan() {
-  return `<div class="card"><div class="scanbox" id="scanbox">${scanning ? `<video id="video" playsinline muted></video><div class="aim"></div>` : `<video id="video" playsinline muted hidden></video><div class="msg">${T('subScan')}</div>`}</div>
+  return `<div class="sgrid"><div><div class="card"><div class="scanbox" id="scanbox">${scanning ? `<video id="video" playsinline muted></video><div class="aim"></div>` : `<video id="video" playsinline muted hidden></video><div class="msg">${T('subScan')}</div>`}</div>
     <div style="margin-top:12px">${scanning ? `<button class="btn ghost full" id="stop">${T('stop')}</button>` : `<button class="scanbtn" id="scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3M7 8v8M10 8v8M13 8v8M16 8v8"/></svg>${T('scan')}</button>`}</div>
     <div class="manual"><input id="code" inputmode="numeric" placeholder="${esc(T('manualPh'))}"><button class="btn sm" id="look">${T('lookup')}</button></div>
-    <button class="btn ghost full" id="noCode" style="margin-top:10px">${T('noCode')}</button></div>
+    <button class="btn ghost full" id="noCode" style="margin-top:10px">${T('noCode')}</button>
+    <button class="btn full" id="endReg" style="margin-top:10px;background:#111">${T('endBtn')}</button></div></div><div>
     ${progCard()}
-    ${recent.length ? `<div class="card recent"><h3>${T('recent')}</h3>${recent.slice(0, 8).map(s => `<div class="it"><div class="th" style="${s.thumb ? `background-image:url(${s.thumb})` : ''}"></div><span class="id ${s.state || ''}">${s.state === 'wait' ? T('sending') : s.state === 'fail' ? T('failed') : esc(s.id)}</span><span>${esc(s.brand)} · ${esc(s.flavor)}${s.sku ? ' · ' + esc(s.sku) : ''}${s.state === 'fail' ? `<br><small style="color:var(--bad)">${esc(s.err)}</small>` : ''}</span></div>`).join('')}</div>` : ''}`;
+    ${recent.length ? `<div class="card recent"><h3>${T('recent')}</h3>${recent.slice(0, 8).map(s => `<div class="it"><div class="th" style="${s.thumb ? `background-image:url(${s.thumb})` : ''}"></div><span class="id ${s.state || ''}">${s.state === 'wait' ? T('sending') : s.state === 'fail' ? T('failed') : esc(s.id)}</span><span>${esc(s.brand)} · ${esc(s.flavor)}${s.sku ? ' · ' + esc(s.sku) : ''}${s.state === 'fail' ? `<br><small style="color:var(--bad)">${esc(s.err)}</small>` : ''}</span></div>`).join('')}</div>` : ''}</div></div>`;
 }
 function progCard() {
   if (!plan) return '';
   const S = plan.final.samples;
-  if (!S.length) return `<div class="card prog"><h3>${T('progH')}</h3><p class="hint" style="margin:0">${T('pNoPlan')}</p></div>`;
+  if (!S.length) return `<div class="card prog"><h3>${T('progH')}</h3><p class="hint nohelp" style="margin:0">${T('pNoPlan')}</p></div>`;
   const ok = S.filter(x => x.have >= x.need), low = S.filter(x => x.have > 0 && x.have < x.need), none = S.filter(x => !x.have);
-  const row = x => { const c = x.have >= x.need ? 'p-ok' : x.have ? 'p-low' : 'p-none'; return `<tr><td>${esc(x.brand)} · ${esc(x.flavor)}</td><td>${esc(x.sku)}</td><td><span class="${c}" style="padding:2px 8px;border-radius:999px;font-weight:700;font-size:12px">${x.have}/${x.need}</span></td></tr>`; };
+  const row = x => { const c = x.have >= x.need ? 'p-ok' : x.have ? 'p-low' : 'p-none'; return `<tr><td>${esc(x.brand)} · ${esc(x.flavor)}</td><td>${esc(x.sku)}</td><td class="planq">${x.qty ? '× ' + x.qty : ''}</td><td><span class="${c}" style="padding:2px 8px;border-radius:999px;font-weight:700;font-size:12px">${x.have}/${x.need}</span></td></tr>`; };
   return `<div class="card prog"><h3>${T('progH')}</h3><div class="pn"><span class="p-ok">${T('pOk')(ok.length)}</span><span class="p-low">${T('pLow')(low.length)}</span><span class="p-none">${T('pNone')(none.length)}</span></div>
-    <details ${low.length + none.length ? 'open' : ''}><summary>${T('pList')}</summary><table>${none.concat(low).map(row).join('')}${ok.map(row).join('')}</table></details></div>`;
+    <details ${low.length + none.length ? 'open' : ''}><summary>${T('pList')}</summary><table>${none.concat(low).map(row).join('')}${ok.map(row).join('')}</table></details>
+    <div class="tools2"><button class="btn ghost sm" id="planXls">${T('planXls')}</button></div></div>`;
+}
+// Excel danh sách mẫu (MKT setup): Brand / Tên flavor / SKUs (Size) / TT North / TT South / MT North / MT South, mỗi size 1 dòng
+const BRAND_L = { OStar: "O'star" };
+async function planXls() {
+  const S = plan.final.samples, ord = b => b === 'OStar' ? 0 : b === 'Swing' ? 1 : 2;
+  const rows = [['Brand', 'Tên flavor', 'SKUs (Size)', 'TT North', 'TT South', 'MT North', 'MT South']].concat(S.slice().sort((a, b) => ord(a.brand) - ord(b.brand) || String(a.brand).localeCompare(b.brand) || String(a.flavor).localeCompare(b.flavor))
+    .map(x => { const q = +x.qty || 2; return [BRAND_L[x.brand] || x.brand, x.flavor, x.sku, q, q, q, q]; }));
+  try { await PC.xlsx(`${PC.yymm(plan.cycle)}_MQM_Sample_Plan.xlsx`, [{ name: 'Sample Plan', rows, widths: [12, 22, 14, 10, 10, 10, 10] }]); } catch (e) { toast(T('xlsErr') + e.message); }
 }
 function ageInfo() {
   if (!cur.mfd || !cur.buyDate) return '';
@@ -325,13 +371,15 @@ function viewForm() {
   const cands = cur.cands.length > 1 && !ok ? `<p class="hint" style="margin:0 0 8px">${T('many')}</p><div class="cands">${cur.cands.map((x, i) => `<button class="cand ${cur.pick === i ? 'on' : ''}" data-cand="${i}"><b>${esc(x.brand)} · ${esc(x.flavor)}</b><br><small>SKU ${esc(x.sku)}</small></button>`).join('')}</div>` : '';
   const unknown = !ok && (cur.cands.length === 0 || cur.editing) ? `${cur.cands.length === 0 ? (cur.barcode ? `<p class="hint" style="margin:0"><span class="tag new">${esc(cur.barcode)}</span> ${T('unknown')}</p>` : `<p class="hint" style="margin:0"><span class="tag new">${T('noCodeTag')}</span> ${T('noCodeHint')}</p>`) : ''}${productPicker()}<button class="btn ghost sm" id="rescan">${T('rescan')}</button>` : '';
   const sku = ok && skuVal() ? `<div class="skubox"><b>${esc(skuVal())}</b><span>${T('skuAuto')}</span></div>` : skuField();
-  const market = `<div class="seg" id="mk">${['North', 'South'].map(m => `<button class="${cur.market === m ? 'on' : ''}" data-v="${m}">${esc(optL(m))}</button>`).join('')}</div>`;
+  const market = `<div class="field"><span class="label">${T('market')} <span class="req">*</span></span><select id="mk" class="mkt"><option value="">${T('chooseMk')}</option>${MARKETS.map(m => `<option value="${m}" ${cur.market === m ? 'selected' : ''}>${esc(optL(m))}</option>`).join('')}</select></div>`;
   const dates = `<div class="dbox">
-      <label class="drow"><span>${T('mfd')} <span class="req">*</span></span><b class="dval ${cur.mfd ? '' : 'ph'}">${cur.mfd ? dmy(cur.mfd) : 'DD/MM/YYYY'}</b><input type="date" data-k="mfd" value="${esc(cur.mfd)}" max="${esc(cur.buyDate || today())}"></label>
-      <label class="drow"><span>${T('buyDate')} <span class="req">*</span></span><b class="dval ${cur.buyDate ? '' : 'ph'}">${cur.buyDate ? dmy(cur.buyDate) : 'DD/MM/YYYY'}</b><input type="date" data-k="buyDate" value="${esc(cur.buyDate)}" max="${today()}"></label></div>
+      <div class="drow" data-big="mfd" role="button" tabindex="0"><span>${T('mfd')} <span class="req">*</span></span><b class="dval ${cur.mfd ? '' : 'ph'}">${cur.mfd ? dmy(cur.mfd) : 'DD/MM/YYYY'}</b></div>
+      <div class="drow" data-big="mfdTime" role="button" tabindex="0"><span>${T('mfdTime')}</span><b class="dval ${cur.mfdTime ? '' : 'ph'}">${cur.mfdTime || 'HH:MM'}</b></div>
+      <div class="drow" data-big="buyDate" role="button" tabindex="0"><span>${T('buyDate')} <span class="req">*</span></span><b class="dval ${cur.buyDate ? '' : 'ph'}">${cur.buyDate ? dmy(cur.buyDate) : 'DD/MM/YYYY'}</b></div></div>
       <div id="age">${ageInfo()}</div>`;
-  const fac = `<div class="seg" id="fc">${FACTORIES.map(f => `<button class="${cur.fac === f ? 'on' : ''}" data-v="${f}">${esc(f)}</button>`).join('')}</div>`;
-  return sec(T('secProduct'), card + cands + unknown) + sec(T('sku'), sku) + sec(T('market'), market, true) + (comp ? '' : sec(T('fac'), fac, true)) + sec(T('secDate'), dates, true)
+  const fac = comp ? '' : `<div class="field"><span class="label">${T('fac')} <span class="req">*</span></span><div class="seg" id="fc">${FACTORIES.map(f => `<button class="${cur.fac === f ? 'on' : ''}" data-v="${f}">${esc(f)}</button>`).join('')}</div></div>
+      <div class="field"><span class="label">${T('line')}</span><input class="lnin" data-k="line" placeholder="${esc(T('linePh'))}" value="${esc(cur.line || '')}" maxlength="40"></div>`;
+  return `<div class="fgrid"><div>` + sec(T('secProduct'), card + cands + unknown) + sec(T('sku'), sku) + `</div><div>` + sec(T('secSrc'), market + fac, true) + sec(T('secDate'), dates, true) + `</div></div>`
     + `<section class="card"><h2><span class="n">${++no}</span>${T('secPhoto')} <span class="req" style="color:var(--red)">*</span></h2>
       ${cur.photos.length < 3 ? `<button class="shot" id="shot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>${T('shot')}<small>${T('shotHint')}</small></button>` : ''}
       <div class="photos">${cur.photos.map((p, i) => `<div style="background-image:url(${p})"><button data-del="${i}" aria-label="${T('delPhoto')}">×</button></div>`).join('')}</div></section>`;
@@ -340,7 +388,7 @@ function missing() {
   if (!cur) return ['?'];
   const m = [];
   if (!cur.brand || !flavorVal()) m.push(T('m_prod'));
-  if (!cur.market) m.push(T('m_market'));
+  if (!MARKETS.includes(cur.market)) m.push(T('m_market'));
   if (cur.origin === 'ORION' && !cur.fac) m.push(T('m_fac'));
   if (!cur.mfd) m.push(T('m_mfd'));
   if (!cur.buyDate) m.push(T('m_buy'));
@@ -354,7 +402,7 @@ function status() {
 function render() {
   hero();
   if (!loaded) { $('#app').innerHTML = `<div class="card loading">${loadErr ? esc(T('loadErr')(loadErr)) : T('loading')}</div>`; $('#bar').hidden = true; bindTop(); return; }
-  $('#app').innerHTML = view === 'setup' ? viewSetup() : view === 'form' ? viewForm() : viewScan();
+  $('#app').innerHTML = view === 'setup' ? viewSetup() : view === 'form' ? viewForm() : view === 'end' ? viewEnd() : viewScan();
   $('#bar').hidden = view !== 'form';
   if (view === 'form') status();
   bindTop(); bind();
@@ -362,7 +410,7 @@ function render() {
 function bindTop() {
   document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { lang = b.dataset.lang; try { localStorage.setItem('mqm1a-lang', lang); } catch (e) {} const y = scrollY; render(); scrollTo(0, y); });
   // Quay lại màn hình quét: từ trang mẫu thì bỏ mẫu đang nhập và mở camera quét lại
-  const back = $('#back'); if (back) back.onclick = () => { const fromForm = view === 'form'; cur = null; view = 'scan'; render(); scrollTo(0, 0); if (fromForm) startScan(); };
+  const back = $('#back'); if (back) back.onclick = () => { const fromForm = view === 'form'; if (view === 'end') { view = 'scan'; render(); return; } cur = null; view = 'scan'; render(); scrollTo(0, 0); if (fromForm) startScan(); };
 }
 function bind() {
   if (view === 'setup') {
@@ -375,16 +423,24 @@ function bind() {
     };
     return;
   }
+  if (view === 'end') {
+    const x = $('#endXls'); if (x) x.onclick = endXls;
+    $('#endMore').onclick = () => { view = 'scan'; render(); scrollTo(0, 0); };
+    return;
+  }
   if (view === 'scan') {
     const sc = $('#scan'); if (sc) sc.onclick = startScan;
     const st = $('#stop'); if (st) st.onclick = () => { stopScan(); render(); };
     $('#noCode').onclick = manualEntry;
+    $('#endReg').onclick = openEnd;
+    const px = $('#planXls'); if (px) px.onclick = planXls;
     const go = () => onCode($('#code').value); $('#look').onclick = go; $('#code').onkeydown = e => { if (e.key === 'Enter') go(); };
     return;
   }
   document.querySelectorAll('[data-cand]').forEach(b => b.onclick = () => { applyCand(+b.dataset.cand); cur.learn = true; render(); });
   const rs = $('#rescan'); if (rs) rs.onclick = () => { cur = null; view = 'scan'; render(); startScan(); };
-  document.querySelectorAll('#mk button').forEach(b => b.onclick = () => { cur.market = b.dataset.v; render(); });
+  const mk = $('#mk'); if (mk) mk.onchange = () => { cur.market = mk.value; status(); };
+  document.querySelectorAll('[data-big]').forEach(el => { el.onclick = () => openBig(el.dataset.big); el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBig(el.dataset.big); } }; });
   document.querySelectorAll('#fc button').forEach(b => b.onclick = () => { cur.fac = b.dataset.v; render(); });
   const ch = $('#change'); if (ch) ch.onclick = () => { cur.editing = true; cur.learn = true; render(); };
   document.querySelectorAll('#app [data-k]').forEach(el => {
@@ -440,21 +496,87 @@ window.addEventListener('online', pump);
 window.addEventListener('beforeunload', e => { if (outbox.length) { e.preventDefault(); e.returnValue = ''; } });
 $('#save').onclick = async () => {
   if (missing().length) return;
-  const data = { buyerName: me.name, buyerDept: me.dept, buyerOther: me.deptOther, market: cur.market, fac: cur.origin === 'ORION' ? cur.fac : '', buyDate: cur.buyDate, origin: cur.origin, brand: cur.brand, flavor: flavorVal(), sku: skuVal(),
+  const [channel, market] = cur.market.split('|');
+  const data = { buyerName: me.name, buyerDept: me.dept, buyerOther: me.deptOther, market, channel, fac: cur.origin === 'ORION' ? cur.fac : '', line: cur.origin === 'ORION' ? String(cur.line || '').trim() : '', mfdTime: cur.mfdTime || '', buyDate: cur.buyDate, origin: cur.origin, brand: cur.brand, flavor: flavorVal(), sku: skuVal(),
     cat: cur.cat || catOf(cur.brand, flavorVal()), barcode: cur.barcode, learn: !!cur.learn, mfd: cur.mfd, qty: 1, photosFull: cur.photos, thumb: cur.photos[0] ? await shrink(cur.photos[0], 320, 0.6) : '' };
   const tmp = 't' + Date.now();
   outbox.push({ tmp, data }); saveOutbox();
-  lastMarket = data.market; try { localStorage.setItem('mqm1a-scan-market', lastMarket); } catch (e) {}
+  lastMarket = cur.market; try { localStorage.setItem('mqm1a-scan-market', lastMarket); } catch (e) {}
+  if (data.line) { lastLine = data.line; try { localStorage.setItem('mqm1a-scan-line', lastLine); } catch (e) {} }
   if (data.fac) { lastFac = data.fac; try { localStorage.setItem('mqm1a-scan-fac', lastFac); } catch (e) {} }
   if (data.learn) learnedCodes[data.barcode] = { origin: data.origin, brand: data.brand, flavor: data.flavor, sku: data.sku, cat: data.cat };
   const r = { tmp, brand: data.brand, flavor: data.flavor, sku: data.sku, thumb: data.thumb, state: 'wait' };
   recent.unshift(r); showDone(r); $('#done').classList.add('on');
   pump();
 };
+
+// ---------- Lịch chọn ngày / giờ cỡ lớn (10/11) ----------
+let bigSt = null;
+const pad2 = n => String(n).padStart(2, '0');
+function openBig(k) { const v = cur[k] || (k === 'mfdTime' ? '' : (k === 'mfd' ? '' : today()));
+  const base = (k === 'mfdTime' ? '' : v) || cur.buyDate || today();
+  bigSt = { k, val: v, y: +base.slice(0, 4), m: +base.slice(5, 7) }; drawBig(); }
+function closeBig() { $('#big').hidden = true; $('#big').innerHTML = ''; bigSt = null; }
+function drawBig() {
+  const b = $('#big'), S = bigSt; b.hidden = false;
+  if (S.k === 'mfdTime') {
+    const [h, mi] = (S.val || ':').split(':');
+    b.innerHTML = `<div class="bx"><h3>${T('pickTime')}</h3><input class="tv" type="time" id="tv" value="${esc(S.val)}">
+      <div class="sm2">${T('timeH')}</div><div class="hg">${Array.from({ length: 24 }, (_, i) => `<button data-h="${pad2(i)}" class="${h === pad2(i) ? 'on' : ''}">${pad2(i)}</button>`).join('')}</div>
+      <div class="sm2">${T('timeM')}</div><div class="mg">${Array.from({ length: 12 }, (_, i) => `<button data-mi="${pad2(i * 5)}" class="${mi === pad2(i * 5) ? 'on' : ''}">${pad2(i * 5)}</button>`).join('')}</div>
+      <div class="act"><button class="btn ghost" id="bgClr">${T('clear')}</button><button class="btn" id="bgOk">${T('okBtn')}</button></div></div>`;
+    const set = v => { S.val = v; drawBig(); };
+    b.querySelectorAll('[data-h]').forEach(x => x.onclick = () => set(x.dataset.h + ':' + ((S.val || '').split(':')[1] || '00')));
+    b.querySelectorAll('[data-mi]').forEach(x => x.onclick = () => set(((S.val || '').split(':')[0] || '00') + ':' + x.dataset.mi));
+    $('#tv').onchange = e => { S.val = e.target.value; };
+    $('#bgOk').onclick = () => { cur.mfdTime = /^\d{2}:\d{2}$/.test(S.val) ? S.val : ''; closeBig(); render(); };
+    $('#bgClr').onclick = () => { cur.mfdTime = ''; closeBig(); render(); };
+  } else {
+    const max = S.k === 'mfd' ? (cur.buyDate || today()) : today(), first = new Date(S.y, S.m - 1, 1), off = (first.getDay() + 6) % 7, n = new Date(S.y, S.m, 0).getDate();
+    const ys = []; for (let y = +today().slice(0, 4); y >= +today().slice(0, 4) - 3; y--) ys.push(y);
+    let cells = ''; for (let i = 0; i < off; i++) cells += '<i></i>';
+    for (let d = 1; d <= n; d++) { const iso = `${S.y}-${pad2(S.m)}-${pad2(d)}`; cells += `<button data-d="${iso}" class="${iso === S.val ? 'on' : ''} ${iso === today() ? 'td' : ''}" ${iso > max ? 'disabled' : ''}>${d}</button>`; }
+    b.innerHTML = `<div class="bx"><h3>${S.k === 'mfd' ? T('mfd') : T('buyDate')}</h3>
+      <div class="nav"><button id="bgP" aria-label="‹">‹</button><select id="bgM">${Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}" ${i + 1 === S.m ? 'selected' : ''}>${lang === 'ko' ? (i + 1) + '월' : 'Tháng ' + (i + 1)}</option>`).join('')}</select>
+        <select id="bgY">${ys.map(y => `<option ${y === S.y ? 'selected' : ''}>${y}</option>`).join('')}</select><button id="bgN" aria-label="›">›</button></div>
+      <div class="wd">${T('wd').map(x => `<span>${x}</span>`).join('')}</div><div class="days">${cells}</div>
+      <div class="act"><button class="btn ghost" id="bgX">${T('back')}</button></div></div>`;
+    const mv = dm => { S.m += dm; if (S.m < 1) { S.m = 12; S.y--; } if (S.m > 12) { S.m = 1; S.y++; } drawBig(); };
+    $('#bgP').onclick = () => mv(-1); $('#bgN').onclick = () => mv(1);
+    $('#bgM').onchange = e => { S.m = +e.target.value; drawBig(); }; $('#bgY').onchange = e => { S.y = +e.target.value; drawBig(); };
+    b.querySelectorAll('[data-d]').forEach(x => x.onclick = () => { cur[S.k] = x.dataset.d; if (S.k === 'buyDate' && cur.mfd > cur.buyDate) cur.mfd = ''; closeBig(); render(); });
+    $('#bgX').onclick = closeBig;
+  }
+  b.onclick = e => { if (e.target === b) closeBig(); };
+}
+// ---------- Kết thúc đăng ký: danh sách mẫu đã nhập (của mình, tháng này) + Excel kèm mã ----------
+let endRows = null, endErr = '';
+function openEnd() { stopScan(); view = 'end'; endRows = null; endErr = ''; render(); scrollTo(0, 0);
+  api.get('samples').then(r => { if (!r.ok) throw new Error(r.error); endRows = r.samples.filter(x => x.host === me.user).sort((a, b) => String(a.id).localeCompare(String(b.id))); endCycle = r.cycle; })
+    .catch(e => { endErr = e.message; endRows = []; }).then(() => { if (view === 'end') render(); }); }
+let endCycle = '';
+const mkLabel = x => { const k = (x.channel ? x.channel + '|' : '') + x.market; return optL(k); };
+const ageD = x => { const a = new Date(String(x.buyDate).slice(0, 10)), b = new Date(String(x.mfd).slice(0, 10)); return isNaN(a) || isNaN(b) ? '' : Math.round((a - b) / 864e5); };
+function viewEnd() {
+  const R = endRows;
+  return `<div class="card"><h2>${T('endH')}</h2>
+    ${outbox.length ? `<p class="savedbox" style="background:#f3f3f3;color:#111;border-radius:12px;padding:10px 12px;font-weight:600">${T('endWait')(outbox.length)}</p>` : ''}
+    ${!R ? `<div class="loading">${T('endLoading')}</div>` : endErr ? `<p style="color:var(--bad)">${esc(endErr)}</p>` : `<p style="margin:0 0 10px;color:var(--muted)">${T('endSub')(R.length)}</p>
+    ${R.length ? `<div style="overflow:auto"><table class="endlist"><thead><tr><th>Mã</th><th>${T('brand')} · ${T('flavor')}</th><th>SKU</th><th>${T('market')}</th><th>${T('fac')}</th><th>${T('mfd')}</th><th>${T('buyDate')}</th></tr></thead><tbody>
+      ${R.map(x => `<tr><td class="id">${esc(x.id)}</td><td>${esc(x.brand)} · ${esc(x.flavor)}</td><td>${esc(x.sku)}</td><td>${esc(mkLabel(x))}</td><td>${esc([x.fac, x.line].filter(Boolean).join(' · '))}</td><td>${dmy(x.mfd)}${x.mfdTime ? ' ' + esc(x.mfdTime) : ''}</td><td>${dmy(x.buyDate)}</td></tr>`).join('')}</tbody></table></div>` : `<p>${T('endNone')}</p>`}`}
+    <div class="tools2">${R && R.length ? `<button class="btn" id="endXls">${T('endXls')}</button>` : ''}<button class="btn ghost" id="endMore">${T('endMore')}</button></div></div>`;
+}
+async function endXls() {
+  const head = ['Mã mẫu', 'Brand', 'Tên flavor', 'SKU (Size)', 'Nguồn', 'Nơi mua', 'Nhà máy', 'Line sản xuất', 'Ngày sản xuất', 'Giờ sản xuất', 'Ngày mua', 'Tuổi (ngày)', 'Barcode', 'Người mua', 'Bộ phận', 'Thời gian đăng ký'];
+  const rows = [head].concat(endRows.map(x => [x.id, BRAND_L[x.brand] || x.brand, x.flavor, x.sku, x.origin, mkLabel(x), x.fac, x.line, dmy(x.mfd), x.mfdTime, dmy(x.buyDate), ageD(x), x.barcode, x.buyer, x.buyerDept,
+    (() => { const d = new Date(x.createdAt); return isNaN(d) ? String(x.createdAt) : d.toLocaleString('vi-VN'); })()]));
+  try { await PC.xlsx(`${PC.yymm(endCycle || (plan && plan.cycle))}_MQM_Sample_Register.xlsx`, [{ name: 'Samples', rows, widths: [10, 10, 20, 11, 9, 10, 11, 12, 12, 10, 12, 10, 15, 18, 9, 18] }]); } catch (e) { toast(T('xlsErr') + e.message); }
+}
+$('#endDone').onclick = () => { $('#done').classList.remove('on'); doneTmp = ''; cur = null; openEnd(); };
 $('#next').onclick = () => { $('#done').classList.remove('on'); doneTmp = ''; cur = null; view = 'scan'; render(); scrollTo(0, 0); startScan(); };
 (async () => {
   const g = await PC.guard('register'); if (!g) return;
-  me = { name: g.user.name, dept: g.user.dept || 'FQS', deptOther: '' };
+  me = { name: g.user.name, dept: g.user.dept || 'FQS', deptOther: '', user: g.user.user };
   PC.bar($('#pcbar'), 'Đăng ký mẫu');
   render(); pump(); loadPlan();
   try {

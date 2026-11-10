@@ -95,6 +95,15 @@ table.st td.all { width: 70px; text-align: right; }
 .sz { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; margin: 2px 4px 2px 0; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
 .sz.on { background: var(--red); border-color: var(--red); color: #fff; }
 .sz.all { border-style: dashed; color: var(--muted); } .sz.all.on { color: #fff; border-style: solid; }
+/* Danh sách mẫu (10/11): mỗi brand 1 bảng 2 cột Vị | Size + số lượng */
+.plan2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.pbrand h3 { margin: 0 0 4px; font-size: 16px; font-weight: 800; }
+.pbrand table.st td.fl { width: 42%; }
+.szq { display: inline-flex; align-items: center; gap: 0; margin: 2px 6px 2px 0; }
+.szq .sz { margin: 0; } .szq.on .sz { border-radius: 999px 0 0 999px; }
+.szq input { width: 62px !important; min-height: 0 !important; height: 33px; padding: 0 6px !important; text-align: center; font-weight: 800; font-size: 14px; border-radius: 0 999px 999px 0 !important; border: 1.5px solid #111 !important; border-left: 0 !important; }
+.addfl { display: flex; gap: 8px; align-items: center; margin-top: 8px; } .addfl select { flex: 1; min-height: 40px !important; font: inherit; font-size: 14px; padding: 6px 10px; border-radius: 12px; }
+@media (max-width: 860px) { .plan2 { grid-template-columns: 1fr; } }
 /* Kết quả chung RD + MKT */
 .card.res { border: 2px solid var(--red); }
 .tchips { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -148,7 +157,7 @@ table.st td.all { width: 70px; text-align: right; }
 <div class="done" id="review"><div class="sheet rv"><h3 id="rvHead"></h3><p id="rvTxt"></p><div id="rvBody"></div>
   <div class="rvbtn"><button class="btn ghost" id="rvBack"></button><button class="btn" id="rvOk"></button></div></div></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js?v=20261105"></script>
+<script src="pc.js?v=20261110"></script>
 <script>
 // MQM ORION VINA · Setup theo tháng (anh Thái 05/11/2026): chọn tháng → bảng câu hỏi theo nhóm (không còn tải file) → mẫu cần mua → ngày sản xuất → Gửi → xem lại → OK.
 // MKT: câu hỏi Bao bì / In ấn · RD: Ngoại quan / Cấu trúc / Hương vị · FQS: đủ 5 nhóm. Gửi rồi vẫn xem và sửa lại được bản của tháng đó (gửi lại = thay bản cũ).
@@ -165,18 +174,18 @@ const TEMPLATE = {
 };
 const I18N = {
   vi: {
-    step: 'MQM ORION VINA · SETUP', title: 'Setup đánh giá tháng', sub: 'Chọn tháng → bảng câu hỏi theo nhóm (thêm / bớt / sửa) → mẫu cần mua → ngày sản xuất → Gửi. Gửi rồi vẫn xem và sửa lại được.',
+    step: 'MQM ORION VINA · SETUP', title: 'Setup đánh giá tháng', sub: 'MKT: câu hỏi bao bì, in ấn + danh sách mẫu. RD: câu hỏi ngoại quan, hương vị, cấu trúc.',
     month: 'Tháng đánh giá', name: 'Người setup', team: 'Team', groupsOf: (t, gs) => `${t} setup câu hỏi: ${gs.join(' · ')}`,
     s1: 'Bước 1 · Bảng câu hỏi', s2: 'Bước 2 · Mẫu cần mua', s3: 'Bước 3 · Ngày sản xuất',
     s1Hint: 'Xếp từ ngoài vào trong: nhìn bao bì, in ấn trước rồi mới tới ngoại quan, cấu trúc, hương vị. Viết câu theo hướng "đạt" để người chấm chọn Ổn = đạt.',
     reuse: 'Dùng lại bộ câu hỏi cũ', tpl: 'Dùng bộ câu hỏi mẫu', reuseAsk: 'Thay bảng câu hỏi hiện tại?', reuseOk: (n, c) => `Đang dùng bộ câu hỏi đã lưu ${c} · ${n} câu`, reuseErr: 'Chưa lấy được: ',
     tplOk: 'Đang dùng bộ câu hỏi mẫu, sửa / thêm / bớt tuỳ ý.', addQ: g => `+ Thêm câu hỏi ${g}`, delQ: 'Bỏ câu này', qPh: 'Nhập câu hỏi…', count: n => `${n} câu`,
-    smpHint: 'Bấm vào quy cách (size) cần mua của từng vị. Mỗi mẫu mua 2 gói.', allFlavor: 'Cả vị', picked: n => `Đã chọn ${n} mẫu`, flavor: 'Vị', size: 'Quy cách (size)',
+    smpHint: 'Bấm size cần mua, rồi nhập số gói cần mua ở mỗi kênh (TT North, TT South, MT North, MT South). Vị khác bấm + Thêm vị.', allFlavor: 'Cả vị', addFl: '+ Thêm vị', pickFl: 'Chọn vị…', qtyT: 'Số gói mỗi kênh', picked: n => `Đã chọn ${n} mẫu`, flavor: 'Vị', size: 'Quy cách (size)',
     loadingCat: 'Đang tải danh mục sản phẩm…', catErr: 'Không tải được danh mục: ',
     dateFrom: 'Ngày sản xuất từ:', dateTo: 'Đến ngày:', dateHint: 'Người mua chọn mẫu có NSX trong khoảng này. Các team chọn khác nhau thì app lấy khoảng chung.',
     send: 'Gửi', resend: 'Gửi bản sửa', sending: 'Đang gửi…', cancel: 'Huỷ sửa', need: 'Còn thiếu: ', m_team: 'team', m_rows: 'câu hỏi', m_smp: 'mẫu cần mua', m_date: 'ngày sản xuất', ready: 'Sẵn sàng gửi',
     sendErr: 'Chưa gửi được: ',
-    rvHead: 'Xem lại trước khi lưu', rvTxt: (t, m, q, s) => `${t} · ${m} · ${q} câu hỏi · ${s} mẫu cần mua. Bấm OK để lưu (bản cũ của tháng này sẽ được thay).`,
+    rvHead: 'Xem lại trước khi lưu', rvTxt: (t, m, q, s) => `${t} · ${m} · ${q} câu hỏi${s ? ` · ${s} mẫu cần mua` : ''}. Bấm OK để lưu (bản cũ của tháng này sẽ được thay).`,
     rvBack: 'Sửa lại', rvOk: 'OK, lưu', rvQ: 'Bảng câu hỏi', rvS: 'Mẫu cần mua', rvD: 'Ngày sản xuất', saving: 'Đang lưu…',
     savedH: 'Đã lưu', savedT: o => o ? 'Đã lưu. Các team đều đã gửi, câu hỏi và danh sách mẫu final đã chuyển sang Đăng ký mẫu và Đánh giá.' : 'Đã lưu, đang chờ các team còn lại. Bạn vẫn xem và sửa lại được bản này.', ok: 'Xong',
     vH: m => `Bản đã gửi · ${m}`, vAt: (n, at) => `${n} gửi lúc ${at}`, edit: '✏️ Sửa bản này', vDraft: 'Có 1 bản sửa chưa bấm OK, mở để lưu tiếp', openDraft: 'Mở bản chưa lưu',
@@ -188,13 +197,13 @@ const I18N = {
     hist: 'Lịch sử gửi', hQ: 'câu', hS: 'mẫu', hSaved: 'Đã OK', hDraft: 'Chưa OK', histNote: 'Mọi lần gửi đều được lưu lại trong Google Sheet (không xoá, không ghi đè); bản Đã OK mới nhất là bản được dùng.',
   },
   ko: {
-    step: 'MQM ORION VINA · SETUP', title: '월간 평가 Setup', sub: '월 선택 → 그룹별 질문표 (추가 · 삭제 · 수정) → 구매 샘플 → 제조일 → 전송. 전송 후에도 확인 · 수정 가능.',
+    step: 'MQM ORION VINA · SETUP', title: '월간 평가 Setup', sub: 'MKT: 포장 · 인쇄 질문 + 샘플 목록. RD: 외관 · 맛 · 식감 질문.',
     month: '평가 월', name: '작성자', team: '팀', groupsOf: (t, gs) => `${t} 질문 그룹: ${gs.join(' · ')}`,
     s1: '1단계 · 질문표', s2: '2단계 · 구매 샘플', s3: '3단계 · 제조일',
     s1Hint: '바깥에서 안으로: 포장 · 인쇄 → 외관 · 식감 · 맛 순서. "적합" 방향으로 작성하세요.',
     reuse: '이전 질문 다시 사용', tpl: '기본 질문 사용', reuseAsk: '현재 질문표를 바꿀까요?', reuseOk: (n, c) => `${c} 저장 질문 사용 중 · ${n}개`, reuseErr: '불러오지 못함: ',
     tplOk: '기본 질문 사용 중, 자유롭게 수정하세요.', addQ: g => `+ ${g} 질문 추가`, delQ: '삭제', qPh: '질문 입력…', count: n => `${n}개`,
-    smpHint: '맛별로 구매할 규격(size)을 누르세요. 샘플당 2봉 구매.', allFlavor: '전체', picked: n => `${n}개 선택`, flavor: '맛', size: '규격',
+    smpHint: '규격(size)을 누르고 채널별 구매 수량을 입력하세요 (TT North, TT South, MT North, MT South). 다른 맛은 + 맛 추가.', allFlavor: '전체', addFl: '+ 맛 추가', pickFl: '맛 선택…', qtyT: '채널별 수량', picked: n => `${n}개 선택`, flavor: '맛', size: '규격',
     loadingCat: '제품 목록 불러오는 중…', catErr: '제품 목록 오류: ',
     dateFrom: '제조일 시작:', dateTo: '종료일:', dateHint: '구매자는 이 범위의 제조일 샘플을 구매합니다. 팀별로 다르면 공통 범위를 사용합니다.',
     send: '전송', resend: '수정본 전송', sending: '전송 중…', cancel: '수정 취소', need: '미입력: ', m_team: '팀', m_rows: '질문', m_smp: '구매 샘플', m_date: '제조일', ready: '전송 준비 완료',
@@ -212,6 +221,11 @@ const I18N = {
   },
 };
 const PLAN_BRANDS = [['OStar', "O'star"], ['Swing', 'Swing']];
+// Vị mặc định trong danh sách mẫu (anh Thái 10/11); vị khác ẩn, bấm + Thêm vị
+const DEF_FL = { OStar: ['Natural', 'Salted Egg', 'Korean Kimchi', 'Seaweed'], Swing: ['Black Pepper Beef', 'Cheese', 'Chicken', 'Newyork Steak'] };
+const DEF_QTY = 2;
+// Chỉ MKT chọn danh sách mẫu; RD / FQS chỉ soạn câu hỏi
+const hasPlan = () => st.team === 'MKT';
 let lang = (() => { try { return localStorage.getItem('mqm1a-lang') === 'ko' ? 'ko' : 'vi'; } catch (e) { return 'vi'; } })();
 const T = k => I18N[lang][k];
 const $ = s => document.querySelector(s);
@@ -225,7 +239,7 @@ const nextMonth = c => { const [y, m] = c.split('-').map(Number); return m === 1
 
 let loading = true, me = null, current = '', mine = null, review = null, plan = null, products = null, catErr = '', editing = false, sending = false;
 // st: tháng, team, câu hỏi [{g, q}], mẫu, ngày; bản nháp lưu trên máy theo người + tháng + team
-let st = { cycle: '', team: '', rows: [], samples: [], brand: PLAN_BRANDS[0][0], dateFrom: '', dateTo: '', info: '' };
+let st = { cycle: '', team: '', rows: [], samples: [], qty: {}, extra: [], brand: PLAN_BRANDS[0][0], dateFrom: '', dateTo: '', info: '' };
 const dKey = () => `mqm-pc-setup2-${(me || {}).user || 'x'}-${st.cycle}-${st.team}`;
 const save = () => { if (!editing) return; try { localStorage.setItem(dKey(), JSON.stringify(st)); } catch (e) {} };
 const dropDraft = () => { try { localStorage.removeItem(dKey()); } catch (e) {} };
@@ -258,13 +272,16 @@ const skusOf = p => String(p.sku || '').split(',').map(x => x.trim()).filter(Boo
 const sKey = (b, f, s) => `${b}|${f}|${s}`;
 function sampleCard() {
   if (!products) return `<div class="empty">${catErr ? esc(T('catErr') + catErr) : T('loadingCat')}</div>`;
-  const list = products.filter(p => p.brand === st.brand);
-  return `<div class="seg bseg" id="bseg">${PLAN_BRANDS.map(([b, l]) => { const n = st.samples.filter(k => k.startsWith(b + '|')).length; return `<button class="${st.brand === b ? 'on' : ''}" data-b="${b}">${esc(l)}${n ? ` · ${n}` : ''}</button>`; }).join('')}</div>
-    <p class="hint">${T('smpHint')}</p>
-    <table class="st"><thead><tr><th>${T('flavor')}</th><th>${T('size')}</th><th></th></tr></thead><tbody>
-    ${list.map(p => { const ks = skusOf(p).map(s => sKey(p.brand, p.flavor, s)), all = ks.length && ks.every(k => st.samples.includes(k));
-      return `<tr><td class="fl">${esc(p.flavor)}</td><td>${skusOf(p).map(s => { const k = sKey(p.brand, p.flavor, s); return `<button class="sz ${st.samples.includes(k) ? 'on' : ''}" data-k="${esc(k)}">${esc(s)}</button>`; }).join('')}</td>
-        <td class="all"><button class="sz all ${all ? 'on' : ''}" data-all="${esc(ks.join(';'))}">${T('allFlavor')}</button></td></tr>`; }).join('')}</tbody></table>`;
+  st.qty = st.qty || {}; st.extra = st.extra || [];
+  return `<p class="hint">${T('smpHint')}</p><div class="plan2">${PLAN_BRANDS.map(([b, l]) => {
+    const all = products.filter(p => p.brand === b), picked = new Set(st.samples.filter(k => k.startsWith(b + '|')).map(k => k.split('|')[1]));
+    const show = all.filter(p => DEF_FL[b].includes(p.flavor) || st.extra.includes(b + '|' + p.flavor) || picked.has(p.flavor))
+      .sort((x, y) => { const ix = DEF_FL[b].indexOf(x.flavor), iy = DEF_FL[b].indexOf(y.flavor); return (ix < 0 ? 99 : ix) - (iy < 0 ? 99 : iy); });
+    const rest = all.filter(p => !show.includes(p)), n = st.samples.filter(k => k.startsWith(b + '|')).length;
+    return `<div class="pbrand"><h3>${esc(l)}${n ? ` <span class="tg">· ${n}</span>` : ''}</h3><table class="st"><thead><tr><th>${T('flavor')}</th><th>${T('size')} · ${T('qtyT')}</th></tr></thead><tbody>
+      ${show.map(p => `<tr><td class="fl">${esc(p.flavor)}</td><td>${skusOf(p).map(z => { const k = sKey(p.brand, p.flavor, z), on = st.samples.includes(k);
+        return `<span class="szq ${on ? 'on' : ''}"><button class="sz ${on ? 'on' : ''}" data-k="${esc(k)}">${esc(z)}</button>${on ? `<input type="number" min="1" max="999" inputmode="numeric" data-q="${esc(k)}" value="${esc(st.qty[k] || DEF_QTY)}" aria-label="${esc(T('qtyT'))}">` : ''}</span>`; }).join('')}</td></tr>`).join('')}</tbody></table>
+      ${rest.length ? `<div class="addfl"><select data-addfl="${b}"><option value="">${T('addFl')}</option>${rest.map(p => `<option value="${esc(p.flavor)}">${esc(p.flavor)}</option>`).join('')}</select></div>` : ''}</div>`; }).join('')}</div>`;
 }
 // Bản đã gửi của tháng: chỉ xem, bấm Sửa để mở lại bảng
 function viewCard() {
@@ -273,8 +290,8 @@ function viewCard() {
     <p class="hint"><span class="okline"><i>✓</i>${esc(T('vAt')(m.name || m.team, fmtAt(m.at)))}</span></p>
     ${m.newerDraft || readDraft() ? `<div class="savedbox draft">${T('vDraft')} <button class="btn ghost sm" id="openDraft">${T('openDraft')}</button></div>` : ''}
     <h4>${T('rvQ')} · ${m.rows.length}</h4>${byG.map(([g, rs]) => `<div><span class="grp">${esc(g)}</span><ol>${rs.map(r => `<li>${esc(r.q)}</li>`).join('')}</ol></div>`).join('')}
-    <h4>${T('rvS')} · ${m.samples.length}</h4><table class="rtbl">${m.samples.map(s => `<tr><td>${esc(s.brand)} · ${esc(s.flavor)}</td><td>${esc(s.sku)}</td></tr>`).join('')}</table>
-    <h4>${T('rvD')}</h4><b>${dmy(m.dateFrom)} – ${dmy(m.dateTo)}</b>
+    ${m.samples.length ? `<h4>${T('rvS')} · ${m.samples.length}</h4><table class="rtbl">${m.samples.map(s => `<tr><td>${esc(s.brand)} · ${esc(s.flavor)}</td><td>${esc(s.sku)}</td><td>${s.qty ? '× ' + s.qty : ''}</td></tr>`).join('')}</table>` : ''}
+    ${m.dateFrom ? `<h4>${T('rvD')}</h4><b>${dmy(m.dateFrom)} – ${dmy(m.dateTo)}</b>` : ''}
     ${(m.history || []).length ? `<h4>${T('hist')} · ${m.history.length}</h4><table class="rtbl">${m.history.map(h => `<tr><td>${esc(fmtAt(h.at))}</td><td><b>${esc(h.name)}</b> <span class="tg">${esc(h.user)}</span></td><td>${h.questions} ${T('hQ')} · ${h.samples} ${T('hS')}</td><td><span class="stt ${h.status === 'saved' ? 'ok' : 'low'}">${h.status === 'saved' ? T('hSaved') : T('hDraft')}</span></td></tr>`).join('')}</table><p class="hint">${T('histNote')}</p>` : ''}</section>`;
 }
 function qCard() {
@@ -299,18 +316,18 @@ function render() {
   if (loading) body = '<div class="card empty">…</div>';
   else if (!st.team) body =`<div class="card empty">${T('pickTeam')}</div>`;
   else if (mine && !editing) body = viewCard();
-  else body = (mine ? '' : `<div class="card empty" style="padding:14px">${esc(T('noneYet')(ML(st.cycle)))}</div>`) + qCard() +
+  else body = (mine ? '' : `<div class="card empty" style="padding:14px">${esc(T('noneYet')(ML(st.cycle)))}</div>`) + qCard() + (!hasPlan() ? '' :
     `<section class="card"><h2><span class="n">2</span>${T('s2')}<span class="meta">${T('picked')(st.samples.length)}</span></h2>${sampleCard()}</section>
     <section class="card"><h2><span class="n">3</span>${T('s3')}</h2>
       <div class="row2"><div><span class="label">${T('dateFrom')} <span class="req">*</span></span><input type="date" id="df" value="${esc(st.dateFrom)}"></div>
         <div><span class="label">${T('dateTo')} <span class="req">*</span></span><input type="date" id="dt" value="${esc(st.dateTo)}" min="${esc(st.dateFrom)}"></div></div>
-      <p class="hint">${T('dateHint')}</p></section>`;
+      <p class="hint">${T('dateHint')}</p></section>`);
   $('#app').innerHTML = top + body + resultCard();
   bind(); status();
 }
 function missing() {
   const m = []; if (!st.team) m.push(T('m_team')); if (!st.rows.some(r => r.q.trim())) m.push(T('m_rows'));
-  if (!st.samples.length) m.push(T('m_smp')); if (!st.dateFrom || !st.dateTo || st.dateFrom > st.dateTo) m.push(T('m_date'));
+  if (hasPlan()) { if (!st.samples.length) m.push(T('m_smp')); if (!st.dateFrom || !st.dateTo || st.dateFrom > st.dateTo) m.push(T('m_date')); }
   return m;
 }
 function status() {
@@ -344,7 +361,9 @@ function bind() {
   };
   const tp = $('#tpl'); if (tp) tp.onclick = () => { if (st.rows.some(r => r.q.trim()) && !confirm(T('reuseAsk'))) return; st.rows = fromTemplate(); st.info = T('tplOk'); keep(); };
   document.querySelectorAll('#bseg button').forEach(b => b.onclick = () => { st.brand = b.dataset.b; keep(); });
-  document.querySelectorAll('.sz[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, i = st.samples.indexOf(k); i >= 0 ? st.samples.splice(i, 1) : st.samples.push(k); keep(); });
+  document.querySelectorAll('.sz[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, i = st.samples.indexOf(k); if (i >= 0) st.samples.splice(i, 1); else { st.samples.push(k); if (!st.qty[k]) st.qty[k] = DEF_QTY; } keep(); });
+  document.querySelectorAll('input[data-q]').forEach(el => el.oninput = () => { const v = Math.round(+el.value); if (v > 0) { st.qty[el.dataset.q] = Math.min(999, v); save(); } });
+  document.querySelectorAll('select[data-addfl]').forEach(el => el.onchange = () => { if (el.value) { st.extra.push(el.dataset.addfl + '|' + el.value); keep(); } });
   document.querySelectorAll('.sz[data-all]').forEach(b => b.onclick = () => { const ks = b.dataset.all.split(';').filter(Boolean), all = ks.every(k => st.samples.includes(k));
     st.samples = all ? st.samples.filter(k => !ks.includes(k)) : [...new Set(st.samples.concat(ks))]; keep(); });
   const df = $('#df'); if (df) df.onchange = e => { st.dateFrom = e.target.value; if (st.dateTo && st.dateTo < st.dateFrom) st.dateTo = ''; keep(); };
@@ -352,13 +371,13 @@ function bind() {
 }
 function startEdit(m) {
   editing = true;
-  if (m) { st.rows = fit(m.rows); st.samples = m.samples.map(s => sKey(s.brand, s.flavor, s.sku)); st.dateFrom = m.dateFrom; st.dateTo = m.dateTo; st.info = ''; }
+  if (m) { st.rows = fit(m.rows); st.samples = m.samples.map(s => sKey(s.brand, s.flavor, s.sku)); st.qty = Object.fromEntries(m.samples.map(s => [sKey(s.brand, s.flavor, s.sku), +s.qty || DEF_QTY])); st.extra = []; st.dateFrom = m.dateFrom; st.dateTo = m.dateTo; st.info = ''; }
   save(); render(); scrollTo(0, 0);
 }
 // Đổi tháng / team: tải bản đã gửi của tháng đó; có bản nháp trên máy thì mở tiếp bản nháp
 async function load() {
   mine = null; plan = null; editing = false; st.info = ''; loading = !!st.team;
-  st.rows = []; st.samples = []; st.dateFrom = ''; st.dateTo = '';
+  st.rows = []; st.samples = []; st.qty = {}; st.extra = []; st.dateFrom = ''; st.dateTo = '';
   render();
   if (!st.team) return;
   const [r, p] = await Promise.all([
@@ -377,7 +396,7 @@ $('#send').onclick = async () => {
   try {
     const rows = st.rows.filter(r => r.q.trim()).map((r, i) => [r, i]).sort((a, b) => G.indexOf(a[0].g) - G.indexOf(b[0].g) || a[1] - b[1]).map(([r]) => ({ g: r.g, q: r.q.trim(), c: '' }));
     const r = await PC.post('setupSave', { cycle: st.cycle, team: st.team, rows,
-      samples: st.samples.map(k => { const [brand, flavor, sku] = k.split('|'); return { brand, flavor, sku }; }), dateFrom: st.dateFrom, dateTo: st.dateTo });
+      samples: hasPlan() ? st.samples.map(k => { const [brand, flavor, sku] = k.split('|'); return { brand, flavor, sku, qty: st.qty[k] || DEF_QTY }; }) : [], dateFrom: hasPlan() ? st.dateFrom : '', dateTo: hasPlan() ? st.dateTo : '' });
     if (!r.ok) throw new Error(r.error || '?');
     openReview(r);
   } catch (e) { toast(T('sendErr') + (e.message || e)); }
@@ -388,8 +407,8 @@ function openReview(r) {
   review = r;
   $('#rvHead').textContent = T('rvHead'); $('#rvTxt').textContent = T('rvTxt')(r.team, ML(r.cycle), r.rows.length, r.samples.length);
   $('#rvBody').innerHTML = `<div class="rvsec"><h4>${T('rvQ')}</h4><ol class="rlist">${r.rows.map(x => `<li>${esc(x.q)}</li>`).join('')}</ol></div>
-    <div class="rvsec"><h4>${T('rvS')} · ${r.samples.length}</h4><table class="rtbl">${r.samples.map(s => `<tr><td>${esc(s.brand)} · ${esc(s.flavor)}</td><td>${esc(s.sku)}</td></tr>`).join('')}</table></div>
-    <div class="rvsec"><h4>${T('rvD')}</h4><b>${dmy(r.dateFrom)} – ${dmy(r.dateTo)}</b></div>`;
+    ${r.samples.length ? `<div class="rvsec"><h4>${T('rvS')} · ${r.samples.length}</h4><table class="rtbl">${r.samples.map(s => `<tr><td>${esc(s.brand)} · ${esc(s.flavor)}</td><td>${esc(s.sku)}</td><td>× ${s.qty}</td></tr>`).join('')}</table></div>` : ''}
+    ${r.dateFrom ? `<div class="rvsec"><h4>${T('rvD')}</h4><b>${dmy(r.dateFrom)} – ${dmy(r.dateTo)}</b></div>` : ''}`;
   $('#rvBack').textContent = T('rvBack'); $('#rvOk').textContent = T('rvOk'); $('#rvOk').disabled = false;
   $('#review').classList.add('on');
 }

@@ -125,7 +125,7 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 <main class="wrap" id="app"><div class="card empty">…</div></main>
 <div class="bar" id="bar" hidden></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js?v=20261105"></script>
+<script src="pc.js?v=20261110"></script>
 <script>
 // MQM 1A · App đánh giá mẫu. Nhập tên + bộ phận → chọn brand mình phụ trách → chọn mẫu → chấm theo bộ câu hỏi của bộ phận.
 // Dữ liệu ghi vào Google Sheet "MQM 1A - Đánh giá mẫu" qua Apps Script (Api.gs), gọi không kèm tài khoản Google.
@@ -263,7 +263,7 @@ function hero() {
 function brandPicker() {
   if (!loaded) return `<p class="empty" style="padding:10px">${T('loadingBrands')}</p>`;
   const groups = brandGroups(), all = draft.brands === 'all';
-  if (!groups.length) return `<p class="hint" style="color:var(--muted);font-size:13px">${T('noSamplesYet')}</p>` +
+  if (!groups.length) return `<p class="hint nohelp" style="color:var(--muted);font-size:13px">${T('noSamplesYet')}</p>` +
     `<div class="ball"><span><b>${T('allBrands')}</b></span><button class="btn sm ${all ? '' : 'ghost'}" data-all="1">${all ? T('allPicked') : T('pickAll')}</button></div>`;
   const n = all ? allBrands().length : draft.brands.length;
   return `<div class="ball"><span>${all ? `<b>${T('allBrands')}</b> ${T('allBrandsNote')}` : T('chosen')(n, allBrands().length)}</span>
