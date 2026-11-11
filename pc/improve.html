@@ -105,6 +105,13 @@ ul.wq em { color: #6b6b6b; font-size: 13.5px; margin-left: 2px; }
 .tgg { display: inline-block; background: #f1f1f1; color: #333; font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; margin: 1px 4px 2px 0; }
 .plink { color: #c8102e; font-weight: 700; text-decoration: none; margin-right: 8px; }
 @media (max-width: 900px) { .kv { grid-template-columns: 1fr; gap: 2px; } }
+
+#lb { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.82); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+#lb[hidden] { display: none; }
+#lb img { max-width: min(92vw, 1100px); max-height: 80vh; border-radius: 14px; background: #222; object-fit: contain; }
+#lb img.small { width: min(70vw, 520px); image-rendering: auto; }
+#lb .lbx { position: absolute; top: 18px; right: 22px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.18); color: #fff; font-size: 26px; cursor: pointer; }
+#lb .lbn a { color: #fff; opacity: .8; font-size: 13.5px; } #lb .lbmsg { color: #fff; }
 </style>
 </head>
 <body>
@@ -139,7 +146,7 @@ const edits = {};     // aid → form kết quả cải tiến đang sửa
 const today = new Date().toISOString().slice(0, 10);
 const late = it => it.status !== STATUS[2] && it.when && it.when < today;
 const driveUrl = id => `https://drive.google.com/file/d/${encodeURIComponent(id)}/view`;
-const photos = ps => (ps || []).length ? `<div class="ph">${ps.map(p => `<a href="${driveUrl(p.id)}" target="_blank" rel="noopener" style="${p.t ? `background-image:url(${p.t})` : ''}" title="Mở ảnh"></a>`).join('')}</div>` : '<span class="meta">Không có ảnh</span>';
+const photos = ps => (ps || []).length ? `<div class="ph">${ps.map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t || '')}" style="${p.t ? `background-image:url(${p.t})` : ''}" title="Xem ảnh"></a>`).join('')}</div>` : '<span class="meta">Không có ảnh</span>';
 const whatList = w => (w || []).length ? `<ol class="wl">${w.map(x => `<li><span class="g">${esc(x.g)}</span>${esc(x.q)}${x.tags.length ? ` · <span class="tg">${esc(x.tags.join(', '))}</span>` : ''}${x.note ? ` · <span class="nt">${esc(x.note)}</span>` : ''}</li>`).join('')}</ol>` : '';
 
 // Ảnh / PDF evidence
@@ -170,7 +177,7 @@ function listTab() {
   // 11/11: dễ đọc — mỗi câu 1 dòng, vấn đề là nhãn đỏ, ghi chú in nghiêng; nguyên nhân / giải pháp có tiêu đề riêng
   const descH = x => `<ul class="wq">${(x.what || []).map(w => `<li><span class="q">${esc(w.q.replace(/\?$/, ''))}</span>${w.tags.map(t => `<span class="tgr">${esc(t)}</span>`).join('')}${w.note ? `<em>“${esc(w.note)}”</em>` : ''}</li>`).join('')}</ul>`;
   const causeH = x => `${(x.cause || []).length ? `<div class="kv"><span class="k">Nguyên nhân</span><span class="v">${x.cause.map(c => `<span class="tgg">${esc(c)}</span>`).join('')}</span></div>` : ''}${x.solution ? `<div class="kv"><span class="k">Giải pháp tạm thời</span><span class="v">${esc(x.solution)}</span></div>` : ''}`;
-  const photoH = x => (x.photos || []).filter(p => p.t).length ? `<div class="ph sm">${x.photos.filter(p => p.t).map(p => `<a href="${driveUrl(p.id)}" target="_blank" rel="noopener" style="background-image:url(${p.t})"></a>`).join('')}</div>` : (x.photos || []).length ? `<div class="kv"><span class="k">Ảnh</span><span class="v">${x.photos.map((p, i) => `<a class="plink" href="${driveUrl(p.id)}" target="_blank" rel="noopener">📷 Ảnh ${i + 1}</a>`).join(' ')}</span></div>` : '';
+  const photoH = x => (x.photos || []).filter(p => p.t).length ? `<div class="ph sm">${x.photos.filter(p => p.t).map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t)}" style="background-image:url(${p.t})"></a>`).join('')}</div>` : (x.photos || []).length ? `<div class="kv"><span class="k">Ảnh</span><span class="v">${x.photos.map((p, i) => `<a class="plink" href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="">📷 Ảnh ${i + 1}</a>`).join(' ')}</span></div>` : '';
   const row = x => { const ow = ownEdit[x.iid] || x.owners;
     return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
@@ -271,7 +278,8 @@ const keep = () => { const y = scrollY; render(); scrollTo(0, y); };
 function bind() {
   const ms = $('#month'); if (ms) ms.onchange = () => { cycle = ms.value; PC.setMonth(cycle); load(); };
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { stab = b.dataset.tab; try { sessionStorage.setItem('mqmImpTab', stab); } catch (e) {} render(); });
-  const lg = $('#login'); if (lg) lg.onclick = async () => { PC.logout(); const u = await PC.login('Đăng nhập · Cải thiện'); if (u && !IMP.includes(u.role)) toast('Tài khoản này không có quyền ở mục Cải thiện.'); PC.bar($('#pcbar'), 'Cải thiện'); load(); };
+  const lg = $('#login'); if (lg) lg.onclick = async () => { PC.logout(); const u = await PC.login('Đăng nhập · Cải thiện'); if (u && !IMP.includes(u.role)) toast('Tài khoản này không có quyền ở mục Cải thiện.'); 
+PC.bar($('#pcbar'), 'Cải thiện'); load(); };
   // sub-tab 1
   // bộ phận xử lý: × bỏ, (+) thêm (11/11)
   const ownOf = iid => { const x = I.candidates.find(c => c.iid === iid); return (ownEdit[iid] || x.owners).slice(); };
@@ -328,6 +336,19 @@ async function load() {
     render();
   } catch (x) { $('#app').innerHTML = `<div class="empty">Không tải được (${esc(x.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }
+// 11/11: bấm ảnh → xem ngay trên trang (không mở tab mới); ảnh lớn lấy từ Drive, không xem được thì phóng to ảnh nhỏ
+function lightbox(id, t) {
+  let lb = document.getElementById('lb'); if (!lb) { lb = document.createElement('div'); lb.id = 'lb'; document.body.appendChild(lb); }
+  lb.innerHTML = `<button class="lbx" aria-label="Đóng">×</button><img alt="Ảnh"><p class="lbn"><a href="${driveUrl(id)}" target="_blank" rel="noopener">Mở bản gốc trên Drive ↗</a></p>`;
+  const img = lb.querySelector('img'); let tried = 0;
+  img.onerror = () => { if (!tried && t) { tried = 1; img.src = t; img.classList.add('small'); } else { img.replaceWith(Object.assign(document.createElement('p'), { className: 'lbmsg', textContent: 'Không xem được ảnh trên trang. Bấm "Mở bản gốc trên Drive".' })); } };
+  img.src = `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w1600`;
+  lb.hidden = false; document.body.style.overflow = 'hidden';
+  const close = () => { lb.hidden = true; lb.innerHTML = ''; document.body.style.overflow = ''; };
+  lb.onclick = e => { if (e.target === lb || e.target.classList.contains('lbx')) close(); };
+  document.addEventListener('keydown', function esc_(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc_); } });
+}
+document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[data-pid]'); if (!a) return; e.preventDefault(); lightbox(a.dataset.pid, a.dataset.t); });
 PC.bar($('#pcbar'), 'Cải thiện');
 load();
 </script>
