@@ -82,6 +82,13 @@ table.rows tr:hover td { background: #fcfcfc; }
 .btn.gray { background: #efefef !important; color: #111 !important; }
 .rjbox { margin-top: 18px; } .rjbox summary { cursor: pointer; font-weight: 700; color: #6b6b6b; padding: 6px 0; } tr.rj td { opacity: .65; }
 @media (max-width: 900px) { table.rows thead { display: none; } table.rows tr { display: grid; grid-template-columns: 1fr auto; } table.rows td { border: 0; padding: 6px 4px; } .c-txt, .c-own { grid-column: 1 / -1; width: auto; } table.rows tr { border-bottom: 1px solid #eee; padding: 8px 0; } }
+
+.ochips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 4px; }
+.och { position: relative; background: #111; color: #fff; border-radius: 999px; padding: 5px 13px; font-size: 13px; font-weight: 700; }
+.och button { position: absolute; top: -7px; right: -7px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; background: #c8102e; color: #fff; font-size: 11px; line-height: 1; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.oadd { position: relative; width: 30px; height: 30px; border-radius: 50%; border: 1.5px dashed #b5b5b5; color: #6b6b6b; display: grid; place-items: center; font-weight: 800; font-size: 17px; cursor: pointer; }
+.oadd:hover { border-color: #111; color: #111; }
+.oadd select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; min-height: 0 !important; border: 0 !important; }
 </style>
 </head>
 <body>
@@ -148,7 +155,8 @@ function listTab() {
       <td class="c-txt"><b>${esc(x.sku || x.sampleId)} — ${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
         <p>${esc(desc(x))}</p>${(x.cause || []).length || x.solution ? `<p class="cs">${(x.cause || []).length ? `<i>Nguyên nhân:</i> ${esc(x.cause.join(', '))}` : ''}${x.solution ? ` · <i>Giải pháp tạm thời:</i> ${esc(x.solution)}` : ''}</p>` : ''}
         ${(x.photos || []).length ? `<div class="ph sm">${x.photos.map(p => `<a href="${driveUrl(p.id)}" target="_blank" rel="noopener" style="${p.t ? `background-image:url(${p.t})` : ''}"></a>`).join('')}</div>` : ''}</td>
-      <td class="c-own"><div class="owners sm" data-own="${esc(x.iid)}">${I.owners.map(o => `<button class="${ow.includes(o) ? 'on' : ''}" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div></td>
+      <td class="c-own"><div class="ochips" data-own="${esc(x.iid)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
+        ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.iid)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div></td>
       <td class="c-act"><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.iid)}">Không đồng ý</button></td></tr>`; };
   return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề chờ FQS duyệt. <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
     <div class="tw2"><table class="rows"><thead><tr><th>Mẫu</th><th>Bộ phận đánh giá</th><th>Nội dung</th><th>Bộ phận xử lý</th><th></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
@@ -245,9 +253,10 @@ function bind() {
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { stab = b.dataset.tab; try { sessionStorage.setItem('mqmImpTab', stab); } catch (e) {} render(); });
   const lg = $('#login'); if (lg) lg.onclick = async () => { PC.logout(); const u = await PC.login('Đăng nhập · Cải thiện'); if (u && !IMP.includes(u.role)) toast('Tài khoản này không có quyền ở mục Cải thiện.'); PC.bar($('#pcbar'), 'Cải thiện'); load(); };
   // sub-tab 1
-  document.querySelectorAll('[data-own]').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {
-    const iid = g.dataset.own, x = I.candidates.find(c => c.iid === iid), cur = (ownEdit[iid] || x.owners).slice(), i = cur.indexOf(b.dataset.o);
-    i >= 0 ? cur.splice(i, 1) : cur.push(b.dataset.o); ownEdit[iid] = cur; keep(); }));
+  // bộ phận xử lý: × bỏ, (+) thêm (11/11)
+  const ownOf = iid => { const x = I.candidates.find(c => c.iid === iid); return (ownEdit[iid] || x.owners).slice(); };
+  document.querySelectorAll('[data-own] [data-rmo]').forEach(b => b.onclick = () => { const iid = b.closest('[data-own]').dataset.own; ownEdit[iid] = ownOf(iid).filter(o => o !== b.dataset.rmo); keep(); });
+  document.querySelectorAll('select[data-addo]').forEach(sel => sel.onchange = () => { if (!sel.value) return; const iid = sel.dataset.addo, cur = ownOf(iid); if (!cur.includes(sel.value)) cur.push(sel.value); ownEdit[iid] = cur; keep(); });
   document.querySelectorAll('[data-conf]').forEach(b => b.onclick = async () => {
     const iid = b.dataset.conf, x = I.candidates.find(c => c.iid === iid); b.disabled = true; b.textContent = 'Đang xác nhận…';
     try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid, owners: ownEdit[iid] || x.owners }); if (!r.ok) throw new Error(r.error); I = r; delete ownEdit[iid]; toast('Đã đồng ý · chuyển sang "Đã xác nhận"'); keep(); }
