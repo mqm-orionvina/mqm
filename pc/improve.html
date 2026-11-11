@@ -112,6 +112,10 @@ ul.wq em { color: #6b6b6b; font-size: 13.5px; margin-left: 2px; }
 #lb img.small { width: min(70vw, 520px); image-rendering: auto; }
 #lb .lbx { position: absolute; top: 18px; right: 22px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.18); color: #fff; font-size: 26px; cursor: pointer; }
 #lb .lbn a { color: #fff; opacity: .8; font-size: 13.5px; } #lb .lbmsg { color: #fff; }
+
+.phrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; } .phrow a { display: block; width: 96px; height: 96px; border-radius: 12px; overflow: hidden; background: #f1f1f1; }
+.phrow img { width: 100%; height: 100%; object-fit: cover; display: block; } .phrow a.noimg { display: grid; place-items: center; } .phrow a.noimg img { display: none; } .phrow a.noimg::after { content: '📷 Xem ảnh'; font-size: 12px; font-weight: 700; color: #c8102e; }
+.c-st { width: 140px; } .c-st small { display: block; color: #8a8a8a; font-size: 12px; margin-top: 4px; } .c-x { width: 50px; text-align: right; }
 </style>
 </head>
 <body>
@@ -169,19 +173,20 @@ function issueBody(x) {
       ${x.solution ? `<span class="lb">GIẢI PHÁP TẠM THỜI</span><div class="meta"><i>${esc(x.solution)}</i></div>` : ''}</div>
     <div><span class="lb">ẢNH MINH HOẠ</span>${photos(x.photos)}</div></div>`;
 }
+  // 11/11: Brand / Flavor / Size dưới mã mẫu, mỗi cái 1 dòng
+const skuLines = x => `<span class="skul">${String(x.sku || '').split(' · ').filter(Boolean).map(t => `<span>${esc(t)}</span>`).join('')}</span>`;
+const sumG = x => [...new Set((x.what || []).map(w => w.g))].join(', ');
+  // 11/11: dễ đọc — mỗi câu 1 dòng, vấn đề là nhãn đỏ, ghi chú in nghiêng; nguyên nhân / giải pháp có tiêu đề riêng
+const descH = x => `<ul class="wq">${(x.what || []).map(w => `<li><span class="q">${esc(w.q.replace(/\?$/, ''))}</span>${w.tags.map(t => `<span class="tgr">${esc(t)}</span>`).join('')}${w.note ? `<em>“${esc(w.note)}”</em>` : ''}</li>`).join('')}</ul>`;
+const causeH = x => `${(x.cause || []).length ? `<div class="kv"><span class="k">Nguyên nhân</span><span class="v">${x.cause.map(c => `<span class="tgg">${esc(c)}</span>`).join('')}</span></div>` : ''}${x.solution ? `<div class="kv"><span class="k">Giải pháp tạm thời</span><span class="v">${esc(x.solution)}</span></div>` : ''}`;
+  // 11/11: ảnh hiện ra luôn ngay sau phần vấn đề (ảnh nhỏ có sẵn, không có thì ảnh thu nhỏ từ Drive); bấm để xem to
+const photoH = x => (x.photos || []).length ? `<div class="phrow">${x.photos.map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t || '')}"><img src="${p.t || `https://drive.google.com/thumbnail?id=${encodeURIComponent(p.id)}&sz=w400`}" alt="Ảnh minh chứng" loading="lazy" onerror="this.parentNode.classList.add('noimg')"></a>`).join('')}</div>` : '';
 function listTab() {
   const xs = I.candidates, rj = I.rejected || [];
-  // 11/11: Brand / Flavor / Size dưới mã mẫu, mỗi cái 1 dòng
-  const skuLines = x => `<span class="skul">${String(x.sku || '').split(' · ').filter(Boolean).map(t => `<span>${esc(t)}</span>`).join('')}</span>`;
-  const sumG = x => [...new Set((x.what || []).map(w => w.g))].join(', ');
-  // 11/11: dễ đọc — mỗi câu 1 dòng, vấn đề là nhãn đỏ, ghi chú in nghiêng; nguyên nhân / giải pháp có tiêu đề riêng
-  const descH = x => `<ul class="wq">${(x.what || []).map(w => `<li><span class="q">${esc(w.q.replace(/\?$/, ''))}</span>${w.tags.map(t => `<span class="tgr">${esc(t)}</span>`).join('')}${w.note ? `<em>“${esc(w.note)}”</em>` : ''}</li>`).join('')}</ul>`;
-  const causeH = x => `${(x.cause || []).length ? `<div class="kv"><span class="k">Nguyên nhân</span><span class="v">${x.cause.map(c => `<span class="tgg">${esc(c)}</span>`).join('')}</span></div>` : ''}${x.solution ? `<div class="kv"><span class="k">Giải pháp tạm thời</span><span class="v">${esc(x.solution)}</span></div>` : ''}`;
-  const photoH = x => (x.photos || []).filter(p => p.t).length ? `<div class="ph sm">${x.photos.filter(p => p.t).map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t)}" style="background-image:url(${p.t})"></a>`).join('')}</div>` : (x.photos || []).length ? `<div class="kv"><span class="k">Ảnh</span><span class="v">${x.photos.map((p, i) => `<a class="plink" href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="">📷 Ảnh ${i + 1}</a>`).join(' ')}</span></div>` : '';
   const row = x => { const ow = ownEdit[x.iid] || x.owners;
     return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
-        ${descH(x)}${causeH(x)}${photoH(x)}</td>
+        ${descH(x)}${photoH(x)}${causeH(x)}</td>
       <td class="c-own"><div class="ochips" data-own="${esc(x.iid)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
         ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.iid)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div></td>
       <td class="c-act"><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.iid)}">Không đồng ý</button></td></tr>`; };
@@ -194,12 +199,16 @@ function listTab() {
 // ---------- Sub-tab 2: Đã xác nhận ----------
 function confTab() {
   const xs = I.confirmed, todo = xs.filter(x => !x.mailedAt).length;
+  // 11/11: bảng dòng như Danh sách cải thiện; cuối dòng nút × trả về tab 1 (khi chưa gửi mail)
   return `<div class="bar1"><span class="sp">${xs.length} vấn đề đã xác nhận · ${todo} chưa gửi mail. Người gửi: <b>${esc(I.sender || '—')}</b> · CC: <b>${esc(I.cc || 'chưa cài (Config improveCc)')}</b></span>
       <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button><button class="btn" id="mail" ${todo ? '' : 'disabled'}>✉ Gửi email cho các bộ phận</button></div>` +
-    (xs.length ? xs.map(x => `<div class="item">${issueHead(x)}${issueBody(x)}
-      <span class="lb">BỘ PHẬN XỬ LÝ</span><div class="owners">${x.owners.map(o => `<span class="ro">${esc(o)}</span>`).join('')}</div>
-      <div class="row"><small>Xác nhận bởi ${esc(x.by)} · ${esc(fmtAt(x.at))}</small>${x.mailedAt ? `<span class="pill sent">✓ Đã gửi mail ${esc(fmtAt(x.mailedAt))}</span>` : `<span class="pill">Chưa gửi mail</span><button class="x" data-unc="${esc(x.iid)}" title="Đưa về Danh sách cải thiện">×</button>`}</div></div>`).join('')
-      : `<div class="empty">Chưa có vấn đề nào được xác nhận. Xác nhận ở "Danh sách cải thiện".</div>`);
+    (xs.length ? `<div class="tw2"><table class="rows"><thead><tr><th>Mẫu</th><th>Bộ phận đánh giá</th><th>Nội dung</th><th>Bộ phận xử lý</th><th>Trạng thái</th><th></th></tr></thead><tbody>${xs.map(x => `<tr>
+      <td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+      <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>${descH(x)}${photoH(x)}${causeH(x)}</td>
+      <td class="c-own"><div class="ochips">${x.owners.map(o => `<span class="och">${esc(o)}</span>`).join('')}</div></td>
+      <td class="c-st">${x.mailedAt ? `<span class="pill sent">✓ Đã gửi mail</span><small>${esc(fmtAt(x.mailedAt))}</small>` : `<span class="pill">Chưa gửi mail</span>`}<small>Xác nhận: ${esc(x.by)}</small></td>
+      <td class="c-x">${x.mailedAt ? '' : `<button class="x" data-unc="${esc(x.iid)}" title="Trả về Danh sách cải thiện" aria-label="Trả về Danh sách cải thiện">×</button>`}</td></tr>`).join('')}</tbody></table></div>`
+      : `<div class="empty">Chưa có vấn đề nào được xác nhận. Bấm "Đồng ý" ở "Danh sách cải thiện".</div>`);
 }
 async function mailFlow() {
   if (busy) return; busy = true;
@@ -259,7 +268,7 @@ function progTab() {
     <div class="kpis"><div class="kpi"><small>Việc cần xử lý</small><b>${pool.length}</b></div><div class="kpi red"><small>${STATUS[0]}</small><b>${n(STATUS[0])}</b></div>
       <div class="kpi"><small>${STATUS[1]}</small><b>${n(STATUS[1])}</b></div><div class="kpi"><small>${STATUS[2]}</small><b>${n(STATUS[2])}</b></div><div class="kpi red"><small>Quá hạn</small><b>${pool.filter(late).length}</b></div></div>
     <div class="filters">${[['all', 'Tất cả'], [STATUS[0], STATUS[0]], [STATUS[1], STATUS[1]], [STATUS[2], STATUS[2]], ['late', 'Quá hạn']].map(([v, t]) => `<button class="chip ${fSt === v ? 'on' : ''}" data-s="${esc(v)}">${t}</button>`).join('')}</div>
-    ${xs.length ? xs.map(progCard).join('') : `<div class="empty">${all.length ? 'Không có việc nào theo lựa chọn này.' : 'Chưa có việc nào. Việc hiện ở đây sau khi FQS xác nhận và bấm "Gửi email cho các bộ phận".'}</div>`}`;
+    ${xs.length ? xs.map(progCard).join('') : `<div class="empty">${all.length ? 'Không có việc nào theo lựa chọn này.' : 'Chưa có việc nào. Việc hiện ở đây ngay khi FQS bấm "Đồng ý" ở Danh sách cải thiện.'}</div>`}`;
 }
 function render() {
   const showLists = !keyDept;
@@ -321,20 +330,28 @@ PC.bar($('#pcbar'), 'Cải thiện'); load(); };
     } catch (x) { b.disabled = false; b.textContent = '💾 Lưu kết quả cải tiến'; toast('Chưa lưu được: ' + x.message); }
   });
 }
+// 11/11: hiện ngay bản lần trước trên máy này, rồi cập nhật ngầm
+const ckey = (q, kq) => 'impc:' + (PC.user() || {}).user + '|' + q + kq;
+function apply(a, i) {
+  A = a; cycle = a.cycle; months = a.months || []; keyDept = a.dept || '';
+  I = i && i.ok ? i : null; Ierr = i && !i.ok ? (i.error || 'lỗi không rõ') : '';
+  $('#sub').textContent = keyDept ? `${PC.monthLabel(a.cycle)} · việc cần xử lý của bộ phận ${keyDept}. Cập nhật trạng thái và kết quả cải tiến, kèm evidence.`
+    : `${PC.monthLabel(a.cycle)} · Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.`;
+}
 async function load() {
-  $('#app').innerHTML = '<div class="empty">Đang tải…</div>';
+  const q = (cycle ? '&cycle=' + encodeURIComponent(cycle) : '');
+  const kq = LINK.d && LINK.k && (!LINK.c || LINK.c === cycle || !cycle) ? '&d=' + encodeURIComponent(LINK.d) + '&k=' + encodeURIComponent(LINK.k) : '';
+  let shown = false;
+  try { const c = JSON.parse(localStorage.getItem(ckey(q, kq)) || 'null'); if (c && c.a && c.a.ok) { apply(c.a, c.i); render(); shown = true; } } catch (e) {}
+  if (!shown) $('#app').innerHTML = '<div class="empty">Đang tải…</div>';
   try {
-    const q = (cycle ? '&cycle=' + encodeURIComponent(cycle) : '');
-    const kq = LINK.d && LINK.k && (!LINK.c || LINK.c === cycle || !cycle) ? '&d=' + encodeURIComponent(LINK.d) + '&k=' + encodeURIComponent(LINK.k) : '';
     const tq = canImp() ? '&t=' + encodeURIComponent(PC.token()) : '';
     const [a, i] = await Promise.all([PC.get('actions' + q + kq + tq), canImp() && !kq ? PC.get('issues' + q + tq) : Promise.resolve(null)]);
     if (!a.ok) throw new Error(a.error);
-    A = a; cycle = a.cycle; months = a.months || []; keyDept = a.dept || '';
-    I = i && i.ok ? i : null; Ierr = i && !i.ok ? (i.error || 'lỗi không rõ') : '';
-    $('#sub').textContent = keyDept ? `${PC.monthLabel(a.cycle)} · việc cần xử lý của bộ phận ${keyDept}. Cập nhật trạng thái và kết quả cải tiến, kèm evidence.`
-      : `${PC.monthLabel(a.cycle)} · Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.`;
-    render();
-  } catch (x) { $('#app').innerHTML = `<div class="empty">Không tải được (${esc(x.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
+    try { localStorage.setItem(ckey(q, kq), JSON.stringify({ a, i: i && i.ok ? i : null })); } catch (e) {}
+    if (shown && (Object.keys(edits).length || Object.keys(ownEdit).length)) { A = a; if (i && i.ok) I = i; return; }   // đang sửa thì không vẽ lại
+    apply(a, i); const y = scrollY; render(); scrollTo(0, y);
+  } catch (x) { if (shown) { toast('Chưa cập nhật được: ' + x.message); return; } $('#app').innerHTML = `<div class="empty">Không tải được (${esc(x.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }
 // 11/11: bấm ảnh → xem ngay trên trang (không mở tab mới); ảnh lớn lấy từ Drive, không xem được thì phóng to ảnh nhỏ
 function lightbox(id, t) {
