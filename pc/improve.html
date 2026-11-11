@@ -89,6 +89,8 @@ table.rows tr:hover td { background: #fcfcfc; }
 .oadd { position: relative; width: 30px; height: 30px; border-radius: 50%; border: 1.5px dashed #b5b5b5; color: #6b6b6b; display: grid; place-items: center; font-weight: 800; font-size: 17px; cursor: pointer; }
 .oadd:hover { border-color: #111; color: #111; }
 .oadd select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; min-height: 0 !important; border: 0 !important; }
+
+.c-day { width: 150px; } .skul { display: flex; flex-direction: column; margin: 4px 0; } .skul span { font-size: 13.5px; font-weight: 600; color: #111; line-height: 1.4; } .skul span:first-child { color: #c8102e; font-weight: 800; }
 </style>
 </head>
 <body>
@@ -148,11 +150,13 @@ function issueBody(x) {
 }
 function listTab() {
   const xs = I.candidates, rj = I.rejected || [];
+  // 11/11: Brand / Flavor / Size dưới mã mẫu, mỗi cái 1 dòng
+  const skuLines = x => `<span class="skul">${String(x.sku || '').split(' · ').filter(Boolean).map(t => `<span>${esc(t)}</span>`).join('')}</span>`;
   const sumG = x => [...new Set((x.what || []).map(w => w.g))].join(', ');
   const desc = x => (x.what || []).map(w => `${w.q}${w.tags.length ? ': ' + w.tags.join(', ') : ''}${w.note ? ' (' + w.note + ')' : ''}`).join(' · ');
   const row = x => { const ow = ownEdit[x.iid] || x.owners;
-    return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b><small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
-      <td class="c-txt"><b>${esc(x.sku || x.sampleId)} — ${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
+    return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+      <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
         <p>${esc(desc(x))}</p>${(x.cause || []).length || x.solution ? `<p class="cs">${(x.cause || []).length ? `<i>Nguyên nhân:</i> ${esc(x.cause.join(', '))}` : ''}${x.solution ? ` · <i>Giải pháp tạm thời:</i> ${esc(x.solution)}` : ''}</p>` : ''}
         ${(x.photos || []).length ? `<div class="ph sm">${x.photos.map(p => `<a href="${driveUrl(p.id)}" target="_blank" rel="noopener" style="${p.t ? `background-image:url(${p.t})` : ''}"></a>`).join('')}</div>` : ''}</td>
       <td class="c-own"><div class="ochips" data-own="${esc(x.iid)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
@@ -161,8 +165,8 @@ function listTab() {
   return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề chờ FQS duyệt. <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
     <div class="tw2"><table class="rows"><thead><tr><th>Mẫu</th><th>Bộ phận đánh giá</th><th>Nội dung</th><th>Bộ phận xử lý</th><th></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
     : `<div class="empty">Không còn vấn đề nào chờ duyệt ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`)
-    + (rj.length ? `<details class="rjbox"><summary>Không đồng ý · ${rj.length}</summary><table class="rows"><tbody>${rj.map(x => `<tr class="rj"><td class="c-day"><b>${esc(x.sampleId)}</b><small>${esc(x.by)}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
-      <td class="c-txt"><b>${esc(x.sku || x.sampleId)} — ${(x.what || []).length} vấn đề</b><p>${esc(desc(x))}</p></td><td class="c-act"><button class="btn gray" data-unc="${esc(x.iid)}">Khôi phục</button></td></tr>`).join('')}</tbody></table></details>` : '');
+    + (rj.length ? `<details class="rjbox"><summary>Không đồng ý · ${rj.length}</summary><table class="rows"><tbody>${rj.map(x => `<tr class="rj"><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(x.by)}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+      <td class="c-txt"><b>${(x.what || []).length} vấn đề</b><p>${esc(desc(x))}</p></td><td class="c-act"><button class="btn gray" data-unc="${esc(x.iid)}">Khôi phục</button></td></tr>`).join('')}</tbody></table></details>` : '');
 }
 // ---------- Sub-tab 2: Đã xác nhận ----------
 function confTab() {
