@@ -157,11 +157,11 @@ table.st td.all { width: 70px; text-align: right; }
 <div class="done" id="review"><div class="sheet rv"><h3 id="rvHead"></h3><p id="rvTxt"></p><div id="rvBody"></div>
   <div class="rvbtn"><button class="btn ghost" id="rvBack"></button><button class="btn" id="rvOk"></button></div></div></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js?v=20261111c"></script>
+<script src="pc.js?v=20261111d"></script>
 <script>
 // MQM ORION VINA · Setup theo tháng (anh Thái 05/11/2026): chọn tháng → bảng câu hỏi theo nhóm (không còn tải file) → mẫu cần mua → ngày sản xuất → Gửi → xem lại → OK.
 // MKT: câu hỏi Bao bì / In ấn · RD: Ngoại quan / Cấu trúc / Hương vị · FQS: đủ 5 nhóm. Gửi rồi vẫn xem và sửa lại được bản của tháng đó (gửi lại = thay bản cũ).
-const TEAMS = ['RD', 'MKT', 'FQS'];
+const TEAMS = ['RD', 'MKT'];   // 11/11: FQS không cần gửi setup
 const G = PC.GROUPS;
 const TEAM_GROUPS = { MKT: ['Bao bì', 'In ấn'], RD: ['Ngoại quan', 'Cấu trúc', 'Hương vị'], FQS: G };
 // Bộ câu hỏi mẫu (mỗi nhóm vài câu, sửa / thêm / bớt tuỳ ý). Câu hỏi viết theo hướng "đạt" để Ổn = đạt

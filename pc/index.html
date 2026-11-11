@@ -72,16 +72,15 @@ html, body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.45 "Se
 </header>
 
 <section class="parts">
-  <a class="part" id="tSetup" href="setup.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><b>Setup</b><p>Mỗi tháng RD / MKT / FQS soạn câu hỏi theo nhóm (MKT: bao bì · in ấn; RD: ngoại quan · cấu trúc · hương vị), chọn mẫu và ngày sản xuất. Gửi rồi vẫn xem, sửa được.</p><span class="go"><span class="tag">Cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+  <a class="part" id="tSetup" href="setup.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><b>Setup</b><p>Mỗi tháng RD / MKT soạn câu hỏi theo nhóm (MKT: bao bì · in ấn; RD: ngoại quan · cấu trúc · hương vị), chọn mẫu và ngày sản xuất. Gửi rồi vẫn xem, sửa được.</p><span class="go"><span class="tag">Cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
   <a class="part" id="tReg" href="register.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M4 6v12M7 6v12M10 6v12M13 6v12M17 6v12M20 6v12"/></svg></span><b>Đăng ký mẫu</b><p>Host quét barcode từng gói (không có barcode thì nhập tay), chọn nơi mua, nhà máy, NSX. Theo dõi SKU nào đủ, thiếu, chưa có.</p><span class="go"><span class="tag">Cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
   <a class="part ev" href="evaluate.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></svg></span><b>Đánh giá mẫu</b><p>Vào là chấm, không cần đăng nhập. Trả lời câu hỏi của tháng từ ngoài vào trong: bao bì, in ấn rồi tới sản phẩm.</p><span class="go"><span class="tag">Không cần đăng nhập</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
   <a class="part rp" href="report.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><path d="M4 20h16"/><path d="M7 16v-5M12 16V6M17 16v-8"/></svg></span><b>Report</b><p>Fact theo tháng: issue theo hạng mục, độ tươi sản phẩm, từng câu hỏi, từng SKU; kết thúc đánh giá gửi mail bộ phận.</p><span class="go"><span class="tag">Ai cũng xem được</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
   <a class="part rp" id="tImp" href="improve.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l5-5 4 4 7-8"/><path d="M15 8h5v5"/></svg></span><b>Cải thiện</b><p>Bộ phận nhận mail mở link vào đây: Chưa / Đang / Đã cải thiện, ghi hướng giải quyết, tải evidence. Ai cũng xem tiến độ.</p><span class="go"><span class="tag">Link riêng từng bộ phận</span><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
 </section>
 
-<section class="status" id="status"><div class="box"><h2>Tháng đang chạy</h2><p class="me" style="margin:0">Đang tải…</p></div></section>
 
-<script src="pc.js?v=20261111c"></script>
+<script src="pc.js?v=20261111d"></script>
 <script>
 const $ = s => document.querySelector(s);
 $('#logo').innerHTML = PC_LOGO;
@@ -108,16 +107,7 @@ function renderMe() {
   if (u && PC.can(part, u)) location.href = $(id).href; else if (u) alert('Tài khoản này không có quyền vào phần này.');
 }));
 renderMe();
-const dmy = s => s ? String(s).split('-').reverse().join('/') : '—';
-const stl = s => s === 'saved' ? '<span class="ok">Đã lưu</span>' : s === 'draft' ? '<span class="wait">Đang xem lại</span>' : '<span class="no">Chưa gửi</span>';
-PC.get('status').then(r => {
-  if (!r.ok) throw new Error(r.error);
-  $('#status').innerHTML = `<div class="box"><h2>${PC.monthLabel(r.cycle)} · đang chạy</h2><div class="st">
-    ${Object.keys(r.setup).map(t => `<div><small>Setup ${t}</small><b>${stl(r.setup[t])}</b></div>`).join('')}
-    <div><small>Câu hỏi final</small><b>${r.questions}</b></div><div><small>Ngày sản xuất</small><b style="font-size:16px">${dmy(r.dateFrom)} – ${dmy(r.dateTo)}</b></div>
-    <div><small>SKU đủ mẫu</small><b class="ok">${r.enough}/${r.skus}</b></div><div><small>SKU thiếu</small><b class="wait">${r.short}</b></div>
-    <div><small>SKU chưa có</small><b class="no">${r.none}</b></div><div><small>Lượt đánh giá</small><b>${r.evals}</b></div><div><small>Đã cải thiện</small><b>${r.actions ? r.actionsDone + '/' + r.actions : '—'}</b></div></div></div>`;
-}).catch(e => { $('#status').innerHTML = `<div class="box"><h2>Tháng đang chạy</h2><p class="me" style="margin:0">Không tải được tình trạng (${e.message}).</p></div>`; });
+// 11/11: bỏ khung tình trạng tháng ở trang chủ (anh Thái)
 </script>
 </body>
 </html>

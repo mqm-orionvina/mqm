@@ -16,7 +16,7 @@ const PC = {
   save(tok, user) { try { localStorage.setItem('mqmPcToken', tok); localStorage.setItem('mqmPcUser', JSON.stringify(user)); } catch (e) {} },
   logout() { try { localStorage.removeItem('mqmPcToken'); localStorage.removeItem('mqmPcUser'); } catch (e) {} },
   // Vai trò được vào từng phần: RD / MKT vào Setup, HOST vào Đăng ký mẫu, ADMIN vào cả hai; Đánh giá thì ai cũng vào
-  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'FQS', 'ADMIN', 'ALL'].includes(u.role) : part === 'register' ? ['HOST', 'ADMIN', 'ALL'].includes(u.role) : part === 'improve' ? ['FQS', 'HOST', 'ADMIN', 'ALL'].includes(u.role) : true; },
+  can(part, u) { u = u || PC.user(); if (!u) return false; return part === 'setup' ? ['RD', 'MKT', 'ADMIN', 'ALL'].includes(u.role) : part === 'register' ? ['HOST', 'ADMIN', 'ALL'].includes(u.role) : part === 'improve' ? ['FQS', 'HOST', 'ADMIN', 'ALL'].includes(u.role) : true; },
   roleName: { RD: 'RD', MKT: 'MKT', FQS: 'FQS', HOST: 'Host · đăng ký mẫu', ADMIN: 'Quản lý', ALL: 'Tất cả các trang' },
   // Chu kỳ theo tháng (yyyy-MM). Tháng đang xem dùng chung cho Đánh giá / Report / Cải thiện, lưu trên máy này
   monthLabel(c) { const m = String(c || '').match(/^(\d{4})-(\d{2})$/); return m ? `Tháng ${+m[2]}/${m[1]}` : String(c || ''); },
