@@ -181,6 +181,18 @@ const GTAGS = {
   'Cấu trúc': ['Ỉu / mềm', 'Cứng', 'Khô', 'Đặc', 'Bở', 'Dính răng', 'Bột'],
   'Hương vị': ['Nhạt vị', 'Lạ vị', 'Đắng', 'Quá ngọt', 'Ôi dầu', 'Khét', 'Chua / hỏng'],
 };
+// 11/11: lỗi theo từng câu hỏi (Bảng đánh giá cảm quan khoai tây · Defect checklist), chỉ tiếng Việt.
+// Khớp theo từ khoá trong câu hỏi; câu không khớp thì dùng danh sách chung của nhóm (GTAGS).
+const QTAGS = [
+  { g: 'Ngoại quan', re: /gia vị|ssn/, tags: ['SSN không đều (vón cục)', 'SSN ít', 'SSN quá nhiều', 'Vảy gia vị không đều (ớt, rong biển / tảo, rau)'] },
+  { g: 'Ngoại quan', re: /màu|bề mặt|cháy|đốm/, tags: ['Cháy nguyên lát / cháy đốm', 'Khoai xanh', 'Đốm đen'] },
+  { g: 'Ngoại quan', re: /nguyên vẹn|hình dạng|vỡ|gãy/, tags: ['Gãy vụn', 'Khoai bị gập', 'Lát cắt không tròn tự nhiên'] },
+  { g: 'Cấu trúc', re: /giòn|xốp|cấu trúc|tan/, tags: ['Giòn cứng (lát dày / sắc nhọn)', 'Cấu trúc giống thủy tinh', 'Kém tan (dính răng)', 'Khoai bị ỉu', 'Ngấm dầu (ngập dầu miệng)', 'Cấu trúc bột', 'Cấu trúc giấy (mỏng, khô dai)', 'Bóng khí rỗng'] },
+  { g: 'Hương vị', re: /hậu vị|vị lạ|sau khi nuốt/, tags: ['Đắng chát', 'Mùi nhân tạo / hóa chất', 'Nhiễm mùi lạ'] },
+  { g: 'Hương vị', re: /dầu/, tags: ['Nhiều dầu', 'Mùi dầu cũ / ôi dầu'] },
+  { g: 'Hương vị', re: /cường độ|hài hòa|hài hoà|gia vị|mặn|ngọt|đậm|nhạt/, tags: ['Yếu topnote', 'Vị mặn gắt', 'Vị nhạt nhẽo', 'Mùi yếu', 'Vị cháy'] },
+];
+const tagsFor = q => { const t = String(q.text || q.q || '').toLowerCase().normalize('NFC'); const m = QTAGS.find(r => r.g === q.g && r.re.test(t)); return m ? m.tags : (GTAGS[q.g] || []); };
 const GKO = { 'Bao bì': '포장', 'In ấn': '인쇄', 'Ngoại quan': '외관', 'Cấu trúc': '식감', 'Hương vị': '맛' };
 const isExpert = () => me && EXPERT.includes(me.dept);
 const cqFor = () => { if (!me) return cqAll; const gs = TABS[curTab()].groups;
@@ -388,7 +400,7 @@ function viewScore() {
     ${G.filter(g => cq.some(q => q.g === g)).map(g => `<div class="qg">${esc(gName(g))}</div>` + cq.filter(q => q.g === g).map(q => { const x = ev.xq[q.id]; n++;
       return `<div class="qrow ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}"><div class="qt"><div>${n}. ${esc(q.text)}${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}</div><span>${esc(q.team)}</span></div>
       <div class="yn" data-xq="${esc(q.id)}"><button class="is ${x.st === 'issue' ? 'on' : ''}" data-v="issue">! ${T('issue')}</button><button class="ok ${x.st === 'ok' ? 'on' : ''}" data-v="ok">✓ ${T('ok')}</button></div>
-      ${x.st === 'issue' ? `<span class="label" style="margin-top:12px">${T('pickIssue')}</span><div class="chips" data-t="${esc(q.id)}">${(GTAGS[g] || []).map(t => `<button class="chip sm ${x.tags.includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
+      ${x.st === 'issue' ? `<span class="label" style="margin-top:12px">${T('pickIssue')}</span><div class="chips" data-t="${esc(q.id)}">${tagsFor(q).map(t => `<button class="chip sm ${x.tags.includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
         <span class="label" style="margin-top:12px">${T('desc')}</span><textarea data-xd="${esc(q.id)}" placeholder="${esc(T('descPh'))}">${esc(x.d)}</textarea>` : ''}
       ${x.st ? `<div class="pick"><span class="label">${T('scoreL')}</span>${scale(q.id)}</div>` : ''}</div>`; }).join('')).join('')}</div>
     ${anyIssue() && isExpert() ? `<div class="card attr cause"><h3>${T('causeTitle')} <span>${T('causeSub')}</span></h3>
