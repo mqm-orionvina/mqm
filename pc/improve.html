@@ -138,6 +138,29 @@ table.itab tr.gstart td { border-top: 2px solid #e2e2e2; }
 .pc-box { background: #f7f7f7; border-radius: 16px; padding: 12px 16px; } .pc-box span { font-size: 12px; font-weight: 800; color: #8a8a8a; text-transform: uppercase; letter-spacing: .03em; } .pc-box p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #111; }
 .pc-ph { margin-top: 12px; }
 @media (max-width: 760px) { .pc-two { grid-template-columns: 1fr; } table.itab td.q0 { width: auto; } .pc-h { flex-direction: column; } .pc-st { text-align: left; } }
+
+/* 11/11 v2: Danh sách / Đã xác nhận — chữ mảnh, ít tô đậm */
+table.rows th { font-weight: 500; color: #8a8a8a; font-size: 12.5px; }
+table.rows td { padding: 18px 12px; }
+.c-day b { font-size: 15px; font-weight: 600; } .skul span { font-weight: 400; color: #444; } .skul span:first-child { color: #c8102e; font-weight: 500; }
+.c-day small { color: #9a9a9a; }
+.dtag { font-weight: 500; font-size: 12.5px; }
+.c-txt > b { font-size: 14.5px; font-weight: 500; color: #111; margin-bottom: 8px; }
+table.iq { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0 0 10px; }
+table.iq th { text-align: left; font-size: 12px; font-weight: 500; color: #9a9a9a; padding: 4px 10px 6px 0; border-bottom: 1px solid #ececec; }
+table.iq td { padding: 8px 10px 8px 0; border-bottom: 1px solid #f3f3f3; vertical-align: top; line-height: 1.5; font-weight: 400; color: #222; }
+table.iq tr:last-child td { border-bottom: 0; }
+table.iq td.q { width: 48%; } table.iq td.p { color: #b3261e; width: 26%; } table.iq td.n { color: #777; font-style: italic; }
+table.iq tr.gh td { font-size: 12px; color: #8a8a8a; text-transform: uppercase; letter-spacing: .04em; padding-top: 12px; font-weight: 500; }
+.cs2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.cs2 > div { background: #f7f7f7; border-radius: 12px; padding: 9px 12px; } .cs2 span { font-size: 11.5px; color: #8a8a8a; text-transform: uppercase; letter-spacing: .04em; } .cs2 p { margin: 3px 0 0; font-size: 14px; line-height: 1.5; color: #222; font-weight: 400; }
+.och { background: #fff; color: #111; border: 1px solid #d6d6d6; font-weight: 500; }
+.och button { width: 16px; height: 16px; font-size: 10px; top: -6px; right: -6px; }
+.oadd { width: 28px; height: 28px; font-weight: 400; }
+.c-act .btn { font-weight: 500; padding: 8px 10px; font-size: 13.5px; }
+.pill { font-weight: 500; }
+table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.rows th.w2 { width: 120px; } table.rows th.w4 { width: 180px; } table.rows th.w5 { width: 140px; } table.rows th.w6 { width: 130px; } table.rows th.w7 { width: 44px; }
+@media (max-width: 900px) { table.rows { table-layout: auto; } .cs2 { grid-template-columns: 1fr; } table.iq td.q { width: auto; } }
 </style>
 </head>
 <body>
@@ -199,8 +222,11 @@ function issueBody(x) {
 const skuLines = x => `<span class="skul">${String(x.sku || '').split(' · ').filter(Boolean).map(t => `<span>${esc(t)}</span>`).join('')}</span>`;
 const sumG = x => [...new Set((x.what || []).map(w => w.g))].join(', ');
   // 11/11: dễ đọc — mỗi câu 1 dòng, vấn đề là nhãn đỏ, ghi chú in nghiêng; nguyên nhân / giải pháp có tiêu đề riêng
-const descH = x => `<ul class="wq">${(x.what || []).map(w => `<li><span class="q">${esc(w.q.replace(/\?$/, ''))}</span>${w.tags.map(t => `<span class="tgr">${esc(t)}</span>`).join('')}${w.note ? `<em>“${esc(w.note)}”</em>` : ''}</li>`).join('')}</ul>`;
-const causeH = x => `${(x.cause || []).length ? `<div class="kv"><span class="k">Nguyên nhân</span><span class="v">${x.cause.map(c => `<span class="tgg">${esc(c)}</span>`).join('')}</span></div>` : ''}${x.solution ? `<div class="kv"><span class="k">Giải pháp tạm thời</span><span class="v">${esc(x.solution)}</span></div>` : ''}`;
+  // 11/11 v2: bảng nhỏ Câu hỏi | Vấn đề | Ghi chú, chữ mảnh, gom theo nhóm
+const descH = x => { const ws = x.what || [], multi = new Set(ws.map(w => w.g)).size > 1; let g0 = null;
+  return `<table class="iq"><thead><tr><th>Câu hỏi</th><th>Vấn đề</th><th>Ghi chú</th></tr></thead><tbody>${ws.map(w => { const gh = multi && w.g !== g0 ? `<tr class="gh"><td colspan="3">${esc(w.g)}</td></tr>` : ''; g0 = w.g;
+    return `${gh}<tr><td class="q">${esc(w.q.replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`; }).join('')}</tbody></table>`; };
+const causeH = x => `${(x.cause || []).length || x.solution ? `<div class="cs2">${(x.cause || []).length ? `<div><span>Nguyên nhân nghi ngờ</span><p>${esc(x.cause.join(', '))}</p></div>` : ''}${x.solution ? `<div><span>Giải pháp tạm thời</span><p>${esc(x.solution)}</p></div>` : ''}</div>` : ''}`;
   // 11/11: ảnh hiện ra luôn ngay sau phần vấn đề (ảnh nhỏ có sẵn, không có thì ảnh thu nhỏ từ Drive); bấm để xem to
 const photoH = x => (x.photos || []).length ? `<div class="phrow">${x.photos.map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t || '')}"><img src="${p.t || `https://drive.google.com/thumbnail?id=${encodeURIComponent(p.id)}&sz=w400`}" alt="Ảnh minh chứng" loading="lazy" onerror="this.parentNode.classList.add('noimg')"></a>`).join('')}</div>` : '';
 function listTab() {
@@ -213,7 +239,7 @@ function listTab() {
         ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.iid)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div></td>
       <td class="c-act"><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.iid)}">Không đồng ý</button></td></tr>`; };
   return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề chờ FQS duyệt. <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
-    <div class="tw2"><table class="rows"><thead><tr><th>Mẫu</th><th>Bộ phận đánh giá</th><th>Nội dung</th><th>Bộ phận xử lý</th><th></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
+    <div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w5"></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
     : `<div class="empty">Không còn vấn đề nào chờ duyệt ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`)
     + (rj.length ? `<details class="rjbox"><summary>Không đồng ý · ${rj.length}</summary><table class="rows"><tbody>${rj.map(x => `<tr class="rj"><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(x.by)}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề</b>${descH(x)}</td><td class="c-act"><button class="btn gray" data-unc="${esc(x.iid)}">Khôi phục</button></td></tr>`).join('')}</tbody></table></details>` : '');
@@ -224,7 +250,7 @@ function confTab() {
   // 11/11: bảng dòng như Danh sách cải thiện; cuối dòng nút × trả về tab 1 (khi chưa gửi mail)
   return `<div class="bar1"><span class="sp">${xs.length} vấn đề đã xác nhận · ${todo} chưa gửi mail. Người gửi: <b>${esc(I.sender || '—')}</b> · CC: <b>${esc(I.cc || 'chưa cài (Config improveCc)')}</b></span>
       <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button><button class="btn" id="mail" ${todo ? '' : 'disabled'}>✉ Gửi email cho các bộ phận</button></div>` +
-    (xs.length ? `<div class="tw2"><table class="rows"><thead><tr><th>Mẫu</th><th>Bộ phận đánh giá</th><th>Nội dung</th><th>Bộ phận xử lý</th><th>Trạng thái</th><th></th></tr></thead><tbody>${xs.map(x => `<tr>
+    (xs.length ? `<div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w6">Trạng thái</th><th class="w7"></th></tr></thead><tbody>${xs.map(x => `<tr>
       <td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>${descH(x)}${photoH(x)}${causeH(x)}</td>
       <td class="c-own"><div class="ochips">${x.owners.map(o => `<span class="och">${esc(o)}</span>`).join('')}</div></td>
