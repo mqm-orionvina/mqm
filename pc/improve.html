@@ -122,6 +122,22 @@ table.itab th { text-align: left; font-size: 12px; font-weight: 700; color: #6b6
 table.itab td { padding: 8px 10px; border: 1px solid #ececec; vertical-align: top; line-height: 1.45; color: #111; }
 table.itab td.tg0 { font-weight: 700; background: #fcfcfc; width: 96px; } table.itab td.nt0 { color: #555; }
 table.itab tr.ft td { background: #fafafa; } table.itab tr.ft td:first-child { font-weight: 700; color: #6b6b6b; font-size: 12.5px; }
+
+/* 11/11 v2: thẻ Tiến độ thoáng, bảng vấn đề toàn chiều ngang */
+.pc-h { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1.5px solid #f0f0f0; margin-bottom: 14px; }
+.pc-sku { font-size: 19px; letter-spacing: -.01em; }
+.pc-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 6px; font-size: 13.5px; color: #6b6b6b; } .pc-meta b { color: #111; font-weight: 700; margin-left: 4px; }
+.pc-st { text-align: right; white-space: nowrap; } .pc-st small { display: block; color: #9a9a9a; font-size: 12px; margin-top: 6px; }
+table.itab { width: 100%; border-collapse: collapse; font-size: 15px; margin: 0; }
+table.itab th { text-align: left; font-size: 12.5px; font-weight: 700; color: #8a8a8a; background: none; padding: 8px 12px; border: 0; border-bottom: 1.5px solid #e6e6e6; }
+table.itab td { padding: 11px 12px; border: 0; border-bottom: 1px solid #f1f1f1; vertical-align: top; line-height: 1.5; color: #111; }
+table.itab td.tg0 { font-weight: 800; background: none; width: 130px; color: #111; }
+table.itab td.q0 { width: 42%; } table.itab td.nt0 { color: #666; font-style: italic; }
+table.itab tr.gstart td { border-top: 2px solid #e2e2e2; }
+.pc-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 4px; }
+.pc-box { background: #f7f7f7; border-radius: 16px; padding: 12px 16px; } .pc-box span { font-size: 12px; font-weight: 800; color: #8a8a8a; text-transform: uppercase; letter-spacing: .03em; } .pc-box p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #111; }
+.pc-ph { margin-top: 12px; }
+@media (max-width: 760px) { .pc-two { grid-template-columns: 1fr; } table.itab td.q0 { width: auto; } .pc-h { flex-direction: column; } .pc-st { text-align: left; } }
 </style>
 </head>
 <body>
@@ -247,18 +263,20 @@ function touch(aid) { const it = A.items.find(x => x.aid === aid); return edits[
 function issueTable(it) {
   const G = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'], d = (it.detail || []).slice().sort((a, b) => (G.indexOf(a.g) < 0 ? 9 : G.indexOf(a.g)) - (G.indexOf(b.g) < 0 ? 9 : G.indexOf(b.g)));
   const rows = d.length ? d.map((w, i) => { const first = i === 0 || d[i - 1].g !== w.g, span = d.filter(x => x.g === w.g).length;
-    return `<tr>${first ? `<td class="tg0" rowspan="${span}">${esc(w.g)}</td>` : ''}<td>${esc(w.q)}</td><td>${esc((w.tags || []).join(', ') || '—')}</td><td class="nt0">${esc(w.note || '')}</td></tr>`; }).join('')
+    return `<tr class="${first && i ? 'gstart' : ''}">${first ? `<td class="tg0" rowspan="${span}">${esc(w.g)}</td>` : ''}<td class="q0">${esc(w.q)}</td><td>${esc((w.tags || []).join(', ') || '—')}</td><td class="nt0">${esc(w.note || '')}</td></tr>`; }).join('')
     : `<tr><td colspan="4" style="white-space:pre-wrap">${esc(it.what)}</td></tr>`;
-  return `<table class="itab"><thead><tr><th>Nhóm</th><th>Câu hỏi</th><th>Vấn đề</th><th>Ghi chú</th></tr></thead><tbody>${rows}
-    ${it.cause ? `<tr class="ft"><td>Nguyên nhân nghi ngờ</td><td colspan="3">${esc(it.cause)}</td></tr>` : ''}${it.suggest ? `<tr class="ft"><td>Giải pháp tạm thời</td><td colspan="3">${esc(it.suggest)}</td></tr>` : ''}</tbody></table>`;
+  return `<table class="itab"><thead><tr><th>Nhóm</th><th>Câu hỏi</th><th>Vấn đề</th><th>Ghi chú người chấm</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 function progCard(it) {
   const e = edits[it.aid], v = e || it, st = v.status, si = STATUS.indexOf(st), lt = late(it);
   const ev = it.evidence.filter(f => !(e && e.remove.includes(f.id)));
   return `<div class="item ${st === STATUS[2] ? 'done' : lt ? 'late' : ''}" data-aid="${esc(it.aid)}">
-    <div class="top"><b>${esc(it.sku || it.sampleId)}</b><span>${esc(it.aid)} · mẫu ${esc(it.sampleId)} · bộ phận đánh giá: ${esc(it.from || '—')}</span></div>
-    <div class="grid2"><div><span class="lb">VẤN ĐỀ</span>${issueTable(it)}</div>
-      <div><span class="lb">ẢNH MINH HOẠ</span>${photos(it.photos)}<p class="meta" style="margin-top:10px">Bộ phận xử lý: <i>${esc(it.who)}</i> · Hạn: <i>${dmy(it.when)}</i> <span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}</p></div></div>
+    <div class="pc-h"><div><b class="pc-sku">${esc(it.sku || it.sampleId)}</b>
+        <div class="pc-meta"><span>Mẫu <b>${esc(it.sampleId)}</b></span><span>Bộ phận đánh giá <b>${esc(it.from || '—')}</b></span><span>Bộ phận xử lý <b>${esc(it.who)}</b></span><span>Hạn <b>${dmy(it.when)}</b></span></div></div>
+      <div class="pc-st"><span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}<small>${esc(it.aid)}</small></div></div>
+    ${issueTable(it)}
+    <div class="pc-two">${it.cause ? `<div class="pc-box"><span>Nguyên nhân nghi ngờ</span><p>${esc(it.cause)}</p></div>` : ''}${it.suggest ? `<div class="pc-box"><span>Giải pháp tạm thời đề xuất</span><p>${esc(it.suggest)}</p></div>` : ''}</div>
+    ${(it.photos || []).length ? `<div class="pc-ph"><span class="lb">ẢNH MINH HOẠ</span>${photoH(it)}</div>` : ''}
     <div class="form"><h4>Kết quả cải tiến</h4>
       <div class="seg" data-st="${esc(it.aid)}">${STATUS.map((s, i) => `<button class="s${i} ${s === st ? 'on' : ''}" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div>
       <div class="f2"><div><span class="lb">NGUYÊN NHÂN GỐC (ĐÃ XÁC ĐỊNH)</span><textarea data-f="rootFix" data-a="${esc(it.aid)}" placeholder="VD: lực seal máy đóng gói line 3 thấp hơn tiêu chuẩn">${esc(v.rootFix)}</textarea></div>
