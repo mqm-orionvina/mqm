@@ -116,6 +116,12 @@ ul.wq em { color: #6b6b6b; font-size: 13.5px; margin-left: 2px; }
 .phrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; } .phrow a { display: block; width: 96px; height: 96px; border-radius: 12px; overflow: hidden; background: #f1f1f1; }
 .phrow img { width: 100%; height: 100%; object-fit: cover; display: block; } .phrow a.noimg { display: grid; place-items: center; } .phrow a.noimg img { display: none; } .phrow a.noimg::after { content: '📷 Xem ảnh'; font-size: 12px; font-weight: 700; color: #c8102e; }
 .c-st { width: 140px; } .c-st small { display: block; color: #8a8a8a; font-size: 12px; margin-top: 4px; } .c-x { width: 50px; text-align: right; }
+
+table.itab { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 4px; }
+table.itab th { text-align: left; font-size: 12px; font-weight: 700; color: #6b6b6b; background: #f7f7f7; padding: 7px 10px; border: 1px solid #ececec; }
+table.itab td { padding: 8px 10px; border: 1px solid #ececec; vertical-align: top; line-height: 1.45; color: #111; }
+table.itab td.tg0 { font-weight: 700; background: #fcfcfc; width: 96px; } table.itab td.nt0 { color: #555; }
+table.itab tr.ft td { background: #fafafa; } table.itab tr.ft td:first-child { font-weight: 700; color: #6b6b6b; font-size: 12.5px; }
 </style>
 </head>
 <body>
@@ -237,13 +243,21 @@ async function confXls() {
 }
 // ---------- Sub-tab 3: Tiến độ cải thiện + form kết quả cải tiến ----------
 function touch(aid) { const it = A.items.find(x => x.aid === aid); return edits[aid] = edits[aid] || { status: it.status, rootFix: it.rootFix, plan: it.plan, prevent: it.prevent, owner: it.owner, doneDate: it.doneDate, files: [], remove: [] }; }
+// 11/11: bảng vấn đề gộp theo nhóm (không tô tag) + nguyên nhân / giải pháp ở cuối bảng
+function issueTable(it) {
+  const G = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'], d = (it.detail || []).slice().sort((a, b) => (G.indexOf(a.g) < 0 ? 9 : G.indexOf(a.g)) - (G.indexOf(b.g) < 0 ? 9 : G.indexOf(b.g)));
+  const rows = d.length ? d.map((w, i) => { const first = i === 0 || d[i - 1].g !== w.g, span = d.filter(x => x.g === w.g).length;
+    return `<tr>${first ? `<td class="tg0" rowspan="${span}">${esc(w.g)}</td>` : ''}<td>${esc(w.q)}</td><td>${esc((w.tags || []).join(', ') || '—')}</td><td class="nt0">${esc(w.note || '')}</td></tr>`; }).join('')
+    : `<tr><td colspan="4" style="white-space:pre-wrap">${esc(it.what)}</td></tr>`;
+  return `<table class="itab"><thead><tr><th>Nhóm</th><th>Câu hỏi</th><th>Vấn đề</th><th>Ghi chú</th></tr></thead><tbody>${rows}
+    ${it.cause ? `<tr class="ft"><td>Nguyên nhân nghi ngờ</td><td colspan="3">${esc(it.cause)}</td></tr>` : ''}${it.suggest ? `<tr class="ft"><td>Giải pháp tạm thời</td><td colspan="3">${esc(it.suggest)}</td></tr>` : ''}</tbody></table>`;
+}
 function progCard(it) {
   const e = edits[it.aid], v = e || it, st = v.status, si = STATUS.indexOf(st), lt = late(it);
   const ev = it.evidence.filter(f => !(e && e.remove.includes(f.id)));
   return `<div class="item ${st === STATUS[2] ? 'done' : lt ? 'late' : ''}" data-aid="${esc(it.aid)}">
     <div class="top"><b>${esc(it.sku || it.sampleId)}</b><span>${esc(it.aid)} · mẫu ${esc(it.sampleId)} · bộ phận đánh giá: ${esc(it.from || '—')}</span></div>
-    <div class="grid2"><div><span class="lb">VẤN ĐỀ</span>${it.detail.length ? whatList(it.detail) : `<p class="meta" style="white-space:pre-wrap"><i>${esc(it.what)}</i></p>`}
-      ${it.cause ? `<span class="lb">NGUYÊN NHÂN NGHI NGỜ</span><div class="meta"><i>${esc(it.cause)}</i></div>` : ''}${it.suggest ? `<span class="lb">GIẢI PHÁP TẠM THỜI ĐỀ XUẤT</span><div class="meta"><i>${esc(it.suggest)}</i></div>` : ''}</div>
+    <div class="grid2"><div><span class="lb">VẤN ĐỀ</span>${issueTable(it)}</div>
       <div><span class="lb">ẢNH MINH HOẠ</span>${photos(it.photos)}<p class="meta" style="margin-top:10px">Bộ phận xử lý: <i>${esc(it.who)}</i> · Hạn: <i>${dmy(it.when)}</i> <span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}</p></div></div>
     <div class="form"><h4>Kết quả cải tiến</h4>
       <div class="seg" data-st="${esc(it.aid)}">${STATUS.map((s, i) => `<button class="s${i} ${s === st ? 'on' : ''}" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div>
