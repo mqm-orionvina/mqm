@@ -135,6 +135,13 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 .shot2 { width: 100%; border: 2px dashed #cdcdcd; background: #fafafa; border-radius: 20px; padding: 16px; font: inherit; font-weight: 800; font-size: 15px; color: #111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .ph3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; } .ph3 div { position: relative; aspect-ratio: 1; border-radius: 14px; background: #eee center/cover; }
 .ph3 button { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
+
+/* 11/11: 2 ô chọn loại đánh giá */
+.typegrid { display: grid; gap: 14px; margin-bottom: 12px; }
+.typebtn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; border: 2px solid #ececec; background: #fff; border-radius: 28px; padding: 26px 22px; font: inherit; color: #111; cursor: pointer; text-align: left; min-height: 150px; justify-content: center; }
+.typebtn:hover, .typebtn:active { border-color: #c8102e; } .typebtn span { font-size: 34px; } .typebtn b { font-size: 24px; letter-spacing: -.02em; } .typebtn small { color: #6b6b6b; font-size: 14.5px; }
+.typepill { display: flex; justify-content: space-between; align-items: center; background: #111; color: #fff; border-radius: 999px; padding: 10px 18px; margin-bottom: 12px; font-weight: 800; } .typepill .linkbtn { color: #fff; }
+@media (min-width: 640px) { .typegrid { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
@@ -144,7 +151,7 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 <div class="bar" id="bar" hidden></div>
 <div class="toast" id="toast"></div>
 <input type="file" accept="image/*" capture="environment" id="cam" hidden>
-<script src="pc.js?v=20261111"></script>
+<script src="pc.js?v=20261111c"></script>
 <script>
 // MQM 1A · App đánh giá mẫu. Nhập tên + bộ phận → chọn brand mình phụ trách → chọn mẫu → chấm theo bộ câu hỏi của bộ phận.
 // Dữ liệu ghi vào Google Sheet "MQM 1A - Đánh giá mẫu" qua Apps Script (Api.gs), gọi không kèm tài khoản Google.
@@ -157,6 +164,10 @@ const EXPERT = ['MKT', 'PI', 'Design', 'R&D'];
 const TABS = { pkg: { vi: 'Đánh giá bao bì', ko: '포장 평가', groups: ['Bao bì', 'In ấn'] }, sen: { vi: 'Đánh giá cảm quan', ko: '관능 평가', groups: ['Ngoại quan', 'Cấu trúc', 'Hương vị'] } };
 const tabsFor = d => d === 'MKT' ? ['pkg', 'sen'] : ['PI', 'Design'].includes(d) ? ['pkg'] : ['sen'];
 let etab = (() => { try { return localStorage.getItem('mqm-pc-eval-tab') || ''; } catch (e) { return ''; } })();
+// 11/11: bấm vào Đánh giá mẫu → chọn trước Cảm quan hay Bao bì (2 ô to), rồi mới nhập tên. Bộ phận theo loại: Bao bì = MKT / PI / Design; Cảm quan = các bộ phận khác (trừ PI, Design)
+let etype = (() => { try { return localStorage.getItem('mqm-pc-eval-type') || ''; } catch (e) { return ''; } })();
+const setType = t => { etype = t; try { t ? localStorage.setItem('mqm-pc-eval-type', t) : localStorage.removeItem('mqm-pc-eval-type'); } catch (e) {} };
+const deptsFor = t => t === 'pkg' ? ['MKT', 'PI', 'Design'] : DEPTS.filter(d => !['PI', 'Design'].includes(d));
 const curTab = () => { const ts = me ? tabsFor(me.dept) : ['sen']; if (!ts.includes(etab)) etab = ts[0]; return etab; };
 // Chỉ còn câu hỏi của tháng (bỏ 4 ô Package / Appearance / Texture / Flavor cố định). Thứ tự từ ngoài vào trong.
 // MKT / PI / Design: câu hỏi Bao bì, In ấn · R&D: Ngoại quan, Cấu trúc, Hương vị · bộ phận khác: tất cả
@@ -182,9 +193,11 @@ const OWNERS = ['QA', 'R&D', 'Production', 'PUR', 'SCM', 'Sales', 'MKT', 'Design
 const I18N = {
   vi: {
     step: 'MQM ORION VINA · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập Họ và Tên, bộ phận và chọn brand mình phụ trách. Đổi người: bấm Đăng xuất.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',
+    subType: 'Chọn loại đánh giá', typeSen: 'Ngoại quan · Cấu trúc · Hương vị', typePkg: 'Bao bì · In ấn', chgType: 'Đổi loại đánh giá',
     subScore: 'Trả lời từng câu: Ổn hoặc Có vấn đề, chấm điểm, xong bấm Lưu.', back: '← Danh sách',
-    ok: 'Ổn', issue: 'Có vấn đề', scoreL: 'Điểm · 1 tốt → 9 kém', pickIssue: 'Chọn vấn đề', desc: 'Diễn giải *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
+    ok: 'Ổn', issue: 'Có vấn đề', scoreL: 'Điểm · 1 tốt → 9 kém *', pickIssue: 'Chọn vấn đề', desc: 'Diễn giải *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
     causeTitle: 'Nguyên nhân & giải pháp tạm thời (nhận định chung)', causeSub: 'Nhóm chuyên gia', causeIn: 'Nguyên nhân nghi ngờ · bên trong', causeOut: 'Nguyên nhân nghi ngờ · bên ngoài',
+    nScore: n => `${n} câu chưa chấm điểm`, doneTab: 'Đã đánh giá', reviewH: 'Bài đã chấm · chỉ xem', reviewNote: 'Đã lưu, không sửa được. Cần sửa thì liên hệ anh Thái.', loadingMine: 'Đang tải bài đã chấm…', noAns: 'Chưa có câu trả lời cho mẫu này.', noDone: 'Bạn chưa đánh giá mẫu nào ở tab này.', yourPhotos: 'Ảnh minh chứng',
     scoreNote: 'Điểm không quan trọng do số lượng người chấm không nhiều, Nhận xét mới có giá trị.', qWord: 'câu', photoT: 'Ảnh minh chứng', photoBtn: 'Chụp ảnh minh chứng', photoMax: 'Tối đa 3 ảnh',
     noQ: m => `Chưa có câu hỏi đánh giá cho ${m}. Chờ RD / MKT / FQS setup xong.`, qHint: 'Từ ngoài vào trong: nhìn bao bì, in ấn trước rồi mới mở gói xem ngoại quan, cấu trúc, hương vị.',
     qFor: (d, gs) => `${d} chấm câu hỏi: ${gs.join(' · ')}`, month: 'Tháng',
@@ -211,9 +224,11 @@ const I18N = {
   },
   ko: {
     step: 'MQM ORION VINA · 샘플 평가', title: '샘플 평가', naH: n => `샘플 없음 · SKU ${n}개 (평가 불가)`, na: '없음', low: (a, b) => `부족 ${a}/${b}봉`, subLogin: '이름, 부서를 입력하고 담당 브랜드를 선택하세요.', subList: '평가할 샘플을 선택하세요. 각자 독립적으로 평가합니다.',
+    subType: '평가 유형 선택', typeSen: '외관 · 식감 · 맛', typePkg: '포장 · 인쇄', chgType: '유형 변경',
     subScore: '부서 전문성으로 문제를 서술해 주세요. 점수는 참고용입니다.', back: '← 목록',
     ok: '이상 없음', issue: '문제 있음', scoreL: '점수 · 1 양호 → 9 불량', pickIssue: '문제 선택', desc: '설명 *', descPh: '예: 봉지 납작, 모서리 눅눅, 이전 로트보다 맛이 약함…', refScore: '참고 점수 (선택) · 1 양호 → 9 불량',
     causeTitle: '원인 및 임시 대책', causeSub: '소속 부서 전문성 기준', causeIn: '추정 원인 · 내부', causeOut: '추정 원인 · 외부',
+    nScore: n => `점수 미입력 ${n}개`, doneTab: '평가 완료', reviewH: '평가 내용 · 보기 전용', reviewNote: '저장됨, 수정 불가.', loadingMine: '불러오는 중…', noAns: '답변 없음.', noDone: '이 탭에서 평가한 샘플이 없습니다.', yourPhotos: '증빙 사진',
     scoreNote: '평가자 수가 많지 않아 점수보다 의견이 중요합니다.', qWord: '문항', photoT: '증빙 사진', photoBtn: '증빙 사진 촬영', photoMax: '최대 3장',
     noQ: m => `${m} 평가 질문이 아직 없습니다. RD / MKT / FQS setup을 기다려 주세요.`, qHint: '바깥에서 안으로: 포장 · 인쇄를 먼저 보고, 개봉 후 외관 · 식감 · 맛.',
     qFor: (d, gs) => `${d} 평가 질문: ${gs.join(' · ')}`, month: '월',
@@ -282,8 +297,8 @@ function hero() {
   const top = `<div class="top"><div class="brand">${BRAND_SVG}${T('step')}</div><div class="right">
     <div class="lang"><button data-lang="vi" class="${lang === 'vi' ? 'on' : ''}">VI</button><button data-lang="ko" class="${lang === 'ko' ? 'on' : ''}">한국어</button></div>
     </div></div>`;
-  if (!me) return top + `<h1>${T('title')}</h1><p>${T('subLogin')}</p>`;
-  if (view === 'score' && cur) return top + `<h1 style="font-size:20px"><button class="back" id="back">${T('back')}</button></h1><p>${T('subScore')}</p>`;
+  if (!me) return top + `<h1>${T('title')}</h1><p>${etype ? T('subLogin') : T('subType')}</p>`;
+  if ((view === 'score' || view === 'review') && cur) return top + `<h1 style="font-size:20px"><button class="back" id="back">${T('back')}</button></h1><p>${T('subScore')}</p>`;
   if (view === 'brands') return top + `<h1>${T('brandsTitle')}</h1><p>${T('subBrands')}</p>`;
   return top + `<h1>${T('title')}</h1><p>${T('subList')}</p>`;
 }
@@ -298,10 +313,14 @@ function brandPicker() {
     ${groups.map(([o, bs]) => `<div class="bhead"><b>${o === 'ORION' ? 'ORION' : T('competitor')}</b><button class="linkbtn" data-group="${esc(o)}">${T('pickGroup')}</button></div>
       <div class="chips">${bs.map(([b, c]) => `<button class="chip ${covers(draft.brands, b) ? 'on' : ''}" data-brand="${esc(b)}">${esc(b)}<span class="cnt">${c}</span></button>`).join('')}</div>`).join('')}`;
 }
+function viewType() {
+  return `<div class="typegrid">${['sen', 'pkg'].map(t => `<button class="typebtn" data-etype="${t}"><span>${t === 'sen' ? '👅' : '📦'}</span><b>${esc(TABS[t][lang] || TABS[t].vi)}</b><small>${t === 'sen' ? T('typeSen') : T('typePkg')}</small></button>`).join('')}</div>`;
+}
 function viewLogin() {
-  return `<div class="card">
+  if (!etype) return viewType();
+  return `<div class="typepill"><span>${esc(TABS[etype][lang] || TABS[etype].vi)}</span><button class="linkbtn" id="chgType">${T('chgType')}</button></div><div class="card">
     <div class="field"><span class="label">${T('name')} <span class="req">*</span></span><input id="name" autocomplete="name" value="${esc(draft.name)}" placeholder="${esc(T('namePh'))}"></div>
-    <div class="field"><span class="label">${T('dept')} <span class="req">*</span></span><div class="chips" id="dept">${DEPTS.map(x => `<button class="chip ${draft.dept === x ? 'on' : ''}" data-v="${x}">${x}</button>`).join('')}</div></div>
+    <div class="field"><span class="label">${T('dept')} <span class="req">*</span></span><div class="chips" id="dept">${deptsFor(etype).map(x => `<button class="chip ${draft.dept === x ? 'on' : ''}" data-v="${x}">${x}</button>`).join('')}</div></div>
     <div class="field"><span class="label">${T('brands')} <span class="req">*</span></span>${brandPicker()}</div>
     <button class="btn full" id="go">${T('go')}</button></div>`;
 }
@@ -314,7 +333,7 @@ function viewList() {
   const pool = samples.filter(s => covers(myBrands(), s.brand)).reverse();
   let xs = pool;
   const todo = pool.filter(s => !mine(s.id)).length;
-  if (filt.show === 'todo') xs = xs.filter(s => !mine(s.id));
+  if (filt.show === 'todo') xs = xs.filter(s => !mine(s.id)); else xs = xs.filter(s => mine(s.id));
   if (filt.q) { const q = filt.q.toLowerCase(); xs = xs.filter(s => `${s.id} ${s.brand} ${s.flavor} ${s.sku}`.toLowerCase().includes(q)); }
   const nb = me.brands === 'all' ? T('allBrands') : T('nBrands')(me.brands.length);
   // Câu hỏi của chu kỳ: xem trước ngay ở danh sách (kể cả khi chưa có mẫu); chấm khi mở từng mẫu
@@ -323,13 +342,13 @@ function viewList() {
   const gs = TABS[curTab()].groups, ts = tabsFor(me.dept);
   return `<div class="etabs">${ts.map(t => `<button class="${t === curTab() ? 'on' : ''}" data-etab="${t}">${esc(TABS[t][lang] || TABS[t].vi)}</button>`).join('')}</div>
     <div class="stat" style="margin-bottom:12px">${PC.monthSelect(months, cycle)}<span>${esc(T('qFor')(me.dept, gs))}</span></div>${cq.length ? '' : `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`}
-    <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'all' ? 'on' : ''}" data-show="all">${T('all')}</button></div>
+    <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'done' ? 'on' : ''}" data-show="done">${T('doneTab')} · ${pool.length - todo}</button></div>
     <div class="stat"><span>${T('left')(todo, pool.length, esc(nb))}</span><button class="linkbtn" id="editBrands">${T('changeBrands')}</button></div>
     ${xs.length ? xs.map(s => { const n = doneBy(s.id).length, m = mine(s.id);
       return `<button class="sample ${m ? 'done' : ''}" data-id="${esc(s.id)}"><div class="th" style="${s.thumb ? `background-image:url(${s.thumb})` : ''}">${s.thumb ? '' : T('noPhoto')}</div>
         <div><span class="id">${esc(s.id)}</span> ${originTag(s)}<b>${esc(s.brand)} · ${esc(s.flavor)}</b><small>${s.sku ? esc(s.sku) + ' · ' : ''}${T('mfdShort')} ${dmy(s.mfd)} · ${esc(L('market', s.market))}</small></div>
         <div class="st">${m ? `<span class="tag ok">${T('scored')}</span>` : ''}${lowTag(s)}<div>${T('people')(n)}</div></div></button>`; }).join('')
-    : `<div class="card empty">${!pool.length ? (samples.length ? T('noMine') : T('noneYet')) : T('allDone')}</div>`}${missingList()}`;
+    : `<div class="card empty">${!pool.length ? (samples.length ? T('noMine') : T('noneYet')) : filt.show === 'done' ? T('noDone') : T('allDone')}</div>`}`;
 }
 // SKU trong danh sách final, thuộc brand mình phụ trách
 const planOf = s => plan && plan.final.samples.find(x => x.brand === s.brand && x.flavor === s.flavor && String(x.sku).toLowerCase() === String(s.sku || '').toLowerCase());
@@ -345,6 +364,7 @@ const anyIssue = () => cq.some(q => ev.xq[q.id].st === 'issue');
 function missing() {
   const m = [], unset = cq.filter(q => !ev.xq[q.id].st).length;
   if (unset) m.push(T('nCq')(unset));
+  const noSc = cq.filter(q => ev.xq[q.id].st && !ev.xq[q.id].score).length; if (noSc) m.push(T('nScore')(noSc));
   if (cq.some(q => ev.xq[q.id].st === 'issue' && !ev.xq[q.id].d.trim() && !ev.xq[q.id].tags.length)) m.push(T('nDesc'));
   if (anyIssue() && isExpert()) {
     if (!ev.causeIn.length && !ev.causeOut.length) m.push(T('nCause'));
@@ -390,8 +410,8 @@ function bar() {
 }
 function render() {
   $('#hero').innerHTML = hero();
-  const wb = me && view !== 'score' ? `<div class="whobox"><div><small>${T('name')}</small><b>${esc(me.name)}</b><small>${esc(me.dept)} · ${me.brands === 'all' ? T('allBrands') : esc(T('nBrands')(me.brands.length))}</small></div><button class="logout" id="logout">${T('logout')}</button></div>` : '';
-  $('#app').innerHTML = !me ? viewLogin() : wb + (view === 'score' ? viewScore() : view === 'brands' ? viewBrands() : viewList());
+  const wb = me && view !== 'score' && view !== 'review' ? `<div class="whobox"><div><small>${T('name')}</small><b>${esc(me.name)}</b><small>${esc(me.dept)} · ${me.brands === 'all' ? T('allBrands') : esc(T('nBrands')(me.brands.length))}</small></div><button class="logout" id="logout">${T('logout')}</button></div>` : '';
+  $('#app').innerHTML = !me ? viewLogin() : wb + (view === 'score' ? viewScore() : view === 'review' ? viewReview() : view === 'brands' ? viewBrands() : viewList());
   bar(); bind();
 }
 function bindPicker() {
@@ -417,10 +437,13 @@ function bind() {
   // Đổi người phải Đăng xuất (bấm 2 lần); đăng xuất xong nhập lại từ đầu, không điền sẵn (anh Thái 09/11)
   const lo = $('#logout'); if (lo) lo.onclick = () => {
     if (!lo.classList.contains('arm')) { lo.classList.add('arm'); lo.textContent = T('logoutArm'); clearTimeout(lo._t); lo._t = setTimeout(() => { const b = $('#logout'); if (b) { b.classList.remove('arm'); b.textContent = T('logout'); } }, 3500); return; }
-    draft = { name: '', dept: '', brands: [] }; view = 'list'; cur = null; ev = null; setMe(null); render(); scrollTo(0, 0); toast(T('loggedOut'));
+    draft = { name: '', dept: '', brands: [] }; view = 'list'; cur = null; ev = null; setType(''); setMe(null); render(); scrollTo(0, 0); toast(T('loggedOut'));
   };
   const back = $('#back'); if (back) back.onclick = () => { view = 'list'; render(); scrollTo(0, 0); };
   if (!me) {
+    document.querySelectorAll('[data-etype]').forEach(b => b.onclick = () => { setType(b.dataset.etype); if (draft.dept && !deptsFor(etype).includes(draft.dept)) draft.dept = ''; render(); scrollTo(0, 0); });
+    const ct = $('#chgType'); if (ct) ct.onclick = () => { setType(''); render(); };
+    if (!etype) return;
     const name = $('#name'); name.oninput = () => { draft.name = name.value; };
     document.querySelectorAll('#dept button').forEach(b => b.onclick = () => { draft.dept = b.dataset.v; render(); });
     bindPicker();
@@ -428,6 +451,7 @@ function bind() {
       const nm = draft.name.trim();
       if (!nm || !draft.dept) return toast(T('needName'));
       if (draft.brands !== 'all' && !draft.brands.length) return toast(T('needBrand'));
+      etab = etype; try { localStorage.setItem('mqm-pc-eval-tab', etab); } catch (e) {}
       setMe({ name: nm, dept: draft.dept, brands: draft.brands }); view = 'list'; render();
     };
     return;
@@ -445,7 +469,7 @@ function bind() {
     const q = $('#q'); if (q) q.oninput = () => { filt.q = q.value; const p = q.selectionStart; render(); const n = $('#q'); n.focus(); n.setSelectionRange(p, p); };
     document.querySelectorAll('[data-show]').forEach(b => b.onclick = () => { filt.show = b.dataset.show; render(); });
     document.querySelectorAll('[data-etab]').forEach(b => b.onclick = () => { etab = b.dataset.etab; try { localStorage.setItem('mqm-pc-eval-tab', etab); } catch (e) {} cq = cqFor(); render(); });
-    document.querySelectorAll('.sample').forEach(b => b.onclick = () => open(b.dataset.id));
+    document.querySelectorAll('.sample').forEach(b => b.onclick = () => mine(b.dataset.id) ? openReview(b.dataset.id) : open(b.dataset.id));
     const eb = $('#editBrands'); if (eb) eb.onclick = () => { draft.brands = me.brands; view = 'brands'; render(); scrollTo(0, 0); };
     return;
   }
@@ -469,6 +493,30 @@ function bind() {
   const sh = $('#shot'); if (sh) sh.onclick = () => $('#cam').click();
   document.querySelectorAll('[data-delph]').forEach(b => b.onclick = () => { ev.photos.splice(+b.dataset.delph, 1); keep(); });
 }
+// 11/11: xem lại bài đã chấm (chỉ xem, không sửa)
+let myEv = null, myEvCyc = '';
+async function openReview(id) {
+  cur = samples.find(s => s.id === id); if (!cur) return;
+  view = 'review'; render(); scrollTo(0, 0);
+  if (!myEv || myEvCyc !== cycle) { try { const r = await api.get(`myEvals&cycle=${encodeURIComponent(cycle)}&name=${encodeURIComponent(me.name)}`); if (!r.ok) throw new Error(r.error); myEv = r.items; myEvCyc = cycle; } catch (e) { toast(e.message); myEv = []; } }
+  if (view === 'review') render();
+}
+function viewReview() {
+  const s = cur, head = `<div class="card head"><div class="th" style="${s.thumb ? `background-image:url(${s.thumb})` : ''}"></div><div><span class="id">${esc(s.id)}</span> ${originTag(s)}<b>${esc(s.brand)} · ${esc(s.flavor)}</b>
+      <small>${s.sku ? esc(s.sku) + ' · ' : ''}${T('mfdShort')} ${dmy(s.mfd)} · ${T('buyShort')} ${dmy(s.buyDate)}</small></div></div>`;
+  if (!myEv || myEvCyc !== cycle) return head + `<div class="card empty">${T('loadingMine')}</div>`;
+  const e = myEv.find(x => x.sampleId === s.id);
+  if (!e || !e.answers.length) return head + `<div class="card empty">${T('noAns')}</div>`;
+  const ans = e.answers.slice().sort((a, b) => G.indexOf(a.g) - G.indexOf(b.g));
+  return head + `<div class="card note">🔒 ${T('reviewNote')} · ${esc(new Date(e.at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }))}</div>
+    <div class="card qbox"><div class="stat" style="margin:0 0 4px"><b style="font-size:15px">${T('reviewH')}</b></div>
+    ${G.filter(g => ans.some(a => a.g === g)).map(g => `<div class="qg">${esc(gName(g))}</div>` + ans.filter(a => a.g === g).map((a, i) => { const bad = a.result === 'Có vấn đề';
+      return `<div class="qrow ${bad ? 'bad' : 'fine'}"><div class="qt"><div>${esc(a.q)}</div><span>${a.score !== '' && a.score != null ? 'Điểm ' + esc(a.score) : ''}</span></div>
+        <div class="yn"><button class="is ${bad ? 'on' : ''}" disabled>! ${T('issue')}</button><button class="ok ${bad ? '' : 'on'}" disabled>✓ ${T('ok')}</button></div>
+        ${bad && (a.tags.length || a.note) ? `<p class="cq-c" style="margin:8px 0 0">${a.tags.map(t => `<span class="tag">${esc(L('tags', t))}</span>`).join(' ')} ${esc(a.note)}</p>` : ''}</div>`; }).join('')).join('')}</div>
+    ${e.solution || e.causeIn.length || e.causeOut.length ? `<div class="card attr cause"><h3>${T('causeTitle')}</h3><p class="cq-c">${esc(e.causeIn.concat(e.causeOut).map(c => L('cause', c)).join(', '))}</p><p style="margin:6px 0">${esc(e.solution)}</p><p class="cq-c">${T('owners')} ${esc(e.owners.join(', '))}</p></div>` : ''}
+    ${e.photos.length ? `<div class="card"><h3 style="margin:0 0 10px;font-size:15px">${T('yourPhotos')}</h3><div class="ph3">${e.photos.map(p => `<a href="https://drive.google.com/file/d/${encodeURIComponent(p.id)}/view" target="_blank" rel="noopener" style="display:block;aspect-ratio:1;border-radius:14px;background:#eee url(${p.t}) center/cover"></a>`).join('')}</div></div>` : ''}`;
+}
 function open(id) {
   cur = samples.find(s => s.id === id); if (!cur) return;
   ev = { sampleId: id, causeIn: [], causeOut: [], solution: '', owners: [], photos: [], xq: Object.fromEntries(cq.map(q => [q.id, { st: '', d: '', score: null, tags: [] }])) };
@@ -484,22 +532,26 @@ async function save() {
     const r = await api.post('saveEval', data);
     if (!r.ok) throw new Error(r.error || '?');
     evals = evals.filter(e => !(e.sampleId === ev.sampleId && String(e.name).toLowerCase() === me.name.toLowerCase()));
-    evals.push({ sampleId: ev.sampleId, name: me.name, at: r.at });
+    evals.push({ sampleId: ev.sampleId, name: me.name, at: r.at, gs: [...new Set(cq.map(q => q.g))] }); myEv = null;
     toast(T('saved')(ev.sampleId));
     view = 'list'; render(); scrollTo(0, 0);
   } catch (err) { toast(T('saveErr') + err.message); b.disabled = false; b.textContent = T('save'); }
 }
 // Tải dữ liệu của tháng đang xem (mặc định tháng đang chạy)
 async function loadAll() {
-  loaded = false; loadErr = ''; render();
+  loadErr = '';
+  const q = cycle ? '&cycle=' + cycle : '', c0 = PC.peek('samples' + q);
+  if (c0 && c0.ok) { months = c0.months || []; current = c0.current || c0.cycle; cycle = c0.cycle; samples = c0.samples; evals = c0.evals;
+    const cq0 = PC.peek('questions' + q), pl0 = PC.peek('plan' + q); cqAll = cq0 && cq0.ok ? cq0.questions : []; cq = cqFor(); plan = pl0 && pl0.ok ? pl0 : null; loaded = true; }
+  else loaded = false;
+  if (view !== 'score') render();
   try {
-    const q = cycle ? '&cycle=' + cycle : '';
     const [r, qr, pl] = await Promise.all([api.get('samples' + q), api.get('questions' + q).catch(() => ({})), api.get('plan' + q).catch(() => ({}))]);
     if (!r.ok) throw new Error(r.error);
     months = r.months || []; current = r.current || r.cycle; cycle = r.cycle;
     samples = r.samples; evals = r.evals; cqAll = qr.ok ? qr.questions : []; cq = cqFor(); plan = pl.ok ? pl : null; loaded = true;
-  } catch (err) { loadErr = err.message; }
-  render();
+  } catch (err) { if (!loaded) loadErr = err.message; }
+  if (view !== 'score') { const y = scrollY; render(); scrollTo(0, y); }
 }
 const shrinkImg = (src, max, q) => new Promise(res => { const im = new Image(); im.onload = () => { const k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
   c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q)); }; im.onerror = () => res(''); im.src = src; });

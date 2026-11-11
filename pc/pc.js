@@ -4,7 +4,9 @@ const PC_API = 'https://script.google.com/macros/s/AKfycby7R2fwonLjguL1Vh6RyipQ4
 // Logo ORION (vẽ lại bằng SVG, giữ cùng nội dung với orion.svg)
 const PC_LOGO = '<svg viewBox="0 0 150 100" aria-label="ORION"><circle cx="60" cy="54" r="44" fill="#e8222a"/><g fill="#fff"><polygon points="19.4,79.5 21.4,83.7 26.0,83.5 22.7,86.6 24.3,90.9 20.2,88.7 16.7,91.6 17.5,87.1 13.7,84.5 18.2,83.9"/><polygon points="36.0,82.0 37.5,86.0 41.7,86.1 38.4,88.8 39.5,92.9 36.0,90.5 32.5,92.9 33.6,88.8 30.3,86.1 34.5,86.0"/><polygon points="7.3,56.5 10.9,60.8 16.3,59.1 13.4,63.9 16.6,68.5 11.1,67.2 7.8,71.7 7.4,66.1 2.0,64.3 7.2,62.1"/><polygon points="17.4,30.3 21.5,36.1 28.4,34.6 24.2,40.2 27.8,46.3 21.1,44.1 16.4,49.3 16.5,42.3 10.0,39.5 16.7,37.4"/><polygon points="38.3,12.1 42.4,19.5 50.8,18.7 45.0,24.9 48.3,32.6 40.7,29.0 34.4,34.6 35.5,26.2 28.2,21.9 36.5,20.4"/><polygon points="65.5,1.0 69.3,10.1 79.2,10.2 71.7,16.6 74.6,26.0 66.2,20.9 58.2,26.6 60.5,17.0 52.5,11.1 62.4,10.4"/></g><polygon fill="#e8222a" points="126.0,6.0 130.9,19.2 145.0,19.8 134.0,28.6 137.8,42.2 126.0,34.4 114.2,42.2 118.0,28.6 107.0,19.8 121.1,19.2"/></svg>';
 const PC = {
-  get(q) { return fetch(`${PC_API}?api=${q}`, { credentials: 'omit' }).then(r => r.json()); },
+  // 11/11: lưu bản mới nhất của các API mở (không token) trên máy → trang hiện ngay lần sau (PC.peek), rồi cập nhật ngầm
+  get(q) { return fetch(`${PC_API}?api=${q}`, { credentials: 'omit' }).then(r => r.json()).then(d => { if (d && d.ok && !/[?&]t=/.test('&' + q)) { try { localStorage.setItem('pcc:' + q, JSON.stringify(d)); } catch (e) { try { Object.keys(localStorage).filter(k => k.startsWith('pcc:')).forEach(k => localStorage.removeItem(k)); } catch (x) {} } } return d; }); },
+  peek(q) { try { return JSON.parse(localStorage.getItem('pcc:' + q) || 'null'); } catch (e) { return null; } },
   post(api, data) {
     return fetch(PC_API, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ api, t: PC.token(), data }) }).then(r => r.json());
