@@ -66,6 +66,22 @@ textarea:focus, input.in:focus { outline: none; border-color: #0074e8; box-shado
 .modal .box { background: #fff; border-radius: 26px; padding: 22px; width: 100%; max-width: 640px; max-height: 88vh; overflow: auto; }
 .modal h3 { margin: 0 0 6px; font-size: 20px; } .modal table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; } .modal td, .modal th { text-align: left; padding: 7px 6px; border-bottom: 1px solid #eee; } .modal .miss { color: var(--red); }
 @media (max-width: 860px) { .grid2, .f2 { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* 11/11: Danh sách cải thiện dạng bảng dòng */
+.tw2 { overflow-x: auto; }
+table.rows { width: 100%; border-collapse: collapse; }
+table.rows th { text-align: left; font-size: 13px; font-weight: 700; color: #6b6b6b; padding: 10px 12px; border-bottom: 1.5px solid #ececec; white-space: nowrap; }
+table.rows td { padding: 16px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+table.rows tr:hover td { background: #fcfcfc; }
+.c-day { width: 108px; } .c-day b { display: block; font-size: 15px; } .c-day small { color: #8a8a8a; font-size: 12.5px; }
+.c-dep { width: 110px; } .dtag { display: inline-block; background: #eef4ff; color: #1f4fa3; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.c-txt b { font-size: 15.5px; display: block; margin-bottom: 4px; } .c-txt p { margin: 2px 0; color: #6b6b6b; font-size: 14px; line-height: 1.5; } .c-txt .cs i { font-style: normal; color: #111; font-weight: 600; }
+.ph.sm { margin-top: 6px; } .ph.sm a { width: 48px; height: 48px; border-radius: 10px; }
+.c-own { width: 230px; } .owners.sm { gap: 4px; } .owners.sm button { padding: 3px 9px; font-size: 12px; }
+.c-act { width: 150px; } .c-act .btn { white-space: nowrap; } .c-act .btn { display: block; width: 100%; padding: 9px 10px; font-size: 13.5px; margin-bottom: 6px; } .c-act .btn.okc { background: #111 !important; }
+.btn.gray { background: #efefef !important; color: #111 !important; }
+.rjbox { margin-top: 18px; } .rjbox summary { cursor: pointer; font-weight: 700; color: #6b6b6b; padding: 6px 0; } tr.rj td { opacity: .65; }
+@media (max-width: 900px) { table.rows thead { display: none; } table.rows tr { display: grid; grid-template-columns: 1fr auto; } table.rows td { border: 0; padding: 6px 4px; } .c-txt, .c-own { grid-column: 1 / -1; width: auto; } table.rows tr { border-bottom: 1px solid #eee; padding: 8px 0; } }
 </style>
 </head>
 <body>
@@ -124,13 +140,21 @@ function issueBody(x) {
     <div><span class="lb">ẢNH MINH HOẠ</span>${photos(x.photos)}</div></div>`;
 }
 function listTab() {
-  const xs = I.candidates;
-  if (!xs.length) return `<div class="empty">Chưa có vấn đề nào chờ xác nhận ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`;
-  return `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề. Sửa bộ phận nên xử lý (bấm để thêm / bỏ) rồi bấm <b>Xác nhận bởi FQS</b> để chuyển sang "Đã xác nhận".</span></div>` +
-    xs.map(x => { const ow = ownEdit[x.iid] || x.owners;
-      return `<div class="item">${issueHead(x)}${issueBody(x)}
-        <span class="lb">BỘ PHẬN NÊN XỬ LÝ</span><div class="owners" data-own="${esc(x.iid)}">${I.owners.map(o => `<button class="${ow.includes(o) ? 'on' : ''}" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>
-        <div class="row"><small>Chấm lúc ${esc(fmtAt(x.at))}</small><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>✓ Xác nhận bởi FQS</button></div></div>`; }).join('');
+  const xs = I.candidates, rj = I.rejected || [];
+  const sumG = x => [...new Set((x.what || []).map(w => w.g))].join(', ');
+  const desc = x => (x.what || []).map(w => `${w.q}${w.tags.length ? ': ' + w.tags.join(', ') : ''}${w.note ? ' (' + w.note + ')' : ''}`).join(' · ');
+  const row = x => { const ow = ownEdit[x.iid] || x.owners;
+    return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b><small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+      <td class="c-txt"><b>${esc(x.sku || x.sampleId)} — ${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
+        <p>${esc(desc(x))}</p>${(x.cause || []).length || x.solution ? `<p class="cs">${(x.cause || []).length ? `<i>Nguyên nhân:</i> ${esc(x.cause.join(', '))}` : ''}${x.solution ? ` · <i>Giải pháp tạm thời:</i> ${esc(x.solution)}` : ''}</p>` : ''}
+        ${(x.photos || []).length ? `<div class="ph sm">${x.photos.map(p => `<a href="${driveUrl(p.id)}" target="_blank" rel="noopener" style="${p.t ? `background-image:url(${p.t})` : ''}"></a>`).join('')}</div>` : ''}</td>
+      <td class="c-own"><div class="owners sm" data-own="${esc(x.iid)}">${I.owners.map(o => `<button class="${ow.includes(o) ? 'on' : ''}" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div></td>
+      <td class="c-act"><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.iid)}">Không đồng ý</button></td></tr>`; };
+  return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề chờ FQS duyệt. <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
+    <div class="tw2"><table class="rows"><thead><tr><th>Mẫu</th><th>Bộ phận đánh giá</th><th>Nội dung</th><th>Bộ phận xử lý</th><th></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
+    : `<div class="empty">Không còn vấn đề nào chờ duyệt ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`)
+    + (rj.length ? `<details class="rjbox"><summary>Không đồng ý · ${rj.length}</summary><table class="rows"><tbody>${rj.map(x => `<tr class="rj"><td class="c-day"><b>${esc(x.sampleId)}</b><small>${esc(x.by)}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+      <td class="c-txt"><b>${esc(x.sku || x.sampleId)} — ${(x.what || []).length} vấn đề</b><p>${esc(desc(x))}</p></td><td class="c-act"><button class="btn gray" data-unc="${esc(x.iid)}">Khôi phục</button></td></tr>`).join('')}</tbody></table></details>` : '');
 }
 // ---------- Sub-tab 2: Đã xác nhận ----------
 function confTab() {
@@ -226,11 +250,14 @@ function bind() {
     i >= 0 ? cur.splice(i, 1) : cur.push(b.dataset.o); ownEdit[iid] = cur; keep(); }));
   document.querySelectorAll('[data-conf]').forEach(b => b.onclick = async () => {
     const iid = b.dataset.conf, x = I.candidates.find(c => c.iid === iid); b.disabled = true; b.textContent = 'Đang xác nhận…';
-    try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid, owners: ownEdit[iid] || x.owners }); if (!r.ok) throw new Error(r.error); I = r; delete ownEdit[iid]; toast('Đã xác nhận · chuyển sang "Đã xác nhận"'); keep(); }
-    catch (e) { toast('Chưa xác nhận được: ' + e.message); b.disabled = false; b.textContent = '✓ Xác nhận bởi FQS'; } });
+    try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid, owners: ownEdit[iid] || x.owners }); if (!r.ok) throw new Error(r.error); I = r; delete ownEdit[iid]; toast('Đã đồng ý · chuyển sang "Đã xác nhận"'); keep(); }
+    catch (e) { toast('Chưa xác nhận được: ' + e.message); b.disabled = false; b.textContent = 'Đồng ý'; } });
+  document.querySelectorAll('[data-rej]').forEach(b => b.onclick = async () => { b.disabled = true; b.textContent = 'Đang lưu…';
+    try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid: b.dataset.rej, reject: true }); if (!r.ok) throw new Error(r.error); I = r; toast('Đã ghi Không đồng ý'); keep(); }
+    catch (e) { toast('Chưa lưu được: ' + e.message); b.disabled = false; b.textContent = 'Không đồng ý'; } });
   // sub-tab 2
   document.querySelectorAll('[data-unc]').forEach(b => b.onclick = async () => { b.disabled = true;
-    try { const r = await PC.post('issueUnconfirm', { cycle: I.cycle, iid: b.dataset.unc }); if (!r.ok) throw new Error(r.error); I = r; toast('Đã đưa về Danh sách cải thiện'); keep(); }
+    try { const r = await PC.post('issueUnconfirm', { cycle: I.cycle, iid: b.dataset.unc }); if (!r.ok) throw new Error(r.error); I = r; toast('Đã đưa về danh sách chờ duyệt'); keep(); }
     catch (e) { toast('Chưa đưa về được: ' + e.message); b.disabled = false; } });
   const ml = $('#mail'); if (ml) ml.onclick = mailFlow;
   const xl = $('#xls'); if (xl) xl.onclick = confXls;
