@@ -143,6 +143,12 @@ table.st td.all { width: 70px; text-align: right; }
 .vhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .okline { display: inline-flex; gap: 8px; align-items: center; font-weight: 700; }
 .okline i { width: 22px; height: 22px; border-radius: 50%; background: #111; color: #fff; display: grid; place-items: center; font-style: normal; font-size: 13px; }
+
+.pcomp { margin-top: 16px; border-top: 1.5px solid #ececec; padding-top: 14px; }
+.cpadd { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.cpadd select { flex: 2 1 260px; min-height: 42px !important; font: inherit; font-size: 14px; padding: 6px 10px; }
+.cpadd input { flex: 1 1 120px; min-height: 42px !important; font-size: 14px !important; padding: 6px 12px !important; } .cpadd #cpQty { flex: 0 0 80px; text-align: center; font-weight: 800; }
+.cpx { border: 0; background: #efefef; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; } .cpx:hover { background: #fde8e6; color: #c8102e; }
 </style>
 </head>
 <body>
@@ -157,7 +163,7 @@ table.st td.all { width: 70px; text-align: right; }
 <div class="done" id="review"><div class="sheet rv"><h3 id="rvHead"></h3><p id="rvTxt"></p><div id="rvBody"></div>
   <div class="rvbtn"><button class="btn ghost" id="rvBack"></button><button class="btn" id="rvOk"></button></div></div></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js?v=20261111d"></script>
+<script src="pc.js?v=20261111e"></script>
 <script>
 // MQM ORION VINA · Setup theo tháng (anh Thái 05/11/2026): chọn tháng → bảng câu hỏi theo nhóm (không còn tải file) → mẫu cần mua → ngày sản xuất → Gửi → xem lại → OK.
 // MKT: câu hỏi Bao bì / In ấn · RD: Ngoại quan / Cấu trúc / Hương vị · FQS: đủ 5 nhóm. Gửi rồi vẫn xem và sửa lại được bản của tháng đó (gửi lại = thay bản cũ).
@@ -180,7 +186,7 @@ const I18N = {
     s1Hint: 'Xếp từ ngoài vào trong: nhìn bao bì, in ấn trước rồi mới tới ngoại quan, cấu trúc, hương vị. Viết câu theo hướng "đạt" để người chấm chọn Ổn = đạt.',
     reuse: 'Dùng lại bộ câu hỏi cũ', tpl: 'Dùng bộ câu hỏi mẫu', reuseAsk: 'Thay bảng câu hỏi hiện tại?', reuseOk: (n, c) => `Đang dùng bộ câu hỏi đã lưu ${c} · ${n} câu`, reuseErr: 'Chưa lấy được: ',
     tplOk: 'Đang dùng bộ câu hỏi mẫu, sửa / thêm / bớt tuỳ ý.', addQ: g => `+ Thêm câu hỏi ${g}`, delQ: 'Bỏ câu này', qPh: 'Nhập câu hỏi…', count: n => `${n} câu`,
-    smpHint: 'Bấm size cần mua, rồi nhập số gói cần mua ở mỗi kênh (TT North, TT South, MT North, MT South). Vị khác bấm + Thêm vị.', allFlavor: 'Cả vị', addFl: '+ Thêm vị', pickFl: 'Chọn vị…', qtyT: 'Số gói mỗi kênh', picked: n => `Đã chọn ${n} mẫu`, flavor: 'Vị', size: 'Quy cách (size)',
+    smpHint: 'Bấm size cần mua, rồi nhập số gói cần mua ở mỗi kênh (TT North, TT South, MT North, MT South). Vị khác bấm + Thêm vị.', allFlavor: 'Cả vị', addFl: '+ Thêm vị', pickFl: 'Chọn vị…', qtyT: 'Số gói mỗi kênh', compT: 'Đối thủ', compPick: '(+) Thêm mẫu đối thủ: chọn brand · vị…', compOther: 'Khác (nhập tay)…', compSize: 'Size (VD: 33g, Normal)', compAdd: 'Thêm', compNeed: 'Chọn hoặc nhập brand · vị đối thủ', compNeedSize: 'Nhập size của mẫu đối thủ', picked: n => `Đã chọn ${n} mẫu`, flavor: 'Vị', size: 'Quy cách (size)',
     loadingCat: 'Đang tải danh mục sản phẩm…', catErr: 'Không tải được danh mục: ',
     dateFrom: 'Ngày sản xuất từ:', dateTo: 'Đến ngày:', dateHint: 'Người mua chọn mẫu có NSX trong khoảng này. Các team chọn khác nhau thì app lấy khoảng chung.',
     send: 'Gửi', resend: 'Gửi bản sửa', sending: 'Đang gửi…', cancel: 'Huỷ sửa', need: 'Còn thiếu: ', m_team: 'team', m_rows: 'câu hỏi', m_smp: 'mẫu cần mua', m_date: 'ngày sản xuất', ready: 'Sẵn sàng gửi',
@@ -203,7 +209,7 @@ const I18N = {
     s1Hint: '바깥에서 안으로: 포장 · 인쇄 → 외관 · 식감 · 맛 순서. "적합" 방향으로 작성하세요.',
     reuse: '이전 질문 다시 사용', tpl: '기본 질문 사용', reuseAsk: '현재 질문표를 바꿀까요?', reuseOk: (n, c) => `${c} 저장 질문 사용 중 · ${n}개`, reuseErr: '불러오지 못함: ',
     tplOk: '기본 질문 사용 중, 자유롭게 수정하세요.', addQ: g => `+ ${g} 질문 추가`, delQ: '삭제', qPh: '질문 입력…', count: n => `${n}개`,
-    smpHint: '규격(size)을 누르고 채널별 구매 수량을 입력하세요 (TT North, TT South, MT North, MT South). 다른 맛은 + 맛 추가.', allFlavor: '전체', addFl: '+ 맛 추가', pickFl: '맛 선택…', qtyT: '채널별 수량', picked: n => `${n}개 선택`, flavor: '맛', size: '규격',
+    smpHint: '규격(size)을 누르고 채널별 구매 수량을 입력하세요 (TT North, TT South, MT North, MT South). 다른 맛은 + 맛 추가.', allFlavor: '전체', addFl: '+ 맛 추가', pickFl: '맛 선택…', qtyT: '채널별 수량', compT: '경쟁사', compPick: '(+) 경쟁사 샘플 추가: 브랜드 · 맛 선택…', compOther: '기타 (직접 입력)…', compSize: '규격 (예: 33g, Normal)', compAdd: '추가', compNeed: '경쟁사 브랜드 · 맛을 선택하세요', compNeedSize: '규격을 입력하세요', picked: n => `${n}개 선택`, flavor: '맛', size: '규격',
     loadingCat: '제품 목록 불러오는 중…', catErr: '제품 목록 오류: ',
     dateFrom: '제조일 시작:', dateTo: '종료일:', dateHint: '구매자는 이 범위의 제조일 샘플을 구매합니다. 팀별로 다르면 공통 범위를 사용합니다.',
     send: '전송', resend: '수정본 전송', sending: '전송 중…', cancel: '수정 취소', need: '미입력: ', m_team: '팀', m_rows: '질문', m_smp: '구매 샘플', m_date: '제조일', ready: '전송 준비 완료',
@@ -237,6 +243,7 @@ const fmtAt = s => { const d = new Date(s); return isNaN(d) ? s : d.toLocaleStri
 const ML = c => lang === 'ko' ? String(c).replace(/^(\d{4})-(\d{2})$/, (_, y, m) => `${y}년 ${+m}월`) : PC.monthLabel(c);
 const nextMonth = c => { const [y, m] = c.split('-').map(Number); return m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`; };
 
+let compProducts = [], cp = { pick: '', brand: '', flavor: '', size: '', qty: 2 };   // 11/11: mẫu đối thủ (+)
 let loading = true, me = null, current = '', mine = null, review = null, plan = null, products = null, catErr = '', editing = false, sending = false;
 // st: tháng, team, câu hỏi [{g, q}], mẫu, ngày; bản nháp lưu trên máy theo người + tháng + team
 let st = { cycle: '', team: '', rows: [], samples: [], qty: {}, extra: [], brand: PLAN_BRANDS[0][0], dateFrom: '', dateTo: '', info: '' };
@@ -281,7 +288,18 @@ function sampleCard() {
     return `<div class="pbrand"><h3>${esc(l)}${n ? ` <span class="tg">· ${n}</span>` : ''}</h3><table class="st"><thead><tr><th>${T('flavor')}</th><th>${T('size')} · ${T('qtyT')}</th></tr></thead><tbody>
       ${show.map(p => `<tr><td class="fl">${esc(p.flavor)}</td><td>${skusOf(p).map(z => { const k = sKey(p.brand, p.flavor, z), on = st.samples.includes(k);
         return `<span class="szq ${on ? 'on' : ''}"><button class="sz ${on ? 'on' : ''}" data-k="${esc(k)}">${esc(z)}</button>${on ? `<input type="number" min="1" max="999" inputmode="numeric" data-q="${esc(k)}" value="${esc(st.qty[k] || DEF_QTY)}" aria-label="${esc(T('qtyT'))}">` : ''}</span>`; }).join('')}</td></tr>`).join('')}</tbody></table>
-      ${rest.length ? `<div class="addfl"><select data-addfl="${b}"><option value="">${T('addFl')}</option>${rest.map(p => `<option value="${esc(p.flavor)}">${esc(p.flavor)}</option>`).join('')}</select></div>` : ''}</div>`; }).join('')}</div>`;
+      ${rest.length ? `<div class="addfl"><select data-addfl="${b}"><option value="">${T('addFl')}</option>${rest.map(p => `<option value="${esc(p.flavor)}">${esc(p.flavor)}</option>`).join('')}</select></div>` : ''}</div>`; }).join('')}</div>${compCard()}`;
+}
+// 11/11 (anh Thái): mẫu đối thủ — bấm (+) chọn brand · vị trong danh mục (hoặc nhập tay), nhập size + số gói mỗi kênh
+function compCard() {
+  const comp = st.samples.filter(k => !PLAN_BRANDS.some(([b]) => k.startsWith(b + '|')));
+  const brands = [...new Set(compProducts.map(p => p.brand))].sort((a, b) => a.localeCompare(b));
+  return `<div class="pbrand pcomp"><h3>${T('compT')}${comp.length ? ` <span class="tg">· ${comp.length}</span>` : ''}</h3>
+    ${comp.length ? `<table class="st"><thead><tr><th>${T('flavor')}</th><th>${T('size')}</th><th>${T('qtyT')}</th><th></th></tr></thead><tbody>${comp.map(k => { const [b, f, z] = k.split('|');
+      return `<tr><td class="fl">${esc(b)} · ${esc(f)}</td><td>${esc(z)}</td><td><span class="szq on"><input type="number" min="1" max="999" inputmode="numeric" data-q="${esc(k)}" value="${esc(st.qty[k] || DEF_QTY)}" style="border-radius:999px!important;border-left:1.5px solid #111!important"></span></td><td><button class="cpx" data-delc="${esc(k)}" aria-label="×">×</button></td></tr>`; }).join('')}</tbody></table>` : ''}
+    <div class="cpadd"><select id="cpPick"><option value="">${T('compPick')}</option>${brands.map(b => `<optgroup label="${esc(b)}">${compProducts.filter(p => p.brand === b).map(p => `<option value="${esc(b + '|' + p.flavor)}" ${cp.pick === b + '|' + p.flavor ? 'selected' : ''}>${esc(b)} · ${esc(p.flavor)}</option>`).join('')}</optgroup>`).join('')}<option value="__other" ${cp.pick === '__other' ? 'selected' : ''}>${T('compOther')}</option></select>
+      ${cp.pick === '__other' ? `<input id="cpBrand" placeholder="Brand" value="${esc(cp.brand)}"><input id="cpFlavor" placeholder="${esc(T('flavor'))}" value="${esc(cp.flavor)}">` : ''}
+      <input id="cpSize" placeholder="${esc(T('compSize'))}" value="${esc(cp.size)}"><input id="cpQty" type="number" min="1" max="999" value="${esc(cp.qty)}" title="${esc(T('qtyT'))}"><button class="btn sm" id="cpAdd">+ ${T('compAdd')}</button></div></div>`;
 }
 // Bản đã gửi của tháng: chỉ xem, bấm Sửa để mở lại bảng
 function viewCard() {
@@ -363,6 +381,14 @@ function bind() {
   document.querySelectorAll('#bseg button').forEach(b => b.onclick = () => { st.brand = b.dataset.b; keep(); });
   document.querySelectorAll('.sz[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, i = st.samples.indexOf(k); if (i >= 0) st.samples.splice(i, 1); else { st.samples.push(k); if (!st.qty[k]) st.qty[k] = DEF_QTY; } keep(); });
   document.querySelectorAll('input[data-q]').forEach(el => el.oninput = () => { const v = Math.round(+el.value); if (v > 0) { st.qty[el.dataset.q] = Math.min(999, v); save(); } });
+  const cpk = $('#cpPick'); if (cpk) cpk.onchange = () => { cp.pick = cpk.value; keep(); };
+  [['cpBrand', 'brand'], ['cpFlavor', 'flavor'], ['cpSize', 'size'], ['cpQty', 'qty']].forEach(([id, k]) => { const el = $('#' + id); if (el) el.oninput = () => { cp[k] = el.value; }; });
+  const cpa = $('#cpAdd'); if (cpa) cpa.onclick = () => {
+    const [b0, f0] = cp.pick === '__other' ? [cp.brand.trim(), cp.flavor.trim()] : cp.pick.split('|'), z = String(cp.size || '').trim(), q = Math.max(1, Math.min(999, Math.round(+cp.qty || DEF_QTY)));
+    if (!b0 || !f0) return toast(T('compNeed')); if (!z) return toast(T('compNeedSize'));
+    const k = sKey(b0.replace(/\|/g, '/'), f0.replace(/\|/g, '/'), z.replace(/\|/g, '/'));
+    if (!st.samples.includes(k)) st.samples.push(k); st.qty[k] = q; cp = { pick: '', brand: '', flavor: '', size: '', qty: DEF_QTY }; keep(); };
+  document.querySelectorAll('[data-delc]').forEach(b => b.onclick = () => { st.samples = st.samples.filter(k => k !== b.dataset.delc); keep(); });
   document.querySelectorAll('select[data-addfl]').forEach(el => el.onchange = () => { if (el.value) { st.extra.push(el.dataset.addfl + '|' + el.value); keep(); } });
   document.querySelectorAll('.sz[data-all]').forEach(b => b.onclick = () => { const ks = b.dataset.all.split(';').filter(Boolean), all = ks.every(k => st.samples.includes(k));
     st.samples = all ? st.samples.filter(k => !ks.includes(k)) : [...new Set(st.samples.concat(ks))]; keep(); });
@@ -433,7 +459,7 @@ $('#rvOk').onclick = async () => {
   current = s.current || new Date().toISOString().slice(0, 7);
   st.cycle = current; st.team = me.role === 'ADMIN' || me.role === 'ALL' ? '' : me.role;
   load();
-  PC.get('catalog').then(r => { if (!r.ok) throw new Error(r.error); products = r.products.filter(p => PLAN_BRANDS.some(([b]) => b === p.brand)); render(); })
+  PC.get('catalog').then(r => { if (!r.ok) throw new Error(r.error); products = r.products.filter(p => PLAN_BRANDS.some(([b]) => b === p.brand)); compProducts = r.products.filter(p => p.origin !== 'ORION' && p.brand); render(); })
     .catch(e => { catErr = e.message || String(e); render(); });
 })();
 </script>

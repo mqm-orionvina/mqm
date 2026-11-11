@@ -74,7 +74,7 @@ textarea:focus, input.in:focus { outline: none; border-color: #0074e8; box-shado
   <p id="sub">Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.</p></header>
 <main class="wrap" id="app"><div class="empty">Đang tải…</div></main>
 <div class="toast" id="toast" hidden></div>
-<script src="pc.js?v=20261111d"></script>
+<script src="pc.js?v=20261111e"></script>
 <script>
 // Tab Cải thiện (anh Thái 10/11/2026) · 3 sub-tab:
 // 1 Danh sách cải thiện: mọi lượt chấm có vấn đề (mẫu, vấn đề, bộ phận đánh giá, nguyên nhân, ảnh, bộ phận nên xử lý — sửa được) → FQS bấm Xác nhận
@@ -94,7 +94,7 @@ const LINK = { c: url.get('c') || '', d: url.get('d') || '', k: url.get('k') || 
 const IMP = ['FQS', 'HOST', 'ADMIN', 'ALL'];
 const canImp = () => { const u = PC.user(); return !!u && IMP.includes(u.role); };
 let stab = url.get('tab') === 'prog' || LINK.k ? 'prog' : (() => { try { return sessionStorage.getItem('mqmImpTab') || 'list'; } catch (e) { return 'list'; } })();
-let cycle = LINK.c || PC.month(), I = null, A = null, months = [], keyDept = '', fDept = LINK.d || '', fSt = 'all', busy = false;
+let Ierr = '', cycle = LINK.c || PC.month(), I = null, A = null, months = [], keyDept = '', fDept = LINK.d || '', fSt = 'all', busy = false;
 const ownEdit = {};   // iid → owners đang sửa ở sub-tab 1
 const edits = {};     // aid → form kết quả cải tiến đang sửa
 const today = new Date().toISOString().slice(0, 10);
@@ -210,7 +210,7 @@ function render() {
   let body;
   if (stab === 'prog') body = A ? progTab() : '<div class="empty">Đang tải…</div>';
   else if (!canImp()) body = `<div class="empty">Danh sách cải thiện dành cho FQS / Host / quản lý. Đăng nhập để xem, xác nhận và gửi mail.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
-  else if (!I) body = '<div class="empty">Đang tải…</div>';
+  else if (!I) body = Ierr ? `<div class="empty">Không tải được danh sách: ${esc(Ierr)}<br><br><button class="btn" id="login">Đăng nhập lại</button></div>` : '<div class="empty">Đang tải…</div>';
   else body = stab === 'list' ? listTab() : confTab();
   $('#app').innerHTML = `${showLists ? `<div class="filters">${PC.monthSelect(months, cycle)}</div>` : ''}${tabs}${body}`;
   bind();
@@ -266,7 +266,7 @@ async function load() {
     const [a, i] = await Promise.all([PC.get('actions' + q + kq + tq), canImp() && !kq ? PC.get('issues' + q + tq) : Promise.resolve(null)]);
     if (!a.ok) throw new Error(a.error);
     A = a; cycle = a.cycle; months = a.months || []; keyDept = a.dept || '';
-    I = i && i.ok ? i : null; if (i && !i.ok) toast(i.error);
+    I = i && i.ok ? i : null; Ierr = i && !i.ok ? (i.error || 'lỗi không rõ') : '';
     $('#sub').textContent = keyDept ? `${PC.monthLabel(a.cycle)} · việc cần xử lý của bộ phận ${keyDept}. Cập nhật trạng thái và kết quả cải tiến, kèm evidence.`
       : `${PC.monthLabel(a.cycle)} · Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.`;
     render();
