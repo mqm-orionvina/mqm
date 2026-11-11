@@ -201,7 +201,7 @@ const cqFor = () => { if (!me) return cqAll; const gs = TABS[curTab()].groups;
 // Định tính: mỗi mục ghi "Ổn" hoặc "Có vấn đề" + mô tả; có vấn đề thì ghi nguyên nhân nghi ngờ (trong / ngoài), giải pháp, bộ phận xử lý. Điểm 1–9 chỉ để tham khảo.
 const CAUSE_IN = ['Nguyên liệu', 'Phụ liệu / bao bì', 'Process sản xuất', 'Bảo quản kho nhà máy'];
 const CAUSE_OUT = ['Nhà cung cấp', 'Vận chuyển', 'Kho NPP / đại lý', 'Trưng bày / điểm bán', 'Thị trường / thời tiết', 'Chưa rõ'];
-const OWNERS = ['QA', 'R&D', 'Production', 'PUR', 'SCM', 'Sales', 'MKT', 'Design', 'PI', 'FQS'];
+const OWNERS = ['QA', 'R&D', 'Production', 'Agro', 'PUR', 'SCM', 'Sales', 'MKT', 'Design', 'PI', 'FQS'];
 const I18N = {
   vi: {
     step: 'MQM ORION VINA · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập Họ và Tên, bộ phận và chọn brand mình phụ trách. Đổi người: bấm Đăng xuất.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',

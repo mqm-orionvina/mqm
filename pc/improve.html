@@ -161,6 +161,9 @@ table.iq tr.gh td { font-size: 12px; color: #8a8a8a; text-transform: uppercase; 
 .pill { font-weight: 500; }
 table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.rows th.w2 { width: 120px; } table.rows th.w4 { width: 180px; } table.rows th.w5 { width: 140px; } table.rows th.w6 { width: 130px; } table.rows th.w7 { width: 44px; }
 @media (max-width: 900px) { table.rows { table-layout: auto; } .cs2 { grid-template-columns: 1fr; } table.iq td.q { width: auto; } }
+
+/* 11/11: gom theo mẫu */
+.c-dep .dtag { margin: 0 4px 4px 0; } .nev { display: block; color: #c8102e; font-size: 12px; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -229,33 +232,51 @@ const descH = x => { const ws = x.what || [], multi = new Set(ws.map(w => w.g)).
 const causeH = x => `${(x.cause || []).length || x.solution ? `<div class="cs2">${(x.cause || []).length ? `<div><span>Nguyên nhân nghi ngờ</span><p>${esc(x.cause.join(', '))}</p></div>` : ''}${x.solution ? `<div><span>Giải pháp tạm thời</span><p>${esc(x.solution)}</p></div>` : ''}</div>` : ''}`;
   // 11/11: ảnh hiện ra luôn ngay sau phần vấn đề (ảnh nhỏ có sẵn, không có thì ảnh thu nhỏ từ Drive); bấm để xem to
 const photoH = x => (x.photos || []).length ? `<div class="phrow">${x.photos.map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t || '')}"><img src="${p.t || `https://drive.google.com/thumbnail?id=${encodeURIComponent(p.id)}&sz=w400`}" alt="Ảnh minh chứng" loading="lazy" onerror="this.parentNode.classList.add('noimg')"></a>`).join('')}</div>` : '';
+// 11/11: gom các lượt chấm cùng 1 mẫu (mọi bộ phận đánh giá) thành 1 dòng; nút bấm áp dụng cho tất cả lượt trong nhóm
+const GK = {};
+const uq = a => [...new Set(a.filter(Boolean))];
+function grp(list, byMail) {
+  const m = new Map(), GO = PC.GROUPS || [];
+  list.forEach(x => { const k = x.sampleId + (byMail ? (x.mailedAt ? '|m' : '|n') : ''); if (!m.has(k)) m.set(k, []); m.get(k).push(x); });
+  return [...m].map(([k, xs]) => { const W = new Map();
+    xs.forEach(x => (x.what || []).forEach(w => { const wk = w.g + '|' + w.q; if (!W.has(wk)) W.set(wk, { g: w.g, q: w.q, tags: [], note: '' }); const o = W.get(wk);
+      o.tags = uq(o.tags.concat(w.tags || [])); if (w.note) o.note = uq(o.note.split(' · ').concat(w.note)).join(' · '); }));
+    const froms = uq(xs.map(x => x.from));
+    const g = Object.assign({}, xs[0], { key: k, iids: xs.map(x => x.iid), n: xs.length, froms, from: froms.join(', '),
+      what: [...W.values()].map((w, i) => [w, i]).sort((a, b) => GO.indexOf(a[0].g) - GO.indexOf(b[0].g) || a[1] - b[1]).map(z => z[0]),
+      cause: uq(xs.flatMap(x => x.cause || [])), solution: uq(xs.map(x => x.solution)).join(' · '), owners: uq(xs.flatMap(x => x.owners || [])),
+      photos: xs.flatMap(x => x.photos || []), by: uq(xs.map(x => x.by)).join(', '), at: xs.map(x => x.at).sort()[0], mailedAt: xs.map(x => x.mailedAt).filter(Boolean).sort().pop() || '' });
+    GK[k] = g; return g; });
+}
+const dtags = x => (x.froms || [x.from]).map(d => `<span class="dtag">${esc(d)}</span>`).join('');
+const nEv = x => x.n > 1 ? `<small class="nev">${x.n} lượt chấm</small>` : '';
 function listTab() {
-  const xs = I.candidates, rj = I.rejected || [];
-  const row = x => { const ow = ownEdit[x.iid] || x.owners;
-    return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+  const xs = grp(I.candidates), rj = grp(I.rejected || []);
+  const row = x => { const ow = ownEdit[x.key] || x.owners;
+    return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small>${nEv(x)}</td><td class="c-dep">${dtags(x)}</td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
         ${descH(x)}${photoH(x)}${causeH(x)}</td>
-      <td class="c-own"><div class="ochips" data-own="${esc(x.iid)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
-        ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.iid)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div></td>
-      <td class="c-act"><button class="btn okc" data-conf="${esc(x.iid)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.iid)}">Không đồng ý</button></td></tr>`; };
-  return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} lượt chấm có vấn đề chờ FQS duyệt. <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
+      <td class="c-own"><div class="ochips" data-own="${esc(x.key)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
+        ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.key)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div></td>
+      <td class="c-act"><button class="btn okc" data-conf="${esc(x.key)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.key)}">Không đồng ý</button></td></tr>`; };
+  return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} mẫu có vấn đề chờ FQS duyệt (${I.candidates.length} lượt chấm, cùng mẫu đã gom 1 dòng). <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
     <div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w5"></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
     : `<div class="empty">Không còn vấn đề nào chờ duyệt ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`)
-    + (rj.length ? `<details class="rjbox"><summary>Không đồng ý · ${rj.length}</summary><table class="rows"><tbody>${rj.map(x => `<tr class="rj"><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(x.by)}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
-      <td class="c-txt"><b>${(x.what || []).length} vấn đề</b>${descH(x)}</td><td class="c-act"><button class="btn gray" data-unc="${esc(x.iid)}">Khôi phục</button></td></tr>`).join('')}</tbody></table></details>` : '');
+    + (rj.length ? `<details class="rjbox"><summary>Không đồng ý · ${rj.length}</summary><table class="rows"><tbody>${rj.map(x => `<tr class="rj"><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(x.by)}</small></td><td class="c-dep">${dtags(x)}</td>
+      <td class="c-txt"><b>${(x.what || []).length} vấn đề</b>${descH(x)}</td><td class="c-act"><button class="btn gray" data-unc="${esc(x.key)}">Khôi phục</button></td></tr>`).join('')}</tbody></table></details>` : '');
 }
 // ---------- Sub-tab 2: Đã xác nhận ----------
 function confTab() {
-  const xs = I.confirmed, todo = xs.filter(x => !x.mailedAt).length;
+  const xs = grp(I.confirmed, true), todo = I.confirmed.filter(x => !x.mailedAt).length;
   // 11/11: bảng dòng như Danh sách cải thiện; cuối dòng nút × trả về tab 1 (khi chưa gửi mail)
-  return `<div class="bar1"><span class="sp">${xs.length} vấn đề đã xác nhận · ${todo} chưa gửi mail. Người gửi: <b>${esc(I.sender || '—')}</b> · CC: <b>${esc(I.cc || 'chưa cài (Config improveCc)')}</b></span>
+  return `<div class="bar1"><span class="sp">${I.confirmed.length} lượt đã xác nhận (${xs.length} mẫu) · ${todo} chưa gửi mail. Người gửi: <b>${esc(I.sender || '—')}</b> · CC: <b>${esc(I.cc || 'chưa cài (Config improveCc)')}</b></span>
       <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button><button class="btn" id="mail" ${todo ? '' : 'disabled'}>✉ Gửi email cho các bộ phận</button></div>` +
     (xs.length ? `<div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w6">Trạng thái</th><th class="w7"></th></tr></thead><tbody>${xs.map(x => `<tr>
-      <td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small></td><td class="c-dep"><span class="dtag">${esc(x.from)}</span></td>
+      <td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small>${nEv(x)}</td><td class="c-dep">${dtags(x)}</td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>${descH(x)}${photoH(x)}${causeH(x)}</td>
       <td class="c-own"><div class="ochips">${x.owners.map(o => `<span class="och">${esc(o)}</span>`).join('')}</div></td>
       <td class="c-st">${x.mailedAt ? `<span class="pill sent">✓ Đã gửi mail</span><small>${esc(fmtAt(x.mailedAt))}</small>` : `<span class="pill">Chưa gửi mail</span>`}<small>Xác nhận: ${esc(x.by)}</small></td>
-      <td class="c-x">${x.mailedAt ? '' : `<button class="x" data-unc="${esc(x.iid)}" title="Trả về Danh sách cải thiện" aria-label="Trả về Danh sách cải thiện">×</button>`}</td></tr>`).join('')}</tbody></table></div>`
+      <td class="c-x">${x.mailedAt ? '' : `<button class="x" data-unc="${esc(x.key)}" title="Trả về Danh sách cải thiện" aria-label="Trả về Danh sách cải thiện">×</button>`}</td></tr>`).join('')}</tbody></table></div>`
       : `<div class="empty">Chưa có vấn đề nào được xác nhận. Bấm "Đồng ý" ở "Danh sách cải thiện".</div>`);
 }
 async function mailFlow() {
@@ -331,8 +352,8 @@ function progTab() {
 function render() {
   const showLists = !keyDept;
   if (!showLists) stab = 'prog';
-  const tabs = showLists ? `<div class="stabs"><button class="${stab === 'list' ? 'on' : ''}" data-tab="list">1 · Danh sách cải thiện${I ? `<small>${I.candidates.length}</small>` : ''}</button>
-    <button class="${stab === 'conf' ? 'on' : ''}" data-tab="conf">2 · Đã xác nhận${I ? `<small>${I.confirmed.length}</small>` : ''}</button><button class="${stab === 'prog' ? 'on' : ''}" data-tab="prog">3 · Tiến độ cải thiện</button></div>` : '';
+  const tabs = showLists ? `<div class="stabs"><button class="${stab === 'list' ? 'on' : ''}" data-tab="list">1 · Danh sách cải thiện${I ? `<small>${new Set(I.candidates.map(x => x.sampleId)).size}</small>` : ''}</button>
+    <button class="${stab === 'conf' ? 'on' : ''}" data-tab="conf">2 · Đã xác nhận${I ? `<small>${new Set(I.confirmed.map(x => x.sampleId)).size}</small>` : ''}</button><button class="${stab === 'prog' ? 'on' : ''}" data-tab="prog">3 · Tiến độ cải thiện</button></div>` : '';
   let body;
   if (stab === 'prog') body = A ? progTab() : '<div class="empty">Đang tải…</div>';
   else if (!canImp()) body = `<div class="empty">Danh sách cải thiện dành cho FQS / Host / quản lý. Đăng nhập để xem, xác nhận và gửi mail.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
@@ -349,19 +370,20 @@ function bind() {
 PC.bar($('#pcbar'), 'Cải thiện'); load(); };
   // sub-tab 1
   // bộ phận xử lý: × bỏ, (+) thêm (11/11)
-  const ownOf = iid => { const x = I.candidates.find(c => c.iid === iid); return (ownEdit[iid] || x.owners).slice(); };
+  const ownOf = k => (ownEdit[k] || GK[k].owners).slice();
+  const each = async (k, body) => { let r; for (const iid of GK[k].iids) { r = await PC.post(body.api, Object.assign({ cycle: I.cycle, iid }, body.d)); if (!r.ok) throw new Error(r.error); } return r; };
   document.querySelectorAll('[data-own] [data-rmo]').forEach(b => b.onclick = () => { const iid = b.closest('[data-own]').dataset.own; ownEdit[iid] = ownOf(iid).filter(o => o !== b.dataset.rmo); keep(); });
   document.querySelectorAll('select[data-addo]').forEach(sel => sel.onchange = () => { if (!sel.value) return; const iid = sel.dataset.addo, cur = ownOf(iid); if (!cur.includes(sel.value)) cur.push(sel.value); ownEdit[iid] = cur; keep(); });
   document.querySelectorAll('[data-conf]').forEach(b => b.onclick = async () => {
-    const iid = b.dataset.conf, x = I.candidates.find(c => c.iid === iid); b.disabled = true; b.textContent = 'Đang xác nhận…';
-    try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid, owners: ownEdit[iid] || x.owners }); if (!r.ok) throw new Error(r.error); I = r; delete ownEdit[iid]; toast('Đã đồng ý · chuyển sang "Đã xác nhận"'); keep(); }
+    const k = b.dataset.conf; b.disabled = true; b.textContent = 'Đang xác nhận…';
+    try { const r = await each(k, { api: 'issueConfirm', d: { owners: ownEdit[k] || GK[k].owners } }); I = r; delete ownEdit[k]; toast('Đã đồng ý · chuyển sang "Đã xác nhận"'); keep(); }
     catch (e) { toast('Chưa xác nhận được: ' + e.message); b.disabled = false; b.textContent = 'Đồng ý'; } });
   document.querySelectorAll('[data-rej]').forEach(b => b.onclick = async () => { b.disabled = true; b.textContent = 'Đang lưu…';
-    try { const r = await PC.post('issueConfirm', { cycle: I.cycle, iid: b.dataset.rej, reject: true }); if (!r.ok) throw new Error(r.error); I = r; toast('Đã ghi Không đồng ý'); keep(); }
+    try { const r = await each(b.dataset.rej, { api: 'issueConfirm', d: { reject: true } }); I = r; toast('Đã ghi Không đồng ý'); keep(); }
     catch (e) { toast('Chưa lưu được: ' + e.message); b.disabled = false; b.textContent = 'Không đồng ý'; } });
   // sub-tab 2
   document.querySelectorAll('[data-unc]').forEach(b => b.onclick = async () => { b.disabled = true;
-    try { const r = await PC.post('issueUnconfirm', { cycle: I.cycle, iid: b.dataset.unc }); if (!r.ok) throw new Error(r.error); I = r; toast('Đã đưa về danh sách chờ duyệt'); keep(); }
+    try { const r = await each(b.dataset.unc, { api: 'issueUnconfirm', d: {} }); I = r; toast('Đã đưa về danh sách chờ duyệt'); keep(); }
     catch (e) { toast('Chưa đưa về được: ' + e.message); b.disabled = false; } });
   const ml = $('#mail'); if (ml) ml.onclick = mailFlow;
   const xl = $('#xls'); if (xl) xl.onclick = confXls;
