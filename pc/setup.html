@@ -157,7 +157,7 @@ table.st td.all { width: 70px; text-align: right; }
 <div class="done" id="review"><div class="sheet rv"><h3 id="rvHead"></h3><p id="rvTxt"></p><div id="rvBody"></div>
   <div class="rvbtn"><button class="btn ghost" id="rvBack"></button><button class="btn" id="rvOk"></button></div></div></div>
 <div class="toast" id="toast"></div>
-<script src="pc.js?v=20261110b"></script>
+<script src="pc.js?v=20261111"></script>
 <script>
 // MQM ORION VINA · Setup theo tháng (anh Thái 05/11/2026): chọn tháng → bảng câu hỏi theo nhóm (không còn tải file) → mẫu cần mua → ngày sản xuất → Gửi → xem lại → OK.
 // MKT: câu hỏi Bao bì / In ấn · RD: Ngoại quan / Cấu trúc / Hương vị · FQS: đủ 5 nhóm. Gửi rồi vẫn xem và sửa lại được bản của tháng đó (gửi lại = thay bản cũ).
@@ -306,7 +306,7 @@ function qCard() {
 }
 function render() {
   hero();
-  const admin = me && me.role === 'ADMIN';
+  const admin = me && (me.role === 'ADMIN' || me.role === 'ALL');
   const top = `<section class="card who"><div class="mrow">
       <div><span class="label">${T('month')}</span><input type="month" id="mon" value="${esc(st.cycle)}"></div>
       <div><span class="label">${T('team')} <span class="req">*</span></span>${admin ? `<div class="seg" id="tm">${TEAMS.map(t => `<button class="${st.team === t ? 'on' : ''}" data-v="${t}">${t}</button>`).join('')}</div>` : `<b style="font-size:18px">${esc(st.team)}</b>`}</div>
@@ -431,7 +431,7 @@ $('#rvOk').onclick = async () => {
   me = g.user; PC.bar($('#pcbar'), 'Setup');
   const s = await PC.get('months').catch(() => ({}));
   current = s.current || new Date().toISOString().slice(0, 7);
-  st.cycle = current; st.team = me.role === 'ADMIN' ? '' : me.role;
+  st.cycle = current; st.team = me.role === 'ADMIN' || me.role === 'ALL' ? '' : me.role;
   load();
   PC.get('catalog').then(r => { if (!r.ok) throw new Error(r.error); products = r.products.filter(p => PLAN_BRANDS.some(([b]) => b === p.brand)); render(); })
     .catch(e => { catErr = e.message || String(e); render(); });
