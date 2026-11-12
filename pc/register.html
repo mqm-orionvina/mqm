@@ -141,6 +141,14 @@ select:disabled { background-color: #f6f5f3; color: #aaa; }
 
 /* 12/11: nút Excel ở đầu thẻ tiến độ */
 .prog .ph2 { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; } .prog .ph2 h3 { margin: 0; }
+
+/* 12/11: chọn giờ sản xuất — giờ | phút */
+.big .hm { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px 0 18px; }
+.big .hmc { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; max-width: 150px; }
+.big .hmc span { font-size: 13px; font-weight: 700; color: var(--muted); }
+.big .hmc button { width: 100%; height: 48px; border: 0; border-radius: 14px; background: #f3f3f3; font-size: 18px; cursor: pointer; color: #111; }
+.big .hmc input { width: 100%; height: 84px; text-align: center; font-size: 46px !important; font-weight: 800; padding: 0; border-radius: 18px; font-variant-numeric: tabular-nums; }
+.big .hmsep { font-size: 46px; font-weight: 800; padding-top: 22px; }
 </style>
 </head>
 <body>
@@ -157,7 +165,7 @@ select:disabled { background-color: #f6f5f3; color: #aaa; }
 <div class="toast" id="toast"></div>
 <div class="big" id="big" hidden></div>
 <input type="file" accept="image/*" capture="environment" id="cam" hidden>
-<script src="pc.js?v=20261111e"></script>
+<script src="pc.js?v=20261112a"></script>
 <script>
 // MQM 1A · Sample Register: đăng ký mẫu bằng quét barcode. Tên + bộ phận mua (nhớ) → quét → Brand / Vị / SKU tự ra → NSX, ngày mua, ảnh → lưu.
 // Barcode ORION: barcodes.json (từ Rule.xlsx, cùng thư mục). Barcode học thêm (đối thủ…): tab Barcodes trong Google Sheet, qua Apps Script.
@@ -537,15 +545,21 @@ function closeBig() { $('#big').hidden = true; $('#big').innerHTML = ''; bigSt =
 function drawBig() {
   const b = $('#big'), S = bigSt; b.hidden = false;
   if (S.k === 'mfdTime') {
-    const [h, mi] = (S.val || ':').split(':');
-    b.innerHTML = `<div class="bx"><h3>${T('pickTime')}</h3><input class="tv" type="time" id="tv" value="${esc(S.val)}">
-      <div class="sm2">${T('timeH')}</div><div class="hg">${Array.from({ length: 24 }, (_, i) => `<button data-h="${pad2(i)}" class="${h === pad2(i) ? 'on' : ''}">${pad2(i)}</button>`).join('')}</div>
-      <div class="sm2">${T('timeM')}</div><div class="mg">${Array.from({ length: 12 }, (_, i) => `<button data-mi="${pad2(i * 5)}" class="${mi === pad2(i * 5) ? 'on' : ''}">${pad2(i * 5)}</button>`).join('')}</div>
+    // 12/11: 1 bên nhập giờ, 1 bên nhập phút (gõ số hoặc bấm ▲ ▼)
+    const [h0, m0] = (S.val || ':').split(':');
+    b.innerHTML = `<div class="bx"><h3>${T('pickTime')}</h3>
+      <div class="hm"><div class="hmc"><span>${T('timeH')}</span><button type="button" data-st="h" data-d="1" aria-label="Tăng giờ">▲</button><input id="tH" inputmode="numeric" maxlength="2" placeholder="--" value="${esc(h0 || '')}"><button type="button" data-st="h" data-d="-1" aria-label="Giảm giờ">▼</button></div>
+        <b class="hmsep">:</b>
+        <div class="hmc"><span>${T('timeM')}</span><button type="button" data-st="m" data-d="1" aria-label="Tăng phút">▲</button><input id="tM" inputmode="numeric" maxlength="2" placeholder="--" value="${esc(m0 || '')}"><button type="button" data-st="m" data-d="-1" aria-label="Giảm phút">▼</button></div></div>
       <div class="act"><button class="btn ghost" id="bgClr">${T('clear')}</button><button class="btn" id="bgOk">${T('okBtn')}</button></div></div>`;
-    const set = v => { S.val = v; drawBig(); };
-    b.querySelectorAll('[data-h]').forEach(x => x.onclick = () => set(x.dataset.h + ':' + ((S.val || '').split(':')[1] || '00')));
-    b.querySelectorAll('[data-mi]').forEach(x => x.onclick = () => set(((S.val || '').split(':')[0] || '00') + ':' + x.dataset.mi));
-    $('#tv').onchange = e => { S.val = e.target.value; };
+    const tH = $('#tH'), tM = $('#tM');
+    const sync = () => { const hh = tH.value.replace(/\D/g, ''), mm = tM.value.replace(/\D/g, '');
+      S.val = hh !== '' || mm !== '' ? pad2(Math.min(23, +hh || 0)) + ':' + pad2(Math.min(59, +mm || 0)) : ''; };
+    tH.oninput = () => { tH.value = tH.value.replace(/\D/g, '').slice(0, 2); if (+tH.value > 23) tH.value = '23'; if (tH.value.length === 2) { tM.focus(); tM.select(); } sync(); };
+    tM.oninput = () => { tM.value = tM.value.replace(/\D/g, '').slice(0, 2); if (+tM.value > 59) tM.value = '59'; sync(); };
+    [tH, tM].forEach(x => x.onfocus = () => x.select());
+    b.querySelectorAll('[data-st]').forEach(x => x.onclick = () => { const isH = x.dataset.st === 'h', el = isH ? tH : tM, max = isH ? 24 : 60;
+      el.value = pad2(((+el.value || 0) + +x.dataset.d + max) % max); if (isH && tM.value === '') tM.value = '00'; if (!isH && tH.value === '') tH.value = '00'; sync(); });
     $('#bgOk').onclick = () => { cur.mfdTime = /^\d{2}:\d{2}$/.test(S.val) ? S.val : ''; closeBig(); render(); };
     $('#bgClr').onclick = () => { cur.mfdTime = ''; closeBig(); render(); };
   } else {

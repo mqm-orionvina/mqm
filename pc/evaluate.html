@@ -156,7 +156,7 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 <div class="bar" id="bar" hidden></div>
 <div class="toast" id="toast"></div>
 <input type="file" accept="image/*" capture="environment" id="cam" hidden>
-<script src="pc.js?v=20261111e"></script>
+<script src="pc.js?v=20261112a"></script>
 <script>
 // MQM 1A · App đánh giá mẫu. Nhập tên + bộ phận → chọn brand mình phụ trách → chọn mẫu → chấm theo bộ câu hỏi của bộ phận.
 // Dữ liệu ghi vào Google Sheet "MQM 1A - Đánh giá mẫu" qua Apps Script (Api.gs), gọi không kèm tài khoản Google.
@@ -198,6 +198,9 @@ const QTAGS = [
   { g: 'Hương vị', re: /cường độ|hài hòa|hài hoà|gia vị|mặn|ngọt|đậm|nhạt/, tags: ['Yếu topnote', 'Vị mặn gắt', 'Vị nhạt nhẽo', 'Mùi yếu', 'Vị cháy'] },
 ];
 const tagsFor = q => { const t = String(q.text || q.q || '').toLowerCase().normalize('NFC'); const m = QTAGS.find(r => r.g === q.g && r.re.test(t)); return m ? m.tags : (GTAGS[q.g] || []); };
+// 12/11: câu hỏi tháng 11 bản tiếng Hàn (khớp theo nội dung tiếng Việt; câu mới chưa dịch thì giữ tiếng Việt)
+const QKO = {"Gói đủ khí bảo vệ sản phẩm không?": "제품을 보호할 만큼 질소(가스)가 충분합니까?", "Đường seal có kín, thằng và đều không?": "실링이 밀봉되고 곧고 균일합니까?", "Bao bì có nguyên vẹn, không nhăn hoặc rách không?": "포장이 온전하고 주름이나 찢어짐이 없습니까?", "Bước cắt bao bì có ngay ngắn, cân đối không?": "포장 커팅 위치가 반듯하고 균형 잡혀 있습니까?", "Mực in có đều màu, hình ảnh và chũ có sắc nét không?": "인쇄 색상이 균일하고 이미지와 글자가 선명합니까?", "Thiết kế và thông tin trên bao bì có rõ ràng, dễ đọc không?": "포장 디자인과 표시 정보가 명확하고 읽기 쉽습니까?", "Độ nguyên vẹn và hình dạng của lát khoai thế nào?": "감자칩의 온전함과 모양은 어떻습니까?", "Màu sắc và bề mặt lát khoai thế nào?": "감자칩의 색상과 표면은 어떻습니까?", "Độ đồng đều gia vị trên bề mặt lát khoai thế nào?": "감자칩 표면의 시즈닝 균일도는 어떻습니까?", "Độ giòn, xốp của lát khoai khi ăn?": "먹을 때 감자칩의 바삭함과 식감은 어떻습니까?", "Cường độ và độ hài hòa của gia vị khi ăn?": "먹을 때 시즈닝의 강도와 조화는 어떻습니까?", "Mùi dầu của lát khoai khi ăn?": "먹을 때 감자칩의 기름 냄새는 어떻습니까?", "Hậu vị sau khi nuốt có vị lạ không?": "삼킨 후 뒷맛에 이상한 맛이 있습니까?"};
+const qText = q => lang === 'ko' ? (QKO[String(q).trim()] || q) : q;
 const GKO = { 'Bao bì': '포장', 'In ấn': '인쇄', 'Ngoại quan': '외관', 'Cấu trúc': '식감', 'Hương vị': '맛' };
 const isExpert = () => me && EXPERT.includes(me.dept);
 const cqFor = () => { if (!me) return cqAll; const gs = TABS[curTab()].groups;
@@ -270,7 +273,7 @@ const I18N = {
     prog: (n, m) => `${n}/${m} 항목 평가`, save: '평가 저장', saving: '저장 중…', saved: id => `${id} 평가 저장 완료`, saveErr: '저장 실패: ',
     loadErr: e => `샘플 목록을 불러오지 못했습니다: ${e}. 네트워크 확인 후 새로고침하세요.`,
     vs: { 'Tốt hơn': '더 좋음', 'Tương đương': '비슷함', 'Kém hơn': '더 나쁨' }, origin: { 'Đối thủ': '경쟁사' }, market: { North: '북부', South: '남부' },
-    tags: { 'Seal yếu': '실링 약함', 'In lệch / mờ': '인쇄 틀어짐 / 흐림', 'Rách': '찢어짐', 'Code date mờ': '날짜 코드 흐림', 'Coating không đều': '코팅 불균일' },
+    tags: {"Gãy vụn": "부서짐", "Khoai bị gập": "접힘", "Lát cắt không tròn tự nhiên": "모양이 부자연스러움", "Cháy nguyên lát / cháy đốm": "전체 탐 / 부분 탐", "Khoai xanh": "녹변 감자", "Đốm đen": "검은 반점", "SSN không đều (vón cục)": "시즈닝 불균일 (뭉침)", "SSN ít": "시즈닝 적음", "SSN quá nhiều": "시즈닝 과다", "Vảy gia vị không đều (ớt, rong biển / tảo, rau)": "플레이크 불균일 (고추, 김 / 해조, 채소)", "Giòn cứng (lát dày / sắc nhọn)": "딱딱함 (두꺼움 / 날카로움)", "Cấu trúc giống thủy tinh": "유리 같은 식감", "Kém tan (dính răng)": "잘 안 녹음 (이에 붙음)", "Khoai bị ỉu": "눅눅함", "Ngấm dầu (ngập dầu miệng)": "기름 흡수 (입안 기름짐)", "Cấu trúc bột": "가루 같은 식감", "Cấu trúc giấy (mỏng, khô dai)": "종이 같은 식감 (얇고 질김)", "Bóng khí rỗng": "기포 (빈 공간)", "Yếu topnote": "탑노트 약함", "Vị mặn gắt": "짠맛 강함", "Vị nhạt nhẽo": "싱거움", "Mùi yếu": "향 약함", "Vị cháy": "탄 맛", "Nhiều dầu": "기름짐", "Mùi dầu cũ / ôi dầu": "산패취 / 오래된 기름 냄새", "Đắng chát": "쓰고 떫음", "Mùi nhân tạo / hóa chất": "인공향 / 화학 냄새", "Nhiễm mùi lạ": "이취", "Xì / rò khí": "가스 누출", "Ít khí": "가스 부족", "Seal yếu": "실링 약함", "Nhăn": "주름", "Rách": "찢어짐", "Biến dạng": "변형", "In lệch / mờ": "인쇄 틀어짐 / 흐림", "Lem màu": "번짐", "Code date mờ": "날짜 코드 흐림", "Sai thông tin": "정보 오류", "Nhãn lỗi": "라벨 불량", "Vỡ / vụn": "부서짐", "Cháy / sẫm màu": "탐 / 짙은 색", "Nhạt màu": "옅은 색", "Bong lớp phủ": "코팅 벗겨짐", "Chảy / bloom": "녹음 / 블룸", "Không đều": "불균일", "Ỉu / mềm": "눅눅함 / 물렁함", "Cứng": "딱딱함", "Khô": "건조함", "Đặc": "단단함", "Bở": "부서지기 쉬움", "Dính răng": "이에 붙음", "Bột": "가루감", "Nhạt vị": "맛 약함", "Lạ vị": "이미", "Đắng": "쓴맛", "Quá ngọt": "너무 단맛", "Ôi dầu": "산패취", "Khét": "탄 냄새", "Chua / hỏng": "신맛 / 변질", "Coating không đều": "코팅 불균일"},
     cqTitle: '이번 주기 질문', cqSub: n => `RD / MKT 질문 ${n}개`, cqHint: '각 샘플을 열면 바깥에서 안으로 순서로 표시됩니다.', cqWant: '변경 요청: ', cqDesc: '서술 *', nCq: n => `주기 질문 ${n}개 미선택`,
   },
 };
@@ -403,7 +406,7 @@ function viewScore() {
   return head + `<div class="card scorenote">⚠ ${T('scoreNote')}</div>${mine(s.id) ? `<div class="card note">${T('already')}</div>` : ''}
     <div class="card qbox"><div class="stat" style="margin:0 0 4px"><b style="font-size:15px">${esc(TABS[curTab()][lang] || TABS[curTab()].vi)} · ${cq.length} ${T('qWord')}</b><button class="linkbtn" id="allOk">${T('allOk')}</button></div>
     ${G.filter(g => cq.some(q => q.g === g)).map(g => `<div class="qg">${esc(gName(g))}</div>` + cq.filter(q => q.g === g).map(q => { const x = ev.xq[q.id]; n++;
-      return `<div class="qrow ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}"><div class="qt"><div>${n}. ${esc(q.text)}${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}</div><span>${esc(q.team)}</span></div>
+      return `<div class="qrow ${x.st === 'issue' ? 'bad' : x.st === 'ok' ? 'fine' : ''}"><div class="qt"><div>${n}. ${esc(qText(q.text))}${q.c ? `<small class="cq-c">${T('cqWant')}${esc(q.c)}</small>` : ''}</div><span>${esc(q.team)}</span></div>
       <div class="yn" data-xq="${esc(q.id)}"><button class="is ${x.st === 'issue' ? 'on' : ''}" data-v="issue">! ${T('issue')}</button><button class="ok ${x.st === 'ok' ? 'on' : ''}" data-v="ok">✓ ${T('ok')}</button></div>
       ${x.st === 'issue' ? `<span class="label" style="margin-top:12px">${T('pickIssue')}</span><div class="chips" data-t="${esc(q.id)}">${tagsFor(q).map(t => `<button class="chip sm ${x.tags.includes(t) ? 'on' : ''}" data-tag="${esc(t)}">${esc(L('tags', t))}</button>`).join('')}</div>
         <span class="label" style="margin-top:12px">${T('desc')}</span><textarea data-xd="${esc(q.id)}" placeholder="${esc(T('descPh'))}">${esc(x.d)}</textarea>` : ''}
@@ -413,8 +416,8 @@ function viewScore() {
       <span class="label" style="margin-top:12px">${T('causeOut')}</span>${pick('causeOut', CAUSE_OUT, 'cause')}
       <span class="label" style="margin-top:12px">${T('solution')}</span><textarea id="solution" placeholder="${esc(T('solutionPh'))}">${esc(ev.solution)}</textarea>
       <span class="label" style="margin-top:12px">${T('owners')}</span>${pick('owners', OWNERS, 'owner')}</div>` : ''}
-    <div class="card"><h3 style="margin:0 0 10px;font-size:15px">${T('photoT')}</h3>
-      ${ev.photos.length < 3 ? `<button class="shot2" id="shot">📷 ${T('photoBtn')}</button>` : ''}
+    <div class="card"><h3 style="margin:0 0 10px;font-size:15px">${T('photoT')} <span style="font-weight:500;color:#8a8a8a;font-size:13px">· ${ev.photos.length}/3 · ${T('photoMax')}</span></h3>
+      ${ev.photos.length < 3 ? `<button class="shot2" id="shot">📷 ${T('photoBtn')}${ev.photos.length ? ` (${ev.photos.length + 1}/3)` : ''}</button>` : ''}
       <div class="ph3">${ev.photos.map((p, i) => `<div style="background-image:url(${p.thumb})"><button data-delph="${i}" aria-label="×">×</button></div>`).join('')}</div></div>`;
 }
 function bar() {
@@ -528,7 +531,7 @@ function viewReview() {
   return head + `<div class="card note">🔒 ${T('reviewNote')} · ${esc(new Date(e.at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }))}</div>
     <div class="card qbox"><div class="stat" style="margin:0 0 4px"><b style="font-size:15px">${T('reviewH')}</b></div>
     ${G.filter(g => ans.some(a => a.g === g)).map(g => `<div class="qg">${esc(gName(g))}</div>` + ans.filter(a => a.g === g).map((a, i) => { const bad = a.result === 'Có vấn đề';
-      return `<div class="qrow ${bad ? 'bad' : 'fine'}"><div class="qt"><div>${esc(a.q)}</div><span>${a.score !== '' && a.score != null ? 'Điểm ' + esc(a.score) : ''}</span></div>
+      return `<div class="qrow ${bad ? 'bad' : 'fine'}"><div class="qt"><div>${esc(lang === 'ko' ? qText(PC.stripG ? PC.stripG(a.q) : a.q) : a.q)}</div><span>${a.score !== '' && a.score != null ? 'Điểm ' + esc(a.score) : ''}</span></div>
         <div class="yn"><button class="is ${bad ? 'on' : ''}" disabled>! ${T('issue')}</button><button class="ok ${bad ? '' : 'on'}" disabled>✓ ${T('ok')}</button></div>
         ${bad && (a.tags.length || a.note) ? `<p class="cq-c" style="margin:8px 0 0">${a.tags.map(t => `<span class="tag">${esc(L('tags', t))}</span>`).join(' ')} ${esc(a.note)}</p>` : ''}</div>`; }).join('')).join('')}</div>
     ${e.solution || e.causeIn.length || e.causeOut.length ? `<div class="card attr cause"><h3>${T('causeTitle')}</h3><p class="cq-c">${esc(e.causeIn.concat(e.causeOut).map(c => L('cause', c)).join(', '))}</p><p style="margin:6px 0">${esc(e.solution)}</p><p class="cq-c">${T('owners')} ${esc(e.owners.join(', '))}</p></div>` : ''}

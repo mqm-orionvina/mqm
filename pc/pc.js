@@ -132,7 +132,7 @@ const PC = {
   .pc-bar~* .savedbox.draft,.pc-bar~* .fileinfo.err{background:#f3f3f3!important;color:#111!important}
   .pc-bar~* .qt td.chg textarea:not(:placeholder-shown){border-color:#111!important;background:#fafafa!important}
   .pc-bar~* .prod .ic{background:#f3f3f3!important;color:#111!important}
-  .pc-bar~* .sample{border-radius:22px!important}.pc-bar~* .sample .th{background:#f3f3f3!important}
+  .pc-bar~* .sample{border-radius:22px!important}.pc-bar~* .sample .th{background-color:#f3f3f3!important}
   .pc-bar~* .bar .prog .track i{background:#c8102e!important}
   .pc-bar~.hero{background:#fff!important;color:#111!important;padding:28px 20px 18px!important}
   .pc-bar~.hero{text-align:center}.pc-bar~.hero .top,.pc-bar~.hero .txt{max-width:640px!important;margin:0 auto!important}
