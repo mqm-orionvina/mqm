@@ -138,6 +138,9 @@ select:disabled { background-color: #f6f5f3; color: #aaa; }
 .qtyf { margin-top: 14px; } .qstep { display: grid; grid-template-columns: 56px 1fr 56px; gap: 8px; }
 .qstep button { height: 52px; border: 0; border-radius: 14px; background: #f1f1f1; font: inherit; font-size: 24px; font-weight: 700; color: #111; cursor: pointer; }
 .qstep input { text-align: center; font-size: 22px; font-weight: 800; height: 52px; padding: 0 8px; }
+
+/* 12/11: nút Excel ở đầu thẻ tiến độ */
+.prog .ph2 { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; } .prog .ph2 h3 { margin: 0; }
 </style>
 </head>
 <body>
@@ -331,9 +334,8 @@ function progCard() {
   if (!S.length) return `<div class="card prog"><h3>${T('progH')}</h3><p class="hint nohelp" style="margin:0">${T('pNoPlan')}</p></div>`;
   const ok = S.filter(x => x.have >= x.need), low = S.filter(x => x.have > 0 && x.have < x.need), none = S.filter(x => !x.have);
   const row = x => { const c = x.have >= x.need ? 'p-ok' : x.have ? 'p-low' : 'p-none'; return `<tr><td>${esc(x.brand)} · ${esc(x.flavor)}</td><td>${esc(x.sku)}</td><td class="planq">${x.qty ? '× ' + x.qty : ''}</td><td><span class="${c}" style="padding:2px 8px;border-radius:999px;font-weight:700;font-size:12px">${x.have}/${x.need}</span></td></tr>`; };
-  return `<div class="card prog"><h3>${T('progH')}</h3><div class="pn"><span class="p-ok">${T('pOk')(ok.length)}</span><span class="p-low">${T('pLow')(low.length)}</span><span class="p-none">${T('pNone')(none.length)}</span></div>
-    <details ${low.length + none.length ? 'open' : ''}><summary>${T('pList')}</summary><table>${none.concat(low).map(row).join('')}${ok.map(row).join('')}</table></details>
-    <div class="tools2"><button class="btn ghost sm" id="planXls">${T('planXls')}</button></div></div>`;
+  return `<div class="card prog"><div class="ph2"><h3>${T('progH')}</h3><button class="btn sm" id="planXls">${T('planXls')}</button></div><div class="pn"><span class="p-ok">${T('pOk')(ok.length)}</span><span class="p-low">${T('pLow')(low.length)}</span><span class="p-none">${T('pNone')(none.length)}</span></div>
+    <details ${low.length + none.length ? 'open' : ''}><summary>${T('pList')}</summary><table>${none.concat(low).map(row).join('')}${ok.map(row).join('')}</table></details></div>`;
 }
 // Excel danh sách mẫu (MKT setup): Brand / Tên flavor / SKUs (Size) / TT North / TT South / MT North / MT South, mỗi size 1 dòng
 const BRAND_L = { OStar: "O'star" };
@@ -341,7 +343,10 @@ async function planXls() {
   const S = plan.final.samples, ord = b => b === 'OStar' ? 0 : b === 'Swing' ? 1 : 2;
   const rows = [['Brand', 'Tên flavor', 'SKUs (Size)', 'TT North', 'TT South', 'MT North', 'MT South']].concat(S.slice().sort((a, b) => ord(a.brand) - ord(b.brand) || String(a.brand).localeCompare(b.brand) || String(a.flavor).localeCompare(b.flavor))
     .map(x => { const q = +x.qty || 2; return [BRAND_L[x.brand] || x.brand, x.flavor, x.sku, q, q, q, q]; }));
-  try { await PC.xlsx(`${PC.yymm(plan.cycle)}_MQM_Sample_Plan.xlsx`, [{ name: 'Sample Plan', rows, widths: [12, 22, 14, 10, 10, 10, 10] }]); } catch (e) { toast(T('xlsErr') + e.message); }
+  // 12/11: 2 sheet — Sample Plan + Mẫu đã đăng ký (tất cả mẫu của tháng)
+  try { const r = await api.get('samples&cycle=' + plan.cycle); if (!r.ok) throw new Error(r.error);
+    const R = r.samples.slice().sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    await PC.xlsx(`${PC.yymm(plan.cycle)}_MQM_Sample_Plan.xlsx`, [{ name: 'Sample Plan', rows, widths: [12, 22, 14, 10, 10, 10, 10] }, { name: 'Mẫu đã đăng ký', rows: regRows(R), widths: REG_W }]); } catch (e) { toast(T('xlsErr') + e.message); }
 }
 function ageInfo() {
   if (!cur.mfd || !cur.buyDate) return '';
@@ -578,11 +583,14 @@ function viewEnd() {
       ${R.map(x => `<tr><td class="id">${esc(x.id)}</td><td>${esc(x.brand)} · ${esc(x.flavor)}</td><td>${esc(x.sku)}</td><td>${esc(mkLabel(x))}</td><td>${esc([x.fac, x.line].filter(Boolean).join(' · '))}</td><td>${dmy(x.mfd)}${x.mfdTime ? ' ' + esc(x.mfdTime) : ''}</td><td>${dmy(x.buyDate)}</td></tr>`).join('')}</tbody></table></div>` : `<p>${T('endNone')}</p>`}`}
     <div class="tools2">${R && R.length ? `<button class="btn" id="endXls">${T('endXls')}</button>` : ''}<button class="btn ghost" id="endMore">${T('endMore')}</button></div></div>`;
 }
-async function endXls() {
-  const head = ['Mã mẫu', 'Brand', 'Tên flavor', 'SKU (Size)', 'Nguồn', 'Nơi mua', 'Nhà máy', 'Line sản xuất', 'Ngày sản xuất', 'Giờ sản xuất', 'Ngày mua', 'Tuổi (ngày)', 'Barcode', 'Người mua', 'Bộ phận', 'Thời gian đăng ký'];
-  const rows = [head].concat(endRows.map(x => [x.id, BRAND_L[x.brand] || x.brand, x.flavor, x.sku, x.origin, mkLabel(x), x.fac, x.line, dmy(x.mfd), x.mfdTime, dmy(x.buyDate), ageD(x), x.barcode, x.buyer, x.buyerDept,
+const REG_W = [10, 10, 20, 11, 8, 9, 10, 11, 12, 12, 10, 12, 10, 15, 18, 9, 18];
+function regRows(list) {
+  const head = ['Mã mẫu', 'Brand', 'Tên flavor', 'SKU (Size)', 'Số gói', 'Nguồn', 'Nơi mua', 'Nhà máy', 'Line sản xuất', 'Ngày sản xuất', 'Giờ sản xuất', 'Ngày mua', 'Tuổi (ngày)', 'Barcode', 'Người mua', 'Bộ phận', 'Thời gian đăng ký'];
+  return [head].concat(list.map(x => [x.id, BRAND_L[x.brand] || x.brand, x.flavor, x.sku, +x.qty || 1, x.origin, mkLabel(x), x.fac, x.line, dmy(x.mfd), x.mfdTime, dmy(x.buyDate), ageD(x), x.barcode, x.buyer, x.buyerDept,
     (() => { const d = new Date(x.createdAt); return isNaN(d) ? String(x.createdAt) : d.toLocaleString('vi-VN'); })()]));
-  try { await PC.xlsx(`${PC.yymm(endCycle || (plan && plan.cycle))}_MQM_Sample_Register.xlsx`, [{ name: 'Samples', rows, widths: [10, 10, 20, 11, 9, 10, 11, 12, 12, 10, 12, 10, 15, 18, 9, 18] }]); } catch (e) { toast(T('xlsErr') + e.message); }
+}
+async function endXls() {
+  try { await PC.xlsx(`${PC.yymm(endCycle || (plan && plan.cycle))}_MQM_Sample_Register.xlsx`, [{ name: 'Samples', rows: regRows(endRows), widths: REG_W }]); } catch (e) { toast(T('xlsErr') + e.message); }
 }
 $('#endDone').onclick = () => { $('#done').classList.remove('on'); doneTmp = ''; cur = null; openEnd(); };
 $('#next').onclick = () => { $('#done').classList.remove('on'); doneTmp = ''; cur = null; view = 'scan'; render(); scrollTo(0, 0); startScan(); };
