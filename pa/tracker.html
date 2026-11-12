@@ -94,7 +94,9 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 .bar2 input[type=checkbox] { accent-color: var(--red); width: 16px; height: 16px; }
 .oc { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; } .oc span { overflow: hidden; text-overflow: ellipsis; min-width: 0; } .oc .chip { flex: none; } .sn { color: var(--muted); font-size: 11.5px; }
 .mx { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: var(--soft); color: var(--muted); margin-right: 4px; } .mx.ok { background: var(--ok-soft); color: var(--ok); }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .two .big { margin-bottom: 6px; } .two .big span { font-size: 12px; line-height: 1.25; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 4px 0 8px; } .two .big { margin-bottom: 6px; } .two .big span { font-size: 12px; line-height: 1.25; }
+.stt { background: var(--soft); border-radius: 14px; padding: 10px 14px 8px; display: flex; flex-direction: column; gap: 2px; } .stt span { font-size: 12px; font-weight: 600; color: var(--muted); } .stt b { display: flex; align-items: baseline; color: var(--ink); font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; } .stt b small { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 4px; letter-spacing: 0; }
+.card p.age-hi { color: var(--red-ink); font-size: 13px; font-weight: 700; margin: 0 0 6px; }
 .grp { margin-left: auto; font-size: 10.5px; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
 .foot { color: var(--muted); font-size: 12px; margin-top: 16px; line-height: 1.6; }
 .more { margin-top: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-weight: 700; font-size: 13px; padding: 9px 16px; border-radius: 999px; cursor: pointer; }
@@ -738,7 +740,7 @@ function renderAge() {
   $('#cards').innerHTML = BRANDS.map(([b, n, g, col]) => { const a = R.filter(r => r.brand === b), s = stats(a.map(r => r.age)), so = stats(a.map(r => r.ageOld));
     const cnt = BUCKETS.map(([lo, hi]) => a.filter(r => r.age >= lo && r.age <= hi).length), mx = Math.max(1, ...cnt);
     return `<div class="card"><h3><i style="background:${col}"></i>${esc(n)}<small class="grp">${g}</small></h3><p>${s ? `${s.n} mẫu` : 'chưa có mẫu'}</p>
-      <div class="two"><div class="big"><b>${s ? s.avg : '–'}</b><span>ngày TB<br>gói đầu kệ</span></div><div class="big"><b>${so ? so.avg : '–'}</b><span>ngày TB<br>gói cũ nhất</span></div></div>
+      <div class="two"><div class="stt"><span>Gói đầu kệ · TB</span><b>${s ? s.avg : '–'}<small>ngày</small></b></div><div class="stt"><span>Gói cũ nhất · TB</span><b>${so ? so.avg : '–'}<small>ngày</small></b></div></div>
       ${s && s.old ? `<p class="age-hi">${s.old}% gói đầu kệ trên 90 ngày</p>` : ''}
       <div class="hist">${cnt.map(c => `<div><em>${c || ''}</em><s style="height:${c / mx * 80}%;background:${col};opacity:${c ? 1 : .2}"></s></div>`).join('')}</div>
       <div class="hl">${BUCKETS.map(x => `<span>${x[2]}</span>`).join('')}</div></div>`; }).join('');
