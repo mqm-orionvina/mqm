@@ -100,6 +100,61 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 .modal h3 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.02em; } .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
 .modal table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; } .modal td, .modal th { padding: 8px 6px; border-bottom: 1px solid #efefef; text-align: left; }
 .modal .miss { color: var(--red); font-weight: 600; }
+/* 13/11: Report A4 — xem trên trang (khung xám, từng tờ trắng) và in ra PDF đúng khổ A4 */
+.rtop { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; } .rtop .rtabs { margin: 0; } .a4go { padding: 11px 18px; font-size: 14px; }
+body.a4on { overflow: hidden; }
+#a4w { position: fixed; inset: 0; z-index: 100; overflow: auto; background: #e9e9e9; padding-bottom: 30px; }
+.a4bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: #fff; padding: 12px 20px; border-bottom: 1px solid #ddd; }
+.a4bar span { color: var(--muted); font-size: 13px; flex: 1; }
+.a4wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 18px; }
+.a4 { width: 210mm; height: 297mm; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.12); padding: 14mm 14mm 18mm; position: relative; overflow: hidden; font-size: 10.5pt; line-height: 1.4; color: #111; }
+.a4h { display: flex; justify-content: space-between; gap: 16px; border-bottom: 3px solid var(--red); padding-bottom: 10px; margin-bottom: 12px; }
+.a4k { color: var(--red); font-size: 8pt; letter-spacing: .2em; font-weight: 800; } .a4h h1 { font-size: 22pt; line-height: 1.1; margin: 6px 0; letter-spacing: -.02em; }
+.a4h p { margin: 0; color: #666; font-size: 9pt; max-width: 125mm; } .a4logo svg { width: 30mm; height: auto; }
+.a4kp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin-bottom: 4mm; } .a4kp > div { background: #f3f3f3; border-radius: 4mm; padding: 3mm 4mm; }
+.a4kp small { display: block; color: #666; font-size: 8pt; font-weight: 600; } .a4kp b { font-size: 18pt; letter-spacing: -.02em; } .a4kp span { display: block; color: #666; font-size: 7.5pt; }
+.a4kp .red { background: var(--red); color: #fff; } .a4kp .red small, .a4kp .red span { color: #ffd5dc; }
+.a4vs { display: grid; grid-template-columns: 1fr 12mm 1fr; align-items: center; gap: 3mm; margin-bottom: 2mm; } .a4vs > div:not(.mid) { border-radius: 4mm; padding: 3mm 5mm; }
+.a4vs .o { background: #fde8eb; } .a4vs .c { background: #ededed; text-align: right; } .a4vs small { display: block; font-size: 7.5pt; letter-spacing: .18em; font-weight: 800; } .a4vs .o small { color: var(--red); }
+.a4vs b { font-size: 22pt; letter-spacing: -.03em; } .a4vs span { display: block; font-size: 8pt; color: #666; }
+.a4vs .mid { width: 12mm; height: 12mm; border-radius: 99px; background: #111; color: #fff; display: grid; place-items: center; font-weight: 900; font-size: 8pt; }
+.a4 h2 { font-size: 13pt; margin: 5mm 0 1mm; letter-spacing: -.01em; } .a4 h2.top { margin-top: 0; } .a4s { color: #777; font-size: 8.5pt; margin: 0 0 2mm; font-weight: 400; }
+.a4fd { margin: 1mm 0 0; padding-left: 5mm; } .a4fd li { margin: 1.2mm 0; font-size: 10pt; } .a4 .r { color: var(--red); } .a4 .g { color: #1a7f37; }
+.a4t { width: 100%; border-collapse: collapse; font-size: 9pt; } .a4t th { text-align: left; font-size: 8pt; color: #777; font-weight: 600; border-bottom: 1.5px solid #ddd; padding: 1.5mm 2mm; }
+.a4t td { border-bottom: 1px solid #eee; padding: 1.6mm 2mm; vertical-align: middle; } .a4t .c { text-align: center; } .a4t .w1 { width: 24mm; } .a4t .w2 { width: 38mm; text-align: right; }
+.a4t tr.gh td { background: #f3f3f3; font-size: 7.5pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #555; padding: 1.2mm 2mm; } .a4t .tg { color: #555; font-size: 8.5pt; }
+.a4t.q { font-size: 8.5pt; } .a4t.q td { padding: 1.1mm 2mm; } .a4t.q .tg { font-size: 8pt; } .a4t.q .a4b { margin: .3mm 0; } .a4t.q .a4b i { height: 2mm; }
+.a4tg { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm 8mm; font-size: 8.5pt; } .a4tg > div > span { display: block; font-weight: 600; margin-bottom: .3mm; }
+.a4 .ko { color: var(--red); } .a4 .kc { color: #7a7a7a; }
+.a4b { display: grid; grid-template-columns: 1fr 11mm; gap: 2mm; align-items: center; margin: .6mm 0; } .a4b i { display: block; height: 2.4mm; border-radius: 2mm; min-width: 1px; }
+.a4b.o i { background: var(--red); } .a4b.c i { background: #7a7a7a; } .a4b span { font-size: 8pt; font-weight: 700; text-align: right; } .a4b.c span { color: #666; }
+.a4 .dt { font-size: 7.5pt; padding: .6mm 2.4mm; }
+.a4sku { border: 1px solid #e3e3e3; border-left: 3px solid var(--red); border-radius: 3mm; padding: 3mm 4mm; margin-bottom: 3mm; break-inside: avoid; }
+.a4sku .sh { display: flex; justify-content: space-between; align-items: baseline; } .a4sku .sh b { font-size: 11.5pt; } .a4sku .pct { font-size: 15pt; font-weight: 800; color: var(--red); }
+.a4sku .sm { color: #777; font-size: 8pt; margin-bottom: 2mm; } .a4sku .sg { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 3mm; font-size: 8.5pt; }
+.a4sku small { display: block; color: #888; font-size: 7pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .6mm; }
+.a4sku .ch { display: inline-block; background: #f3f3f3; border-radius: 99px; padding: .3mm 2mm; margin: 0 1mm 1mm 0; font-size: 8pt; } .a4sku .ch em { font-style: normal; color: var(--red); font-weight: 800; }
+.a4sku .nt { margin: 2mm 0 0; padding-left: 4mm; font-size: 8.5pt; color: #333; } .a4sku .nt li { margin: .6mm 0; }
+.a4sku .sol { margin-top: 1.5mm; font-size: 8.5pt; background: #fafafa; border-radius: 2mm; padding: 1.5mm 2.5mm; }
+/* khổ ngang + tiếng Hàn */
+.a4.land { width: 297mm; height: 210mm; padding: 11mm 14mm 15mm; font-size: 10pt; } .a4.land.ko { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif; }
+.a4lang { display: flex; background: var(--soft); border-radius: 999px; padding: 3px; } .a4lang button { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 13px; padding: 8px 14px; border-radius: 999px; cursor: pointer; color: var(--muted); } .a4lang button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.a4.land .a4h { padding-bottom: 6px; margin-bottom: 8px; } .a4.land .a4h h1 { font-size: 20pt; margin: 4px 0; } .a4.land .a4h p { max-width: 200mm; } .a4.land .a4logo svg { width: 22mm; }
+.a4.land .a4kp { margin-bottom: 3mm; } .a4.land .a4kp b { font-size: 16pt; }
+.a4cols { display: grid; grid-template-columns: 1.05fr 1fr; gap: 8mm; } .a4cols.eq { grid-template-columns: 1fr 1fr; }
+.a4.land h2 { margin-top: 3.5mm; } .a4.land .a4fd li { font-size: 9.5pt; margin: 1mm 0; } .a4.land .a4t td { padding: 1.3mm 2mm; } .a4.land .a4tg { gap: 1mm 6mm; }
+.a4.land .a4t.q td { padding: .35mm 2mm; } .a4.land .a4t.q .a4b { margin: .2mm 0; } .a4.land .a4t.q tr.gh td { padding: .8mm 2mm; } .a4.land .a4t.q { font-size: 8.5pt; }
+.a4grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; } .a4grid .a4sku { margin: 0; height: 77mm; overflow: hidden; }
+.a4.land .a4sku .sg { grid-template-columns: 1.3fr 1fr; } .a4.land .nt { margin-top: 2mm; font-size: 8.5pt; } .a4.land .nt ul { margin: 0; padding-left: 4mm; } .a4.land .nt li { margin: .4mm 0; }
+.a4f { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: #999; border-top: 1px solid #eee; padding-top: 2mm; }
+@media print {
+  @page { size: A4 landscape; margin: 0; }
+  html, body { background: #fff !important; }
+  body.a4on > *:not(#a4w) { display: none !important; } body.a4on { overflow: visible; }
+  .a4bar { display: none !important; } #a4w { position: static; overflow: visible; background: #fff; padding: 0; } .a4wrap { display: block; padding: 0; }
+  .a4 { box-shadow: none; page-break-after: always; break-after: page; margin: 0; } .a4:last-child { page-break-after: auto; break-after: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 /* 13/11: Tab ORION vs Đối thủ (ORION = đỏ, đối thủ = xám đậm; tốt hơn = xanh, kém hơn = đỏ, kèm ▲▼ + chữ) */
 .rtabs { display: flex; justify-content: center; gap: 4px; background: var(--soft); border-radius: 999px; padding: 4px; width: max-content; max-width: 100%; margin: 0 auto 16px; }
 .rtabs button { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14.5px; padding: 10px 20px; border-radius: 999px; cursor: pointer; color: var(--muted); }
@@ -353,6 +408,164 @@ function compare() {
   return filters + duel + dumb + flav + qrows + `<div class="two">${bfly}${dtab}</div>`;
 }
 
+// ===== 13/11: Report A4 ngang · Tiếng Việt / 한국어 · xem trước trên trang, tải PDF về máy hoặc in =====
+// Chỉ ghi bộ phận, không ghi tên người chấm. Nhận xét / giải pháp do người chấm gõ tự do → giữ nguyên văn (bản tiếng Hàn ghi "원문")
+const A4_SKU_PER_PAGE = 4;
+let a4Lang = (() => { try { return localStorage.getItem('mqm-a4-lang') === 'vi' ? 'vi' : 'ko'; } catch (e) { return 'ko'; } })();
+const KO_Q = {"Gói đủ khí bảo vệ sản phẩm không?": "제품을 보호할 만큼 질소(가스)가 충분합니까?", "Đường seal có kín, thằng và đều không?": "실링이 밀봉되고 곧고 균일합니까?", "Bao bì có nguyên vẹn, không nhăn hoặc rách không?": "포장이 온전하고 주름이나 찢어짐이 없습니까?", "Bước cắt bao bì có ngay ngắn, cân đối không?": "포장 커팅 위치가 반듯하고 균형 잡혀 있습니까?", "Mực in có đều màu, hình ảnh và chũ có sắc nét không?": "인쇄 색상이 균일하고 이미지와 글자가 선명합니까?", "Thiết kế và thông tin trên bao bì có rõ ràng, dễ đọc không?": "포장 디자인과 표시 정보가 명확하고 읽기 쉽습니까?", "Độ nguyên vẹn và hình dạng của lát khoai thế nào?": "감자칩의 온전함과 모양은 어떻습니까?", "Màu sắc và bề mặt lát khoai thế nào?": "감자칩의 색상과 표면은 어떻습니까?", "Độ đồng đều gia vị trên bề mặt lát khoai thế nào?": "감자칩 표면의 시즈닝 균일도는 어떻습니까?", "Độ giòn, xốp của lát khoai khi ăn?": "먹을 때 감자칩의 바삭함과 식감은 어떻습니까?", "Cường độ và độ hài hòa của gia vị khi ăn?": "먹을 때 시즈닝의 강도와 조화는 어떻습니까?", "Mùi dầu của lát khoai khi ăn?": "먹을 때 감자칩의 기름 냄새는 어떻습니까?", "Hậu vị sau khi nuốt có vị lạ không?": "삼킨 후 뒷맛에 이상한 맛이 있습니까?"};
+const KO_T = {"Gãy vụn": "부서짐", "Khoai bị gập": "접힘", "Lát cắt không tròn tự nhiên": "모양이 부자연스러움", "Cháy nguyên lát / cháy đốm": "전체 탐 / 부분 탐", "Khoai xanh": "녹변 감자", "Đốm đen": "검은 반점", "SSN không đều (vón cục)": "시즈닝 불균일 (뭉침)", "SSN ít": "시즈닝 적음", "SSN quá nhiều": "시즈닝 과다", "Vảy gia vị không đều (ớt, rong biển / tảo, rau)": "플레이크 불균일 (고추, 김 / 해조, 채소)", "Giòn cứng (lát dày / sắc nhọn)": "딱딱함 (두꺼움 / 날카로움)", "Cấu trúc giống thủy tinh": "유리 같은 식감", "Kém tan (dính răng)": "잘 안 녹음 (이에 붙음)", "Khoai bị ỉu": "눅눅함", "Ngấm dầu (ngập dầu miệng)": "기름 흡수 (입안 기름짐)", "Cấu trúc bột": "가루 같은 식감", "Cấu trúc giấy (mỏng, khô dai)": "종이 같은 식감 (얇고 질김)", "Bóng khí rỗng": "기포 (빈 공간)", "Yếu topnote": "탑노트 약함", "Vị mặn gắt": "짠맛 강함", "Vị nhạt nhẽo": "싱거움", "Mùi yếu": "향 약함", "Vị cháy": "탄 맛", "Nhiều dầu": "기름짐", "Mùi dầu cũ / ôi dầu": "산패취 / 오래된 기름 냄새", "Đắng chát": "쓰고 떫음", "Mùi nhân tạo / hóa chất": "인공향 / 화학 냄새", "Nhiễm mùi lạ": "이취", "Xì / rò khí": "가스 누출", "Ít khí": "가스 부족", "Seal yếu": "실링 약함", "Nhăn": "주름", "Rách": "찢어짐", "Biến dạng": "변형", "In lệch / mờ": "인쇄 틀어짐 / 흐림", "Lem màu": "번짐", "Code date mờ": "날짜 코드 흐림", "Sai thông tin": "정보 오류", "Nhãn lỗi": "라벨 불량", "Vỡ / vụn": "부서짐", "Cháy / sẫm màu": "탐 / 짙은 색", "Nhạt màu": "옅은 색", "Bong lớp phủ": "코팅 벗겨짐", "Chảy / bloom": "녹음 / 블룸", "Không đều": "불균일", "Ỉu / mềm": "눅눅함 / 물렁함", "Cứng": "딱딱함", "Khô": "건조함", "Đặc": "단단함", "Bở": "부서지기 쉬움", "Dính răng": "이에 붙음", "Bột": "가루감", "Nhạt vị": "맛 약함", "Lạ vị": "이미", "Đắng": "쓴맛", "Quá ngọt": "너무 단맛", "Ôi dầu": "산패취", "Khét": "탄 냄새", "Chua / hỏng": "신맛 / 변질", "Coating không đều": "코팅 불균일"};
+const KO_C = { 'Nguyên liệu': '원료', 'Phụ liệu / bao bì': '부자재 / 포장재', 'Process sản xuất': '생산 공정', 'Bảo quản kho nhà máy': '공장 창고 보관', 'Nhà cung cấp': '협력사', 'Vận chuyển': '운송', 'Kho NPP / đại lý': '대리점 창고', 'Trưng bày / điểm bán': '매장 진열', 'Thị trường / thời tiết': '시장 / 날씨', 'Chưa rõ': '불명' };
+const KO_D = { Production: '생산', Sales: '영업', Design: '디자인', MKT: '마케팅', PUR: '구매', ENG: '설비', Pro: '생산', 'Khác': '기타' };
+const KO_G = { 'Bao bì': '포장', 'In ấn': '인쇄', 'Ngoại quan': '외관', 'Cấu trúc': '식감', 'Hương vị': '맛' };
+const A4L = {
+  vi: { k: 'MQM ORION VINA · BÁO CÁO CHẤT LƯỢNG', title: m => `Kết quả đánh giá mẫu · ${m}`, sub: 'Tổng hợp từ các lượt đánh giá trên app MQM · ORION so với đối thủ · chỉ số chính là % câu trả lời "Có vấn đề" (thấp hơn = tốt hơn)',
+    kS: 'Mẫu đã đánh giá', kSs: (o, c) => `ORION ${o} · Đối thủ ${c}`, kE: 'Lượt chấm', kEs: n => `${n} câu trả lời`, kD: 'Bộ phận tham gia', kB: 'Câu trả lời "Có vấn đề"', comp: 'ĐỐI THỦ', compN: 'Đối thủ',
+    fH: 'Kết luận chính', f1: (o, c, v) => `ORION có <b>${o}</b> câu trả lời "Có vấn đề", đối thủ <b>${c}</b> → ${v}.`, vEq: 'tương đương', vDn: d => `<b class="r">ORION kém hơn ${d} điểm %</b>`, vUp: d => `<b class="g">ORION tốt hơn ${d} điểm %</b>`,
+    f2: (g, o, c) => `Nhóm tiêu chí chênh nhiều nhất: <b>${g}</b> — ORION ${o} so với đối thủ ${c}.`, f3: 'Câu hỏi ORION kém nhất so với đối thủ: ', f4: 'Lỗi ORION gặp nhiều nhất: ', times: n => `${n} lần`,
+    f5: (k, p) => `SKU ORION nhiều vấn đề nhất: <b>${k}</b> — ${p} câu trả lời có vấn đề.`, f6: 'ORION tốt hơn đối thủ ở: ',
+    gH: 'Theo nhóm tiêu chí', gS: '% câu trả lời "Có vấn đề"', tH: 'Lỗi hay gặp', tS: 'Số lần ghi nhận',
+    qH: 'Vấn đề theo từng câu hỏi', qS: 'lỗi hay gặp là của ORION', qc: ['Câu hỏi', 'ORION / Đối thủ', 'Lỗi hay gặp (ORION)', 'So sánh'],
+    up: d => `▲ ORION tốt hơn ${d}%`, dn: d => `▼ ORION kém hơn ${d}%`, eq: '≈ Ngang nhau', na: 'Chưa đủ số liệu',
+    sH: 'Chi tiết theo SKU ORION', sS: 'SKU nhiều vấn đề nhất ở trên · nhận xét ghi theo bộ phận', sM: (np, ne, b, n, a) => `${np} gói · ${ne} lượt chấm · ${b}/${n} câu có vấn đề${a != null ? ` · tuổi TB ${a} ngày` : ''}`,
+    lT: 'Lỗi hay gặp', lC: 'Nguyên nhân nghi ngờ', lO: 'Đề xuất xử lý', lN: 'Nhận xét', lS: 'Giải pháp tạm thời',
+    cH: 'Đối thủ tham chiếu', cS: '% câu trả lời "Có vấn đề" theo SKU đối thủ · cao nhất ở trên', cc: ['SKU đối thủ', '% vấn đề', 'Lỗi hay gặp'],
+    foot: m => `MQM ORION VINA · Báo cáo chất lượng ${m.toLowerCase()}`, footR: (d, i, n) => `Xuất ngày ${d} · Trang ${i}/${n}` },
+  ko: { k: 'MQM ORION VINA · 품질 보고서', title: m => `샘플 평가 결과 · ${m}`, sub: 'MQM 앱 평가 결과 종합 · ORION vs 경쟁사 · 주요 지표는 "문제 있음" 응답 비율 (낮을수록 좋음)',
+    kS: '평가 샘플', kSs: (o, c) => `ORION ${o} · 경쟁사 ${c}`, kE: '평가 건수', kEs: n => `응답 ${n}개`, kD: '참여 부서', kB: '"문제 있음" 응답', comp: '경쟁사', compN: '경쟁사',
+    fH: '주요 결론', f1: (o, c, v) => `ORION의 "문제 있음" 응답 비율은 <b>${o}</b>, 경쟁사는 <b>${c}</b> → ${v}.`, vEq: '비슷한 수준', vDn: d => `<b class="r">ORION이 ${d}%p 열위</b>`, vUp: d => `<b class="g">ORION이 ${d}%p 우수</b>`,
+    f2: (g, o, c) => `차이가 가장 큰 평가 기준: <b>${g}</b> — ORION ${o} vs 경쟁사 ${c}.`, f3: '경쟁사 대비 ORION이 가장 취약한 문항: ', f4: 'ORION 주요 불량: ', times: n => `${n}회`,
+    f5: (k, p) => `문제가 가장 많은 ORION SKU: <b>${k}</b> — 응답의 ${p}가 "문제 있음".`, f6: 'ORION이 경쟁사보다 우수한 문항: ',
+    gH: '평가 기준별 비교', gS: '"문제 있음" 응답 비율', tH: '주요 불량', tS: '발생 횟수',
+    qH: '문항별 문제 현황', qS: '주요 불량은 ORION 기준', qc: ['문항', 'ORION / 경쟁사', '주요 불량 (ORION)', '비교'],
+    up: d => `▲ ORION 우수 ${d}%p`, dn: d => `▼ ORION 열위 ${d}%p`, eq: '≈ 비슷함', na: '데이터 부족',
+    sH: 'ORION SKU별 상세', sS: '문제 비율이 높은 순 · 의견과 대책은 평가자가 입력한 원문(베트남어)', sM: (np, ne, b, n, a) => `${np}팩 · 평가 ${ne}건 · 문제 응답 ${b}/${n}${a != null ? ` · 평균 경과일 ${a}일` : ''}`,
+    lT: '주요 불량', lC: '추정 원인', lO: '담당 부서 제안', lN: '평가 의견 (원문)', lS: '임시 대책 (원문)',
+    cH: '경쟁사 참고', cS: '경쟁사 SKU별 "문제 있음" 응답 비율 · 높은 순', cc: ['경쟁사 SKU', '문제 비율', '주요 불량'],
+    foot: m => `MQM ORION VINA · ${m} 품질 보고서`, footR: (d, i, n) => `출력일 ${d} · ${i} / ${n}` }
+};
+function a4Pages(lang) {
+  const L = A4L[lang], ko = lang === 'ko';
+  const kq = q => { const s = PC.stripG(q); return ko ? KO_Q[s] || s : s; };
+  const kt = t => !ko ? t : KO_T[t] || (Object.entries(KO_T).find(([k]) => String(t).length >= 20 && k.startsWith(t)) || [0, t])[1];
+  const kc = t => ko ? KO_C[t] || t : t, kd = t => ko ? KO_D[t] || t : t, kg = g => ko ? KO_G[g] || g : g;
+  const tag = (o, c) => { if (o == null || c == null) return `<span class="dt na">${L.na}</span>`; const d = Math.round(o - c);
+    return Math.abs(d) < 3 ? `<span class="dt eq">${L.eq}</span>` : d < 0 ? `<span class="dt up">${L.up(-d)}</span>` : `<span class="dt dn">${L.dn(d)}</span>`; };
+  const now = new Date(), p2 = n => String(n).padStart(2, '0');
+  const mon = ko ? (m => m ? `${m[1]}년 ${+m[2]}월` : R.cycle)(String(R.cycle).match(/^(\d{4})-(\d{2})$/)) : PC.monthLabel(R.cycle);
+  const today = ko ? `${now.getFullYear()}.${p2(now.getMonth() + 1)}.${p2(now.getDate())}` : `${p2(now.getDate())}/${p2(now.getMonth() + 1)}/${now.getFullYear()}`;
+  const byId = Object.fromEntries(R.samples.map(s => [s.id, s]));
+  const ex = R.extra.filter(x => byId[x.sampleId]).map(x => Object.assign({ s: byId[x.sampleId], g: x.group || PC.groupOf(x.question) }, x));
+  const evs = R.evals.filter(e => byId[e.sampleId]).map(e => Object.assign({ s: byId[e.sampleId] }, e));
+  const O = ex.filter(x => isO(x.s)), C = ex.filter(x => !isO(x.s)), sO = stat(O), sC = stat(C), sA = stat(ex);
+  const mO = R.samples.filter(isO), mC = R.samples.filter(s => !isO(s)), depts = [...new Set(evs.map(e => e.dept))];
+  const tagCnt = xs => { const m = {}; xs.forEach(x => (x.tags || []).forEach(t => { m[t] = (m[t] || 0) + 1; })); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+  const cnt = list => { const m = {}; list.forEach(v => { if (v) m[v] = (m[v] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+  const isBad = x => x.result === 'Có vấn đề';
+  const gr = GRPS.map(g => ({ g, o: stat(O.filter(x => x.g === g)), c: stat(C.filter(x => x.g === g)) })).filter(r => r.o.n || r.c.n);
+  const qs = R.questions.map(q => { const xo = O.filter(x => x.qid === q.id); return { q, g: q.g || PC.groupOf(q.q), o: stat(xo), c: stat(C.filter(x => x.qid === q.id)), tg: tagCnt(xo.filter(isBad)).slice(0, 2).map(t => kt(t[0])) }; }).filter(r => r.o.n || r.c.n);
+  const tO = tagCnt(O.filter(isBad)), tC = Object.fromEntries(tagCnt(C.filter(isBad)));
+  const skuOf = s => s.brand + ' · ' + s.flavor + (s.sku ? ' · ' + s.sku : '');
+  const skus = [...new Set(mO.map(skuOf))].map(k => { const xs = O.filter(x => skuOf(x.s) === k), es = evs.filter(e => isO(e.s) && skuOf(e.s) === k), st = stat(xs);
+    const notes = [...new Map(xs.filter(x => isBad(x) && String(x.note || '').trim().length > 3).map(x => [String(x.note).trim().toLowerCase(), x])).values()].sort((a, b) => String(b.note).length - String(a.note).length).slice(0, 2);
+    const pc = mO.filter(s => skuOf(s) === k), ages = pc.map(ageOf).filter(d => d != null);
+    return { k, st, ne: es.length, np: pc.length, age: ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) : null, tags: tagCnt(xs.filter(isBad)).slice(0, 4),
+      notes, causes: cnt(es.flatMap(e => (e.causeIn || []).concat(e.causeOut || []))).slice(0, 3), owners: cnt(es.flatMap(e => e.owners || [])).slice(0, 3),
+      sol: [...new Set(es.flatMap(e => String(e.solution || '').split(/\s*[·\n]\s*/)).map(t => t.trim()).filter(t => t.replace(/[-–.\s]/g, '').length > 2))].slice(0, 3) };
+  }).filter(r => r.st.n).sort((a, b) => b.st.p - a.st.p);
+  const cSkus = [...new Set(mC.map(skuOf))].map(k => { const xs = C.filter(x => skuOf(x.s) === k); return { k, st: stat(xs), tg: tagCnt(xs.filter(isBad)).slice(0, 2).map(t => kt(t[0])) }; }).filter(r => r.st.n).sort((a, b) => b.st.p - a.st.p);
+  // Kết luận chính (tự sinh từ số liệu)
+  const d = Math.round(sO.p - sC.p), wg = gr.filter(r => r.o.n && r.c.n).sort((a, b) => (b.o.p - b.c.p) - (a.o.p - a.c.p))[0];
+  const wq = qs.filter(r => r.o.n && r.c.n).sort((a, b) => (b.o.p - b.c.p) - (a.o.p - a.c.p)).slice(0, 3), bq = qs.filter(r => r.o.n && r.c.n && r.o.p - r.c.p <= -3);
+  const find = [
+    L.f1(f0(sO.p), f0(sC.p), Math.abs(d) < 3 ? L.vEq : d > 0 ? L.vDn(d) : L.vUp(-d)),
+    wg ? L.f2(kg(wg.g), f0(wg.o.p), f0(wg.c.p)) : '',
+    wq.length ? L.f3 + wq.map(r => `<b>${esc(kq(r.q.q))}</b> (${f0(r.o.p)} vs ${f0(r.c.p)})`).join(' · ') : '',
+    tO.length ? L.f4 + tO.slice(0, 3).map(([t, n]) => `<b>${esc(kt(t))}</b> (${L.times(n)})`).join(', ') + '.' : '',
+    skus.length ? L.f5(esc(skus[0].k), f0(skus[0].st.p)) : '',
+    bq.length ? L.f6 + bq.map(r => esc(kq(r.q.q))).join(' · ') : ''
+  ].filter(Boolean);
+  const pages = [], cls = `a4 land ${lang}`, foot = () => `<div class="a4f"><span>${L.foot(mon)}</span><span>${L.footR(today, pages.length + 1, '__N__')}</span></div>`;
+  const bar = (v, c, m) => `<div class="a4b ${c}"><i style="width:${v == null ? 0 : Math.max(1, v / (m || 100) * 100).toFixed(1)}%"></i><span>${f0(v)}</span></div>`;
+  const lg = `<span class="ko">■</span> ORION <span class="kc">■</span> ${L.compN}`;
+  // Trang 1: tổng quan · VS · kết luận | nhóm tiêu chí · lỗi hay gặp
+  const gm = Math.max(10, ...gr.flatMap(r => [r.o.p || 0, r.c.p || 0])), t4 = tO.slice(0, 4), tm = Math.max(1, ...t4.map(x => x[1]), ...t4.map(([t]) => tC[t] || 0));
+  pages.push(`<section class="${cls}"><div class="a4h"><div><div class="a4k">${L.k}</div><h1>${L.title(mon)}</h1><p>${L.sub}</p></div><div class="a4logo">${typeof PC_LOGO === 'string' ? PC_LOGO : ''}</div></div>
+    <div class="a4kp"><div><small>${L.kS}</small><b>${R.samples.length}</b><span>${L.kSs(mO.length, mC.length)}</span></div><div><small>${L.kE}</small><b>${evs.length}</b><span>${L.kEs(ex.length)}</span></div>
+      <div><small>${L.kD}</small><b>${depts.length}</b><span>${esc(depts.map(kd).join(' · '))}</span></div><div class="red"><small>${L.kB}</small><b>${f0(sA.p)}</b><span>${sA.b} / ${sA.n}</span></div></div>
+    <div class="a4cols"><div>
+      <div class="a4vs"><div class="o"><small>ORION</small><b>${f0(sO.p)}</b><span>${[...new Set(mO.map(s => s.brand))].join(' · ')} · ${sO.b}/${sO.n}</span></div><div class="mid">VS</div>
+        <div class="c"><small>${L.comp}</small><b>${f0(sC.p)}</b><span>${[...new Set(mC.map(s => s.brand))].join(' · ')} · ${sC.b}/${sC.n}</span></div></div>
+      <h2>${L.fH}</h2><ol class="a4fd">${find.map(t => `<li>${t}</li>`).join('')}</ol></div>
+    <div><h2 class="top">${L.gH}</h2><p class="a4s">${L.gS} · ${lg}</p>
+      <table class="a4t"><tbody>${gr.map(r => `<tr><td class="w1"><b>${kg(r.g)}</b></td><td>${bar(r.o.p, 'o', gm)}${bar(r.c.p, 'c', gm)}</td><td class="w2">${tag(r.o.p, r.c.p)}</td></tr>`).join('')}</tbody></table>
+      <h2>${L.tH}</h2><p class="a4s">${L.tS} · ${lg}</p>
+      <div class="a4tg">${t4.map(([t, n]) => `<div><span>${esc(kt(t))}</span><div class="a4b o"><i style="width:${(n / tm * 100).toFixed(1)}%"></i><span>${n}</span></div><div class="a4b c"><i style="width:${((tC[t] || 0) / tm * 100).toFixed(1)}%"></i><span>${tC[t] || 0}</span></div></div>`).join('')}</div></div></div>${foot()}</section>`);
+  // Trang 2: từng câu hỏi
+  const qm = Math.max(10, ...qs.flatMap(r => [r.o.p || 0, r.c.p || 0]));
+  pages.push(`<section class="${cls}"><h2 class="top">${L.qH}</h2><p class="a4s">${L.gS} · ${lg} · ${L.qS}</p>
+    <table class="a4t q"><thead><tr><th>${L.qc[0]}</th><th style="width:26%">${L.qc[1]}</th><th style="width:22%">${L.qc[2]}</th><th style="width:14%">${L.qc[3]}</th></tr></thead><tbody>
+    ${GRPS.filter(g => qs.some(r => r.g === g)).map(g => `<tr class="gh"><td colspan="4">${kg(g)}</td></tr>` + qs.filter(r => r.g === g).map(r => `<tr><td>${esc(kq(r.q.q))}</td><td>${bar(r.o.p, 'o', qm)}${bar(r.c.p, 'c', qm)}</td><td class="tg">${esc(r.tg.join(', ')) || '—'}</td><td>${tag(r.o.p, r.c.p)}</td></tr>`).join('')).join('')}</tbody></table>${foot()}</section>`);
+  // Trang 3+: chi tiết SKU ORION (2×2), trang cuối: đối thủ tham chiếu
+  const card = r => `<div class="a4sku"><div class="sh"><b>${esc(r.k)}</b><span class="pct">${f0(r.st.p)}</span></div>
+    <div class="sm">${L.sM(r.np, r.ne, r.st.b, r.st.n, r.age)}</div>
+    <div class="sg"><div><small>${L.lT}</small>${r.tags.length ? r.tags.map(([t, n]) => `<span class="ch">${esc(kt(t))} <em>${n}</em></span>`).join('') : '—'}</div>
+      <div><small>${L.lC}</small>${r.causes.length ? esc(r.causes.map(c => kc(c[0])).join(', ')) : '—'}<small style="margin-top:1.5mm">${L.lO}</small>${r.owners.length ? esc(r.owners.map(c => kd(c[0])).join(', ')) : '—'}</div></div>
+    ${r.notes.length ? `<div class="nt"><small>${L.lN}</small><ul>${r.notes.map(x => `<li><b>${esc(kd(x.dept))}</b> · ${esc(String(x.note).slice(0, 120))}</li>`).join('')}</ul></div>` : ''}
+    ${r.sol.length ? `<div class="sol"><small>${L.lS}</small>${esc(r.sol.join(' · ').slice(0, 160))}</div>` : ''}</div>`;
+  for (let i = 0; i < skus.length; i += A4_SKU_PER_PAGE) {
+    pages.push(`<section class="${cls}"><h2 class="top">${L.sH}${skus.length > A4_SKU_PER_PAGE ? ` <span class="a4s">(${i + 1}–${Math.min(skus.length, i + A4_SKU_PER_PAGE)} / ${skus.length})</span>` : ''}</h2><p class="a4s">${L.sS}</p>
+      <div class="a4grid">${skus.slice(i, i + A4_SKU_PER_PAGE).map(card).join('')}</div>${foot()}</section>`);
+  }
+  if (cSkus.length) {
+    const half = Math.ceil(cSkus.length / 2), tb = list => `<table class="a4t"><thead><tr><th>${L.cc[0]}</th><th class="c" style="width:18%">${L.cc[1]}</th><th style="width:40%">${L.cc[2]}</th></tr></thead><tbody>
+      ${list.map(r => `<tr><td>${esc(r.k)}</td><td class="c">${f0(r.st.p)}</td><td class="tg">${esc(r.tg.join(', ')) || '—'}</td></tr>`).join('')}</tbody></table>`;
+    pages.push(`<section class="${cls}"><h2 class="top">${L.cH}</h2><p class="a4s">${L.cS}</p><div class="a4cols eq"><div>${tb(cSkus.slice(0, half))}</div><div>${tb(cSkus.slice(half))}</div></div>${foot()}</section>`);
+  }
+  return pages.join('').replace(/__N__/g, pages.length);
+}
+// Thư viện tạo PDF (chỉ tải khi bấm "Tải PDF")
+const loadJs = src => new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('Không tải được thư viện PDF')); document.head.appendChild(s); });
+// tên file: yymm_MQM_Quick report (anh Thái 13/11)
+const a4Name = () => `${String(R.cycle).slice(2, 4)}${String(R.cycle).slice(5, 7)}_MQM_Quick report`;
+// Xem trước: thu nhỏ trang cho vừa màn hình (điện thoại / laptop nhỏ)
+function a4Fit() { const w = $('.a4wrap'); if (!w) return; const k = Math.min(1, (innerWidth - 24) / 1123); w.style.zoom = k < 1 ? k.toFixed(3) : ''; }
+function a4Render() {
+  const w = $('#a4w'); if (!w) return;
+  w.querySelector('.a4wrap').innerHTML = a4Pages(a4Lang);
+  w.querySelectorAll('[data-al]').forEach(b => b.classList.toggle('on', b.dataset.al === a4Lang));
+  $('#a4n').textContent = `${w.querySelectorAll('section.a4').length} trang · ${a4Lang === 'ko' ? '한국어' : 'Tiếng Việt'}`; a4Fit();
+}
+function openA4() {
+  let w = $('#a4w'); if (!w) { w = document.createElement('div'); w.id = 'a4w'; document.body.appendChild(w); }
+  w.innerHTML = `<div class="a4bar"><b>Report A4 · ${PC.monthLabel(R.cycle)}</b><span id="a4n"></span>
+    <div class="a4lang"><button data-al="vi">Tiếng Việt</button><button data-al="ko">한국어</button></div>
+    <button class="btn" id="a4d">Tải PDF</button><button class="btn gray" id="a4p">In</button><button class="btn gray" id="a4x">Đóng</button></div><div class="a4wrap"></div>`;
+  document.body.classList.add('a4on'); a4Render(); addEventListener('resize', a4Fit);
+  w.querySelectorAll('[data-al]').forEach(b => b.onclick = () => { a4Lang = b.dataset.al; try { localStorage.setItem('mqm-a4-lang', a4Lang); } catch (e) {} a4Render(); });
+  $('#a4x').onclick = () => { document.body.classList.remove('a4on'); removeEventListener('resize', a4Fit); w.remove(); };
+  $('#a4p').onclick = () => { const t = document.title, z = $('.a4wrap').style.zoom; $('.a4wrap').style.zoom = ''; document.title = a4Name(); window.print(); document.title = t; $('.a4wrap').style.zoom = z; };
+  $('#a4d').onclick = async () => {
+    const b = $('#a4d'), wrap = $('.a4wrap'), z = wrap.style.zoom; b.disabled = true;
+    try {
+      b.textContent = 'Đang chuẩn bị…';
+      await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+      await loadJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+      wrap.style.zoom = ''; const secs = [...wrap.querySelectorAll('section.a4')], pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+      for (let i = 0; i < secs.length; i++) {
+        b.textContent = `Đang tạo PDF… ${i + 1}/${secs.length}`;
+        // html2canvas đôi khi lấy sai màu chữ kế thừa → ghi cố định màu chữ của từng phần tử vào bản sao trước khi chụp
+        const src = [...secs[i].querySelectorAll('*')].map(el => getComputedStyle(el).color);
+        const cv = await html2canvas(secs[i], { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false,
+          onclone: (doc, el) => { const sec = el || doc.querySelectorAll('section.a4')[i]; [...sec.querySelectorAll('*')].forEach((e, k) => { if (src[k]) e.style.color = src[k]; }); } });
+        if (i) pdf.addPage('a4', 'landscape');
+        pdf.addImage(cv.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 297, 210);
+      }
+      pdf.save(a4Name() + '.pdf'); toastMsg('Đã tải ' + a4Name() + '.pdf');
+    } catch (x) { toastMsg('Chưa tạo được PDF: ' + x.message + ' · có thể dùng nút In → Lưu dưới dạng PDF'); }
+    wrap.style.zoom = z; b.disabled = false; b.textContent = 'Tải PDF';
+  };
+}
+
 function view() {
   const byId = Object.fromEntries(R.samples.map(s => [s.id, s]));
   const keep = s => s && (fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')) && (!fBrand || s.brand === fBrand);
@@ -362,7 +575,8 @@ function view() {
   return { samples, evals, extra };
 }
 
-const rtabs = () => `<div class="rtabs">${[['all', 'Tổng quan'], ['cmp', 'ORION vs Đối thủ']].map(([v, t]) => `<button class="${tab === v ? 'on' : ''}" data-rt="${v}">${t}</button>`).join('')}</div>`;
+const rtabs = () => `<div class="rtop"><div class="rtabs">${[['all', 'Tổng quan'], ['cmp', 'ORION vs Đối thủ']].map(([v, t]) => `<button class="${tab === v ? 'on' : ''}" data-rt="${v}">${t}</button>`).join('')}</div>
+  ${R.extra && R.extra.length ? '<button class="btn a4go" id="a4btn">Report A4 · PDF</button>' : ''}</div>`;
 function render() {
   if (tab === 'cmp') { $('#app').innerHTML = rtabs() + compare(); bind(); return; }
   const { samples, evals, extra } = view();
@@ -443,6 +657,7 @@ function render() {
 function bind() {
   document.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { fOrigin = b.dataset.o; render(); });
   const sel = $('#brand'); if (sel) sel.onchange = () => { fBrand = sel.value; render(); };
+  const a4b = $('#a4btn'); if (a4b) a4b.onclick = openA4;
   document.querySelectorAll('[data-rt]').forEach(b => b.onclick = () => { tab = b.dataset.rt; try { localStorage.setItem('mqm-rep-tab', tab); } catch (e) {} render(); });
   document.querySelectorAll('[data-mk]').forEach(b => b.onclick = () => { cMk = b.dataset.mk; render(); });
   [['#cO', v => { cO = v; }], ['#cC', v => { cC = v; }], ['#cDp', v => { cDp = v; }]].forEach(([id, f]) => { const s = $(id); if (s) s.onchange = () => { f(s.value); render(); }; });
@@ -455,6 +670,7 @@ async function load(c) {
     if (!R.ok) throw new Error(R.error);
     $('#sub').textContent = `Fact từ các lượt đánh giá ${PC.monthLabel(R.cycle).toLowerCase()}. Ai cũng xem được.`;
     render();
+    if (location.hash === '#a4' && R.extra && R.extra.length) openA4();   // link thẳng tới Report A4
   } catch (e) { $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }
 (async () => {
