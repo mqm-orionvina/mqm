@@ -196,6 +196,15 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 .solo-t td.bl, .solo-t td.br { width: 30%; } .solo-t td.bl { border-right: 1.5px solid var(--line); } .solo-t tr.reg td { background: var(--soft); }
 @media (max-width: 900px) { .sov { grid-template-columns: minmax(0, 1fr) 26px minmax(0, 1fr); } .sov .sk, .sov .sd { grid-column: 1 / -1; text-align: left; } .sov .sl { grid-row: 2; } .sov .vs { grid-row: 2; grid-column: 2; } .sov .sl.r { grid-row: 2; grid-column: 3; } .sov .bf.l { grid-row: 3; grid-column: 1; } .sov .bf.r { grid-row: 3; grid-column: 3; }
   .solo-k { grid-template-columns: 1fr; } }
+
+/* 13/11: Freshness */
+.frsvg { width: 100%; height: auto; } .frsvg .pv { stroke: var(--card, #fff); stroke-width: .8; stroke-linejoin: round; cursor: pointer; } .frsvg .pv:hover { stroke: var(--ink, #141414); stroke-width: 1.4; }
+.frsvg .pv[fill="#ffffff"] { stroke: #c9ccd3; } .frsvg .pv.sel { stroke: var(--ink, #141414); stroke-width: 2.2; }
+.frsvg .pl { font-size: 10px; font-weight: 800; fill: #141414; paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: 2.5px; pointer-events: none; } .frsvg .pl.dk { fill: #fff; stroke: rgba(0,0,0,.35); }
+#frIns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 20px; align-content: start; } #frIns .ikpi, #frIns .ins-d { grid-column: 1 / -1; }
+.fdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.fbar { background: var(--soft); }
+@media (max-width: 700px) { #frIns { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -204,7 +213,7 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 <header class="top"><div class="in">
   <div class="brand"><i>O</i><div><b>Product Age</b><small>Ostar · Swing vs Lay's · Wavy · 9 Center · 196 Office</small></div></div>
   <span class="langsw"><button data-lang="vi" class="on">Tiếng Việt</button><button data-lang="ko">한국어</button></span><span class="live" id="live"><i></i><span id="liveT">Đang kết nối Google Sheets…</span></span>
-  <nav class="tabs" role="tablist"><button role="tab" id="t-prog" class="on" data-tab="prog">Tiến độ Center / Office</button><button role="tab" id="t-age" data-tab="age">Tuổi sản phẩm</button><button role="tab" id="t-cov" data-tab="cov">Độ phủ</button><button role="tab" id="t-solo" data-tab="solo">Solo</button><button role="tab" id="t-prod" data-tab="prod">Danh sách sản phẩm</button><button role="tab" id="t-info" data-tab="info">Info</button><button role="tab" id="t-guide" data-tab="guide">Hướng dẫn</button></nav>
+  <nav class="tabs" role="tablist"><button role="tab" id="t-prog" class="on" data-tab="prog">Tiến độ Center / Office</button><button role="tab" id="t-age" data-tab="age">Tuổi sản phẩm</button><button role="tab" id="t-cov" data-tab="cov">Độ phủ</button><button role="tab" id="t-fr" data-tab="fr">Freshness</button><button role="tab" id="t-solo" data-tab="solo">Solo</button><button role="tab" id="t-prod" data-tab="prod">Danh sách sản phẩm</button><button role="tab" id="t-info" data-tab="info">Info</button><button role="tab" id="t-guide" data-tab="guide">Hướng dẫn</button></nav>
 </div></header>
 
 <main class="wrap">
@@ -605,6 +614,21 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
     <div class="tw"><table id="tCovS"></table></div>
     <p class="foot"><b>Độ phủ</b> = số shop có ít nhất 1 SKU <b>vị chính</b> của brand ÷ số shop đã khảo sát. Vị chính: Ostar Tảo + Kim Chi · Swing Bò NY + Phô Mai · Lay's và Lay's Wavy đủ vị (4 vị Ostar Tự Nhiên, Trứng Muối, Swing Gà Teri, Maxx Bò không tính). <b>Shop đã khảo sát</b> = shop có ít nhất 1 mẫu gửi lên (tính theo Salesman · Office · số shop · ngày). Mẫu bấm “Không có trên kệ” chỉ lưu trên điện thoại nên shop không có SKU nào sẽ chưa được tính. Mẫu thử (TEST) không tính.</p>
   </section>
+  <section id="v-fr" hidden>
+    <div class="bar2"><h2>Freshness · độ tươi theo tuổi gói đầu kệ (date 180 ngày)</h2>
+      <label for="fR">Vùng <select id="fR"><option value="">Tất cả</option><option value="N">TT North</option><option value="S">TT South</option></select></label>
+      <label for="fC">Center <select id="fC"><option value="">Tất cả</option></select></label>
+      <label for="fT">Loại shop <select id="fT"><option value="">Tất cả</option><option value="S">Big</option><option value="A">Normal</option><option value="B">Small</option></select></label></div>
+    <div class="cards" id="frCards"></div>
+    <div class="bar2"><h2>Bản đồ freshness theo tỉnh · ORION vs PEPSI</h2><label>cùng 1 thang màu · số trên tỉnh = tuổi TB (ngày) · bấm vào tỉnh để xem chi tiết</label></div>
+    <div class="maps3">
+      <div class="mapcard"><div class="mh2"><b class="mo">ORION</b><span>Ostar + Swing</span><select id="selFO" aria-label="Chọn brand / flavor ORION"></select></div><svg id="frMapO" class="frsvg" viewBox="9 12 313 656" role="img" aria-label="Bản đồ freshness ORION"></svg></div>
+      <div class="mapcard"><div class="mh2"><b class="mp2">PEPSI</b><span>Lay's + Lay's Wavy</span><select id="selFP" aria-label="Chọn brand / flavor PEPSI"></select></div><svg id="frMapP" class="frsvg" viewBox="9 12 313 656" role="img" aria-label="Bản đồ freshness PEPSI"></svg></div>
+      <aside class="inscard"><div class="ins-t">Insight</div><div id="frInfo" class="provinfo"></div><div id="frIns" class="frins"></div>
+        <p class="insnote">Freshness = phần hạn dùng còn lại của gói đầu kệ = (180 − tuổi) ÷ 180. Tuổi = ngày mua − NSX của gói đầu kệ. Tô màu theo tuổi TB của tỉnh, xanh = còn tươi, đỏ = gần hết date. Tính mọi vị; mẫu TEST không tính.</p></aside>
+    </div>
+    <p class="foot"><b>Mốc</b>: ≤ 30 ngày rất tươi · 30–60 tươi · 60–90 ổn · 90–120 cần chú ý · 120–150 cũ · &gt; 150 ngày sắp hết date (date khoai tây 180 ngày).</p>
+  </section>
   <section id="v-solo" hidden>
     <div class="bar2"><h2>Solo · tuổi sản phẩm từng cặp ORION vs đối thủ</h2>
       <label for="sR">Vùng <select id="sR"><option value="">Tất cả</option><option value="N">TT North</option><option value="S">TT South</option></select></label>
@@ -964,7 +988,74 @@ function renderSolo() {
     + lines.map(([nm, x, cl]) => { const d = diff(x); return `<tr class="${cl} ${!x.o && !x.p ? 'dim' : ''}"><td>${cl ? '<b>' + esc(nm) + '</b>' : esc(nm)}</td><td class="n">${x.o ? x.o.n : 0}</td><td class="bl">${cell(x.o, P.co, 'l')}</td><td class="br">${cell(x.p, P.cp, 'r')}</td><td class="n">${x.p ? x.p.n : 0}</td><td class="n"><b class="${dCls(d)}">${dTxt(d)}</b></td></tr>`; }).join('') + '</tbody>';
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-solo]'); if (!b) return; soloId = b.dataset.solo; LS.set('pa.solo', soloId); renderSolo(); });
-function render() { if (tab === 'prog') renderProg(); else if (tab === 'prod') renderProd(); else if (tab === 'age') renderAge(); else if (tab === 'cov') renderCov(); else if (tab === 'solo') renderSolo(); }
+
+// ---------- Freshness (13/11): tuổi TB gói đầu kệ theo tỉnh, 2 bản đồ ORION / PEPSI cùng thang đỏ → xanh, date 180 ngày ----------
+const SHELF = 180;
+const FBINS = [[0, 30, '≤ 30'], [30, 60, '30–60'], [60, 90, '60–90'], [90, 120, '90–120'], [120, 150, '120–150'], [150, 9999, '> 150']];
+const FRAMP = ['#1a9850', '#7cc35a', '#d9ef8b', '#fee08b', '#fc8d59', '#d73027'];
+const fbin = a => FBINS.findIndex(b => a >= b[0] && a < b[1]);
+const freshPct = a => Math.max(0, Math.round((SHELF - a) / SHELF * 100));
+const FRG = { O: { name: 'ORION', brands: ['OStar', 'Swing'], col: '#c8102e', sel: '' }, P: { name: 'PEPSI', brands: ["Lay's", "Lay's Wavy"], col: '#1f4fa3', sel: '' } };
+let frSel = '', lastFrR = [];
+function frOpts(k) { const g = FRG[k], fls = b => [...new Set(rows.filter(r => r.brand === b).map(r => r.flavor))].sort();
+  return `<option value="">Tất cả ${g.name}</option>` + g.brands.map(b => `<option value="${esc(b)}|">${esc(BR(b)[1])}</option>` + fls(b).map(f => `<option value="${esc(b)}|${esc(f)}">— ${esc(BR(b)[1])} ${esc(flName(f))}</option>`).join('')).join(''); }
+const frHit = (k, r) => { const g = FRG[k], [sb, sf] = (g.sel || '|').split('|'); return g.brands.includes(r.brand) && (!sb || r.brand === sb) && (!sf || r.flavor === sf) && !isNaN(r.age); };
+const frLab = k => { const g = FRG[k], [sb, sf] = (g.sel || '|').split('|'); return g.sel ? (sf ? `${BR(sb)[1]} ${flName(sf)}` : BR(sb)[1]) : g.name; };
+function frMap(k, R) {
+  const st = {}; VN34.forEach(v => st[v.name] = []);
+  R.forEach(r => { const pv = provOf(r); if (st[pv] && frHit(k, r)) st[pv].push(r.age); });
+  let h = '', lab = '';
+  VN34.forEach(v => { const a = st[v.name], n = a.length, avg = n ? Math.round(a.reduce((x, y) => x + y, 0) / n) : 0, bi = fbin(avg);
+    h += `<path d="${v.d}" data-fp="${esc(v.name)}" class="pv ${v.name === frSel ? 'sel' : ''}" fill="${n ? FRAMP[bi] : '#ffffff'}"><title>${esc(v.name)} · ${n ? `tuổi TB ${avg} ngày · freshness ${freshPct(avg)}% · ${n} mẫu` : 'chưa có mẫu'}</title></path>`;
+    if (n) lab += `<text x="${v.cx}" y="${v.cy + 5}" class="pl ${bi === 0 || bi === 5 ? 'dk' : ''}" text-anchor="middle">${avg}</text>`; });
+  $('#frMap' + k).innerHTML = h + lab;
+  const all = R.filter(r => frHit(k, r)).map(r => r.age);
+  const prov = VN34.map(v => { const a = st[v.name]; return { name: v.name, n: a.length, avg: a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : 0 }; });
+  return { k, g: FRG[k], lab0: frLab(k), s: stats(all), prov };
+}
+function frInfo() {
+  const box = $('#frInfo'); if (!frSel) { box.innerHTML = '<p class="g pi-hint">👆 Bấm vào 1 tỉnh trên bản đồ để xem chi tiết tỉnh.</p>'; return; }
+  const RR = lastFrR.filter(r => provOf(r) === frSel);
+  const kp = k => { const a = RR.filter(r => frHit(k, r)).map(r => r.age), s = stats(a); return `<div class="ik"><span style="color:${FRG[k].col}">${FRG[k].name}</span><b>${s ? s.avg : '–'}<small style="font-size:13px"> ngày</small></b><small>${s ? `freshness ${freshPct(s.avg)}% · ${s.n} mẫu · ${s.old}% &gt; 90 ngày` : 'chưa có mẫu'}</small></div>`; };
+  const bb = BRANDS.map(([b, nm, , col]) => { const s = stats(RR.filter(r => r.brand === b && !isNaN(r.age)).map(r => r.age)); return s ? `<div class="pi-b"><span>${esc(nm)}</span><span class="cbar"><i style="width:${Math.min(100, s.avg / SHELF * 100)}%;background:${FRAMP[fbin(s.avg)]}"></i></span><b>${s.avg}</b> ngày</div>` : ''; }).join('');
+  box.innerHTML = `<div class="pi-h"><b>${esc(frSel)}</b><span>${RR.length} mẫu · tuổi TB gói đầu kệ</span><button id="frX" aria-label="Đóng">✕</button></div><div class="ikpi pi-k">${kp('O')}${kp('P')}</div><div class="pi-bars">${bb}</div>`;
+}
+function frInsight(O, P) {
+  const kpi = X => `<div class="ik"><span style="color:${X.g.col}">${X.g.name}</span><b>${X.s ? X.s.avg : '–'}<small style="font-size:13px"> ngày</small></b><small>${esc(X.lab0)} · freshness ${X.s ? freshPct(X.s.avg) : '–'}% · ${X.s ? X.s.n : 0} mẫu</small></div>`;
+  const big = X => X.prov.filter(x => x.n >= 5);
+  const old = X => big(X).sort((a, b) => b.avg - a.avg).slice(0, 3), fresh = X => big(X).sort((a, b) => a.avg - b.avg).slice(0, 3);
+  const li = xs => xs.length ? xs.map(x => `<li><span><i class="fdot" style="background:${FRAMP[fbin(x.avg)]}"></i>${esc(x.name)}</span><b>${x.avg} ngày</b><small>${x.n} mẫu</small></li>`).join('') : '<li class="g">chưa đủ dữ liệu</li>';
+  const pm = Object.fromEntries(P.prov.map(x => [x.name, x])), worse = big(O).filter(x => pm[x.name] && pm[x.name].n >= 3 && x.avg > pm[x.name].avg).map(x => `${x.name} (${x.avg} vs ${pm[x.name].avg})`);
+  const d = O.s && P.s ? O.s.avg - P.s.avg : null;
+  $('#frIns').innerHTML = `<div class="ins-sec">Cả nước</div><div class="ikpi">${kpi(O)}${kpi(P)}</div>
+    <p class="ins-d">${d == null ? 'Chưa đủ mẫu.' : d <= 0 ? `<b>${esc(O.lab0)}</b> tươi hơn <b>${esc(P.lab0)}</b> <b>${-d} ngày</b> tuổi TB trên toàn quốc.` : `<b>${esc(O.lab0)}</b> cũ hơn <b>${esc(P.lab0)}</b> <b>${d} ngày</b> tuổi TB trên toàn quốc.`}</p>
+    <div class="ins-s"><b>ORION cũ nhất</b><small>tỉnh ≥ 5 mẫu</small><ul>${li(old(O))}</ul></div>
+    <div class="ins-s"><b>ORION tươi nhất</b><ul>${li(fresh(O))}</ul></div>
+    <div class="ins-s"><b>PEPSI cũ nhất</b><ul>${li(old(P))}</ul></div>
+    <div class="ins-s"><b>Tỉnh ORION cũ hơn PEPSI</b><p>${worse.length ? worse.map(esc).join(' · ') : 'Không có tỉnh nào'}</p></div>
+    <div class="ins-s" style="grid-column:1/-1"><b>Thang màu · tuổi TB (ngày)</b><div class="isc"><span>Tươi</span>${FRAMP.map((c, i) => `<i style="background:${c}" title="${FBINS[i][2]} ngày"></i>`).join('')}<span style="width:auto;margin-left:4px">Cũ</span></div><div class="isl">${FBINS.map(b => `<span>${b[2]}</span>`).join('')}</div><p class="g"><i class="nos"></i> Trắng = tỉnh chưa có mẫu</p></div>`;
+}
+function drawFrMaps(R) {
+  lastFrR = R;
+  ['O', 'P'].forEach(k => { const el = $('#selF' + k); if (!el.options.length) el.innerHTML = frOpts(k); el.value = FRG[k].sel; });
+  const O = frMap('O', R), P = frMap('P', R); frInsight(O, P); frInfo();
+}
+function markFr() { document.querySelectorAll('.frsvg .pv').forEach(x => x.classList.toggle('sel', !!frSel && x.dataset.fp === frSel)); frInfo(); }
+document.addEventListener('click', e => { if (e.target.id === 'frX') { frSel = ''; markFr(); return; } const pv = e.target.closest('.frsvg [data-fp]'); if (!pv) return; frSel = frSel === pv.dataset.fp ? '' : pv.dataset.fp; markFr(); });
+document.addEventListener('change', e => { if (e.target.id === 'selFO' || e.target.id === 'selFP') { e.stopImmediatePropagation(); FRG[e.target.id.slice(4)].sel = e.target.value; drawFrMaps(lastFrR); } }, true);
+function renderFr() {
+  const cr = $('#fR').value, cc = $('#fC').value, ct = $('#fT').value, inR = c => !cr || (cr === 'N') === NORTH.includes(c);
+  const keep = $('#fC').value; $('#fC').innerHTML = '<option value="">Tất cả</option>' + CENTERS.map(c => c.center).filter(inR).map(c => `<option ${c === keep ? 'selected' : ''}>${esc(c)}</option>`).join('');
+  const R = rows.filter(r => r.shop && inR(r.center) && (!cc || r.center === cc) && (!ct || r.type === ct));
+  $('#frCards').innerHTML = BRANDS.map(([b, nm, g, col]) => { const s = stats(R.filter(r => r.brand === b && !isNaN(r.age)).map(r => r.age));
+    const o120 = s ? Math.round(R.filter(r => r.brand === b && r.age > 120).length / s.n * 100) : 0;
+    return `<div class="card"><h3><i style="background:${col}"></i>${esc(nm)}<small class="grp">${g}</small></h3><p>${s ? s.n + ' mẫu' : 'chưa có mẫu'}</p>
+      <div class="two"><div class="stt"><span>Freshness</span><b style="color:${s ? FRAMP[fbin(s.avg)] === '#d9ef8b' || FRAMP[fbin(s.avg)] === '#fee08b' ? '#8a6d00' : FRAMP[fbin(s.avg)] : 'inherit'}">${s ? freshPct(s.avg) + '%' : '–'}</b></div><div class="stt"><span>Tuổi TB</span><b>${s ? s.avg : '–'}<small>ngày</small></b></div></div>
+      <span class="cbar wide fbar"><i style="width:${s ? Math.min(100, s.avg / SHELF * 100) : 0}%;background:${s ? FRAMP[fbin(s.avg)] : 'transparent'}"></i></span>
+      ${s ? `<p class="age-hi" style="margin:0">${s.old}% gói &gt; 90 ngày · ${o120}% &gt; 120 ngày</p>` : ''}</div>`; }).join('');
+  drawFrMaps(R);
+}
+function render() { if (tab === 'prog') renderProg(); else if (tab === 'prod') renderProd(); else if (tab === 'age') renderAge(); else if (tab === 'cov') renderCov(); else if (tab === 'fr') renderFr(); else if (tab === 'solo') renderSolo(); }
 function a4Init() { const q = document.getElementById('a4qr'); if (!q || q.dataset.done) return; q.dataset.done = 1;
   try { new QRCode(q, { text: 'https://mqm-orionvina.github.io/mqm/pa/', width: 168, height: 168, colorDark: '#111111', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch (e) {} }
 // thu nhỏ trang A4 (794 px) cho vừa bề ngang màn hình
@@ -983,7 +1074,7 @@ document.addEventListener('change', e => { if (e.target.id === 'fC') fillFC(); }
 document.addEventListener('click', e => { const b = e.target.closest('[data-reg]'); if (!b) return; reg = b.dataset.reg; document.querySelectorAll('[data-reg]').forEach(x => x.classList.toggle('on', x === b)); fillFC(); shown = 30; renderAge(); });
 $('#pC').innerHTML += CENTERS.map(c => `<option>${esc(c.center)}</option>`).join('');
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b === t)); $('#v-prog').hidden = tab !== 'prog'; $('#v-age').hidden = tab !== 'age'; $('#v-prod').hidden = tab !== 'prod'; $('#v-cov').hidden = tab !== 'cov'; $('#v-solo').hidden = tab !== 'solo'; $('#v-info').hidden = tab !== 'info'; $('#v-guide').hidden = tab !== 'guide'; if (tab === 'info') drawQR(); if (tab === 'guide') { a4Init(); fitA4(); } LS.set('pa.tab', tab); render(); return; }
+  const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b === t)); $('#v-prog').hidden = tab !== 'prog'; $('#v-age').hidden = tab !== 'age'; $('#v-prod').hidden = tab !== 'prod'; $('#v-cov').hidden = tab !== 'cov'; $('#v-fr').hidden = tab !== 'fr'; $('#v-solo').hidden = tab !== 'solo'; $('#v-info').hidden = tab !== 'info'; $('#v-guide').hidden = tab !== 'guide'; if (tab === 'info') drawQR(); if (tab === 'guide') { a4Init(); fitA4(); } LS.set('pa.tab', tab); render(); return; }
   const oc = e.target.closest('tr[data-off]'); if (oc) { openOff.has(oc.dataset.off) ? openOff.delete(oc.dataset.off) : openOff.add(oc.dataset.off); renderProg(); return; }
   const c = e.target.closest('tr.c'); if (c) { open.has(c.dataset.c) ? open.delete(c.dataset.c) : open.add(c.dataset.c); renderProg(); return; }
   if (e.target.id === 'more') { shown += 30; renderAge(); }
@@ -992,7 +1083,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { const c = e.target.closest && e.target.closest('tr.c'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); c.click(); } });
 document.addEventListener('change', e => { shown = 30; render(); });
 document.addEventListener('input', e => { if (e.target.id === 'recQ') { shown = 30; renderAge(); } });
-const savedTab = LS.get('pa.tab', 'prog'); if (['age', 'cov', 'solo', 'prod', 'info', 'guide'].includes(savedTab)) document.querySelector(`[data-tab="${savedTab}"]`).click();
+const savedTab = LS.get('pa.tab', 'prog'); if (['age', 'cov', 'fr', 'solo', 'prod', 'info', 'guide'].includes(savedTab)) document.querySelector(`[data-tab="${savedTab}"]`).click();
 render();
 
 // ---------- Bản web app: đăng nhập (tab Viewers) → đọc số qua Apps Script mỗi 60 giây ----------
