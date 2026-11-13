@@ -114,7 +114,7 @@ ul.wq em { color: #6b6b6b; font-size: 13.5px; margin-left: 2px; }
 #lb .lbn a { color: #fff; opacity: .8; font-size: 13.5px; } #lb .lbmsg { color: #fff; }
 
 .phrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; } .phrow a { display: block; width: 96px; height: 96px; border-radius: 12px; overflow: hidden; background: #f1f1f1; }
-.phrow img { width: 100%; height: 100%; object-fit: cover; display: block; } .phrow a.noimg { display: grid; place-items: center; } .phrow a.noimg img { display: none; } .phrow a.noimg::after { content: '📷 Xem ảnh'; font-size: 12px; font-weight: 700; color: #c8102e; }
+.phrow img { width: 100%; height: 100%; object-fit: cover; display: block; } .phrow a.ld img { visibility: hidden; } .phrow a.ld { background: linear-gradient(90deg,#f1f1f1,#e4e4e4,#f1f1f1) 0 0/200% 100%; animation: shim 1.2s linear infinite; } @keyframes shim { to { background-position: -200% 0; } } .phrow a.noimg { display: grid; place-items: center; } .phrow a.noimg img { display: none; } .phrow a.noimg::after { content: '📷 Xem ảnh'; font-size: 12px; font-weight: 700; color: #c8102e; }
 .c-st { width: 140px; } .c-st small { display: block; color: #8a8a8a; font-size: 12px; margin-top: 4px; } .c-x { width: 50px; text-align: right; }
 
 table.itab { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 4px; }
@@ -231,7 +231,34 @@ const descH = x => { const ws = x.what || [], multi = new Set(ws.map(w => w.g)).
     return `${gh}<tr><td class="q">${esc(w.q.replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`; }).join('')}</tbody></table>`; };
 const causeH = x => `${(x.cause || []).length || x.solution ? `<div class="cs2">${(x.cause || []).length ? `<div><span>Nguyên nhân nghi ngờ</span><p>${esc(x.cause.join(', '))}</p></div>` : ''}${x.solution ? `<div><span>Giải pháp tạm thời</span><p>${esc(x.solution)}</p></div>` : ''}</div>` : ''}`;
   // 11/11: ảnh hiện ra luôn ngay sau phần vấn đề (ảnh nhỏ có sẵn, không có thì ảnh thu nhỏ từ Drive); bấm để xem to
-const photoH = x => (x.photos || []).length ? `<div class="phrow">${x.photos.map(p => `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(p.t || '')}"><img src="${p.t || `https://drive.google.com/thumbnail?id=${encodeURIComponent(p.id)}&sz=w400`}" alt="Ảnh minh chứng" loading="lazy" onerror="this.parentNode.classList.add('noimg')"></a>`).join('')}</div>` : '';
+const photoH = x => (x.photos || []).length ? `<div class="phrow">${x.photos.map(p => { const t = p.t || TH[p.id] || ''; return `<a href="${driveUrl(p.id)}" data-pid="${esc(p.id)}" data-t="${esc(t)}" class="${t ? '' : TH[p.id] === '' ? 'noimg' : 'ld'}"><img ${t ? `src="${t}"` : ''} alt="Ảnh minh chứng" loading="lazy" onerror="this.parentNode.classList.add('noimg')"></a>`; }).join('')}</div>` : '';
+// 13/11: ảnh chưa có bản nhỏ trong Sheet → tải ảnh qua Apps Script (ảnh trên Drive không công khai), thu nhỏ trên máy
+// rồi nhớ trong máy (localStorage mqm-th:<id>) → lần sau hiện ngay. Tải tối đa 3 ảnh cùng lúc.
+const TH = {}, thBusy = {}, thQ = [];
+let thRun = 0;
+try { Object.keys(localStorage).filter(k => k.startsWith('mqm-th:')).forEach(k => { TH[k.slice(7)] = localStorage.getItem(k); }); } catch (e) {}
+function setThumb(a, u) { a.dataset.t = u; a.classList.remove('ld', 'noimg'); const im = a.querySelector('img'); if (im) im.src = u; else a.style.backgroundImage = `url(${u})`; }
+const shrinkTo = (src, max) => new Promise(ok => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+  c.width = Math.round(im.width * s); c.height = Math.round(im.height * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .7)); }; im.onerror = () => ok(''); im.src = src; });
+function paintThumbs() {
+  document.querySelectorAll('a[data-pid]').forEach(a => { if (a.dataset.t) return; const u = TH[a.dataset.pid];
+    if (u) setThumb(a, u); else if (u === '') { a.classList.remove('ld'); a.classList.add('noimg'); } });
+}
+function pumpThumbs() {
+  while (thRun < 3 && thQ.length) {
+    const id = thQ.shift(); thRun++;
+    fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json())
+      .then(d => d && d.ok && d.data ? shrinkTo(d.data, 360) : '').catch(() => '')
+      .then(u => { TH[id] = u || ''; if (u) { try { localStorage.setItem('mqm-th:' + id, u); } catch (e) {} } })
+      .finally(() => { delete thBusy[id]; thRun--; paintThumbs(); pumpThumbs(); });
+  }
+}
+function fillThumbs() {
+  paintThumbs();
+  [...document.querySelectorAll('a[data-pid]')].filter(a => !a.dataset.t).map(a => a.dataset.pid)
+    .forEach(id => { if (TH[id] === undefined && !thBusy[id]) { thBusy[id] = 1; thQ.push(id); } });
+  pumpThumbs();
+}
 // 11/11: gom các lượt chấm cùng 1 mẫu (mọi bộ phận đánh giá) thành 1 dòng; nút bấm áp dụng cho tất cả lượt trong nhóm
 const GK = {};
 const uq = a => [...new Set(a.filter(Boolean))];
@@ -364,6 +391,7 @@ function render() {
 }
 const keep = () => { const y = scrollY; render(); scrollTo(0, y); };
 function bind() {
+  fillThumbs();
   const ms = $('#month'); if (ms) ms.onchange = () => { cycle = ms.value; PC.setMonth(cycle); load(); };
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { stab = b.dataset.tab; try { sessionStorage.setItem('mqmImpTab', stab); } catch (e) {} render(); });
   const lg = $('#login'); if (lg) lg.onclick = async () => { PC.logout(); const u = await PC.login('Đăng nhập · Cải thiện'); if (u && !IMP.includes(u.role)) toast('Tài khoản này không có quyền ở mục Cải thiện.'); 
@@ -437,9 +465,11 @@ async function load() {
 function lightbox(id, t) {
   let lb = document.getElementById('lb'); if (!lb) { lb = document.createElement('div'); lb.id = 'lb'; document.body.appendChild(lb); }
   lb.innerHTML = `<button class="lbx" aria-label="Đóng">×</button><img alt="Ảnh"><p class="lbn"><a href="${driveUrl(id)}" target="_blank" rel="noopener">Mở bản gốc trên Drive ↗</a></p>`;
-  const img = lb.querySelector('img'); let tried = 0;
-  img.onerror = () => { if (!tried && t) { tried = 1; img.src = t; img.classList.add('small'); } else { img.replaceWith(Object.assign(document.createElement('p'), { className: 'lbmsg', textContent: 'Không xem được ảnh trên trang. Bấm "Mở bản gốc trên Drive".' })); } };
-  img.src = `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w1600`;
+  // 13/11: ảnh lớn lấy qua Apps Script; trong lúc tải hiện ảnh nhỏ phóng to
+  const img = lb.querySelector('img'), fail = () => img.replaceWith(Object.assign(document.createElement('p'), { className: 'lbmsg', textContent: 'Không xem được ảnh trên trang. Bấm "Mở bản gốc trên Drive".' }));
+  if (t) { img.src = t; img.classList.add('small'); }
+  fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json())
+    .then(d => { if (d && d.ok && d.data) { img.onerror = () => { if (!t) fail(); }; img.src = d.data; img.classList.remove('small'); } else if (!t) fail(); }).catch(() => { if (!t) fail(); });
   lb.hidden = false; document.body.style.overflow = 'hidden';
   const close = () => { lb.hidden = true; lb.innerHTML = ''; document.body.style.overflow = ''; };
   lb.onclick = e => { if (e.target === lb || e.target.classList.contains('lbx')) close(); };

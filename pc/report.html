@@ -100,6 +100,52 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 .modal h3 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.02em; } .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
 .modal table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; } .modal td, .modal th { padding: 8px 6px; border-bottom: 1px solid #efefef; text-align: left; }
 .modal .miss { color: var(--red); font-weight: 600; }
+/* 13/11: Tab ORION vs Đối thủ (ORION = đỏ, đối thủ = xám đậm; tốt hơn = xanh, kém hơn = đỏ, kèm ▲▼ + chữ) */
+.rtabs { display: flex; justify-content: center; gap: 4px; background: var(--soft); border-radius: 999px; padding: 4px; width: max-content; max-width: 100%; margin: 0 auto 16px; }
+.rtabs button { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14.5px; padding: 10px 20px; border-radius: 999px; cursor: pointer; color: var(--muted); }
+.rtabs button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.chip.sm { padding: 7px 13px; font-size: 13px; } select.chip.red { background-color: #fde8eb; color: var(--red); }
+.vsx { align-self: center; font-weight: 800; color: var(--muted); font-size: 13px; }
+.duel { padding: 22px; } .dh { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 12px; margin-bottom: 14px; }
+.side { border-radius: 20px; padding: 14px 16px; } .side small { display: block; font-size: 11px; letter-spacing: .18em; font-weight: 800; }
+.side b { display: block; font-size: 20px; letter-spacing: -.02em; margin: 2px 0; } .side span { font-size: 12.5px; color: var(--muted); }
+.side.o { background: #fde8eb; } .side.o small { color: var(--red); } .side.c { background: #ededed; text-align: right; } .side.c small { color: #555; }
+.vs { width: 44px; height: 44px; border-radius: 999px; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 900; font-size: 13px; }
+.dr { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr); align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid #f0f0f0; }
+.dl { text-align: center; } .dl b { display: block; font-size: 14px; font-weight: 600; } .dl small { color: var(--muted); font-size: 12px; }
+.dv { font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: #9a9a9a; } .dv.r { text-align: right; } .dv.win { color: var(--ink); } .dv.lose { color: #b5b5b5; }
+.dv i { font-style: normal; font-size: 13px; color: #fff; background: #1a7f37; border-radius: 999px; padding: 2px 7px; vertical-align: 6px; margin: 0 6px; }
+.verdict { text-align: center; font-size: 14px; color: var(--muted); padding-top: 12px; border-top: 1px solid #f0f0f0; } .verdict .g { color: #1a7f37; } .verdict .r { color: var(--red); }
+.dt { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.dt.up { background: #e6f4ea; color: #1a7f37; } .dt.dn { background: #fde8eb; color: var(--red); } .dt.eq { background: var(--soft); color: #555; } .dt.na { color: var(--muted); }
+.lg { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); margin: -6px 0 6px; } .lg i { display: inline-block; width: 10px; height: 10px; border-radius: 99px; margin-right: 5px; vertical-align: -1px; }
+.lg i.o, .pt.o { background: var(--red); } .lg i.c, .pt.c { background: #6b6b6b; }
+.db { display: grid; grid-template-columns: 96px minmax(0,1fr) 150px; gap: 14px; align-items: center; padding: 16px 0 14px; border-top: 1px solid #f0f0f0; } .db > b { font-size: 14px; }
+.dbt { position: relative; height: 34px; background: linear-gradient(#ececec,#ececec) center/100% 2px no-repeat; }
+.dbt .ax { position: absolute; bottom: -14px; transform: translateX(-50%); font-size: 10.5px; color: #aaa; }
+.dbt .ln { position: absolute; top: 15px; height: 4px; background: #cfcfcf; border-radius: 4px; } .dbt .ln.bad { background: #f3b6c0; }
+.pt { position: absolute; top: 9px; width: 16px; height: 16px; border-radius: 99px; transform: translateX(-50%); box-shadow: 0 0 0 2px #fff; }
+.pt em { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); font-style: normal; font-size: 12px; font-weight: 800; white-space: nowrap; color: var(--ink); }
+.pt.c em { bottom: auto; top: 18px; color: #555; }
+.pairs { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.pair { background: #fafafa; border-radius: 20px; padding: 14px 16px; } .ph { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; } .ph b { font-size: 15.5px; }
+.fl { padding: 6px 0; } .fn { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; } .fn span { font-weight: 800; }
+.fb { height: 8px; background: #ececec; border-radius: 99px; overflow: hidden; margin: 4px 0 3px; } .fb i { display: block; height: 100%; border-radius: 99px; }
+.fl.o .fb i { background: var(--red); } .fl.c .fb i { background: #6b6b6b; } .fl small { color: var(--muted); font-size: 12px; }
+.qgh { font-size: 11.5px; letter-spacing: .14em; font-weight: 800; color: var(--muted); text-transform: uppercase; margin: 14px 0 2px; }
+.qc { padding: 10px 0; border-top: 1px solid #f0f0f0; } .qct { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; font-size: 14px; margin-bottom: 6px; }
+.qb { display: grid; grid-template-columns: minmax(0,1fr) 44px; gap: 8px; align-items: center; margin-top: 3px; } .qb i { display: block; height: 9px; border-radius: 99px; min-width: 2px; }
+.qb span { font-size: 12.5px; font-weight: 700; text-align: right; } .qb.o i { background: var(--red); } .qb.c i { background: #6b6b6b; } .qb.c span { color: #555; }
+.ko { color: var(--red); } .kc { color: #6b6b6b; } .mut { color: var(--muted); font-size: 11.5px; }
+.bf { display: grid; grid-template-columns: minmax(0,1fr) 150px minmax(0,1fr); gap: 10px; align-items: center; padding: 7px 0; font-size: 13px; }
+.bf > b { text-align: center; font-weight: 600; font-size: 12.5px; line-height: 1.25; } .bf.hd { font-size: 11.5px; font-weight: 800; letter-spacing: .12em; color: var(--muted); padding: 0 0 4px; } .bf.hd span:last-child { text-align: right; }
+.bl, .br { display: flex; align-items: center; gap: 6px; } .bl { justify-content: flex-end; } .bl i, .br i { display: block; height: 12px; border-radius: 4px; min-width: 2px; }
+.bl i { background: var(--red); } .br i { background: #6b6b6b; } .bl span, .br span { font-size: 12px; font-weight: 700; color: #555; }
+@media (max-width: 760px) {
+  .dv { font-size: 22px; } .side b { font-size: 16px; } .dh { gap: 8px; } .vs { width: 36px; height: 36px; }
+  .db { grid-template-columns: 76px minmax(0,1fr); } .db .dt { grid-column: 2; justify-self: start; }
+  .pairs { grid-template-columns: minmax(0,1fr); } .bf { grid-template-columns: minmax(0,1fr) 110px minmax(0,1fr); }
+}
 @media (max-width: 760px) {
   .head { padding: 20px 16px 4px; } .wrap { padding: 12px 16px 60px; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi b { font-size: 24px; }
@@ -206,6 +252,107 @@ async function endFlow() {
 function toastMsg(t) { let el = $('#toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:999px;font-weight:600;font-size:14px;z-index:99;max-width:90vw;text-align:center'; document.body.appendChild(el); }
   el.textContent = t; el.hidden = false; clearTimeout(el._t); el._t = setTimeout(() => { el.hidden = true; }, 5000); }
 
+// ===== 13/11: Tab "ORION vs Đối thủ" — so sánh theo % câu trả lời "Có vấn đề" (chỉ số chính), điểm 1 tốt → 9 kém (tham khảo) =====
+let tab = (() => { try { return localStorage.getItem('mqm-rep-tab') || 'all'; } catch (e) { return 'all'; } })();
+let cO = '', cC = '', cMk = '', cDp = '';
+const isO = s => s && s.origin === 'ORION';
+const GRPS = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'];
+const FLV = [[/seaweed|nori|rong/i, 'Rong biển'], [/natural|classic|tự nhiên/i, 'Vị tự nhiên'], [/chees|phô mai/i, 'Phô mai'], [/steak|beef|bò/i, 'Bò · Steak'], [/bbq|nướng/i, 'BBQ'], [/kimchi/i, 'Kimchi'], [/egg|trứng/i, 'Trứng muối'], [/shrimp|tôm/i, 'Tôm'], [/chicken|gà/i, 'Gà'], [/pepper|tiêu/i, 'Tiêu']];
+const flvKey = f => (FLV.find(([r]) => r.test(String(f))) || [0, String(f)])[1];
+const stat = xs => { const n = xs.length, b = xs.filter(x => x.result === 'Có vấn đề').length, sc = xs.map(x => +x.score).filter(v => v > 0);
+  return { n, b, p: n ? b / n * 100 : null, sc: sc.length ? sc.reduce((a, c) => a + c, 0) / sc.length : null }; };
+const f0 = v => v == null ? '—' : Math.round(v) + '%', f1 = v => v == null ? '—' : v.toFixed(1);
+// chênh lệch % vấn đề (ORION − đối thủ): âm = ORION ít vấn đề hơn = tốt hơn
+function dTag(o, c) {
+  if (o == null || c == null) return '<span class="dt na">Chưa đủ số liệu</span>';
+  const d = Math.round(o - c);
+  return Math.abs(d) < 3 ? '<span class="dt eq">≈ Ngang nhau</span>' : d < 0 ? `<span class="dt up">▲ ORION tốt hơn ${-d}%</span>` : `<span class="dt dn">▼ ORION kém hơn ${d}%</span>`;
+}
+const topTag = xs => { const m = {}; xs.forEach(x => (x.tags || []).forEach(t => { m[t] = (m[t] || 0) + 1; })); const e = Object.entries(m).sort((a, b) => b[1] - a[1])[0]; return e ? e[0] : ''; };
+function compare() {
+  const byId = Object.fromEntries(R.samples.map(s => [s.id, s]));
+  const okS = s => s && (!cMk || s.market === cMk) && (isO(s) ? (!cO || s.brand === cO) : (!cC || s.brand === cC));
+  const smp = R.samples.filter(okS);
+  const ex = R.extra.filter(x => okS(byId[x.sampleId]) && (!cDp || x.dept === cDp)).map(x => Object.assign({ s: byId[x.sampleId], g: x.group || PC.groupOf(x.question) }, x));
+  const evs = R.evals.filter(e => okS(byId[e.sampleId]) && (!cDp || e.dept === cDp));
+  const O = ex.filter(x => isO(x.s)), C = ex.filter(x => !isO(x.s)), sO = stat(O), sC = stat(C);
+  const oBr = [...new Set(R.samples.filter(isO).map(s => s.brand))].sort(), cBr = [...new Set(R.samples.filter(s => !isO(s)).map(s => s.brand))].sort();
+  const depts = [...new Set(R.extra.map(x => x.dept))].sort();
+  const filters = `<div class="filters">${PC.monthSelect(R.months, R.cycle)}
+    <select class="chip red" id="cO"><option value="">ORION · tất cả</option>${oBr.map(b => `<option ${b === cO ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select>
+    <span class="vsx">vs</span>
+    <select class="chip" id="cC"><option value="">Đối thủ · tất cả</option>${cBr.map(b => `<option ${b === cC ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select></div>
+    <div class="filters" style="margin-top:-8px">${[['', 'Cả nước'], ['North', 'Miền Bắc'], ['South', 'Miền Nam']].map(([v, t]) => `<button class="chip sm ${cMk === v ? 'on' : ''}" data-mk="${v}">${t}</button>`).join('')}
+    <select class="chip sm" id="cDp"><option value="">Mọi bộ phận chấm</option>${depts.map(d => `<option ${d === cDp ? 'selected' : ''}>${esc(d)}</option>`).join('')}</select></div>`;
+  if (!O.length || !C.length) return filters + `<div class="card empty">Cần có lượt chấm cho cả ORION và đối thủ để so sánh${cO || cC || cMk || cDp ? ' với lựa chọn này' : ''}.</div>`;
+
+  // 1. Bảng tỉ số
+  const age = list => { const ds = list.map(ageOf).filter(d => d != null); return ds.length ? ds.reduce((a, b) => a + b, 0) / ds.length : null; };
+  const nm = (side, br) => br || [...new Set(smp.filter(s => side ? isO(s) : !isO(s)).map(s => s.brand))].join(' · ');
+  const eO = evs.filter(e => isO(byId[e.sampleId])), eC = evs.filter(e => !isO(byId[e.sampleId]));
+  const mO = smp.filter(isO), mC = smp.filter(s => !isO(s)), aO = age(mO), aC = age(mC);
+  const row = (lb, hint, vo, vc, fmt, lowWins) => { const w = vo == null || vc == null || Math.abs(vo - vc) < .05 ? '' : (vo < vc) === lowWins ? 'o' : 'c';
+    return `<div class="dr"><div class="dv ${w === 'o' ? 'win' : w ? 'lose' : ''}">${fmt(vo)}${w === 'o' ? '<i>✓</i>' : ''}</div><div class="dl"><b>${lb}</b><small>${hint}</small></div><div class="dv r ${w === 'c' ? 'win' : w ? 'lose' : ''}">${w === 'c' ? '<i>✓</i>' : ''}${fmt(vc)}</div></div>`; };
+  const qsAll = R.questions.map(q => ({ q, o: stat(O.filter(x => x.qid === q.id)), c: stat(C.filter(x => x.qid === q.id)) })).filter(r => r.o.n && r.c.n);
+  const better = qsAll.filter(r => r.o.p - r.c.p <= -3).length, worse = qsAll.filter(r => r.o.p - r.c.p >= 3).length;
+  const duel = `<div class="card duel"><div class="dh"><div class="side o"><small>ORION</small><b>${esc(nm(1, cO))}</b><span>${mO.length} mẫu · ${eO.length} lượt chấm</span></div><div class="vs">VS</div>
+      <div class="side c"><small>ĐỐI THỦ</small><b>${esc(nm(0, cC))}</b><span>${mC.length} mẫu · ${eC.length} lượt chấm</span></div></div>
+    ${row('% câu trả lời "Có vấn đề"', 'thấp hơn = tốt hơn · chỉ số chính', sO.p, sC.p, f0, true)}
+    ${row('Điểm trung bình', '1 tốt → 9 kém · tham khảo', sO.sc, sC.sc, f1, true)}
+    ${row('Tuổi sản phẩm khi mua', 'ngày từ NSX · thấp hơn = tươi hơn', aO, aC, v => v == null ? '—' : Math.round(v) + ' ngày', true)}
+    <div class="verdict">${qsAll.length ? `Trên ${qsAll.length} câu hỏi: ORION <b class="g">tốt hơn ở ${better}</b> · <b class="r">kém hơn ở ${worse}</b> · ngang nhau ở ${qsAll.length - better - worse}` : ''}</div></div>`;
+
+  // 2. Theo nhóm tiêu chí: dumbbell % vấn đề
+  const gr = GRPS.map(g => ({ g, o: stat(O.filter(x => x.g === g)), c: stat(C.filter(x => x.g === g)) })).filter(r => r.o.n || r.c.n);
+  const mx = Math.max(10, Math.ceil(Math.max(...gr.flatMap(r => [r.o.p || 0, r.c.p || 0])) / 10) * 10);
+  const X = v => (v / mx * 100).toFixed(1) + '%';
+  const dumb = `<div class="card"><h2>Theo nhóm tiêu chí</h2><p class="sub">% câu trả lời "Có vấn đề" · chấm càng về bên trái càng tốt</p>
+    <div class="lg"><span><i class="o"></i>ORION</span><span><i class="c"></i>Đối thủ</span></div>
+    ${gr.map(r => { const a = r.o.p, b = r.c.p, lo = Math.min(a ?? b, b ?? a), hi = Math.max(a ?? b, b ?? a);
+      return `<div class="db"><b>${r.g}</b><div class="dbt"><span class="ax" style="left:0">0</span><span class="ax" style="left:100%">${mx}%</span>
+        <i class="ln ${a > b ? 'bad' : ''}" style="left:${X(lo)};width:calc(${X(hi)} - ${X(lo)})"></i>
+        ${b != null ? `<i class="pt c" style="left:${X(b)}" title="Đối thủ ${f0(b)} · ${r.c.b}/${r.c.n} câu"><em>${f0(b)}</em></i>` : ''}
+        ${a != null ? `<i class="pt o" style="left:${X(a)}" title="ORION ${f0(a)} · ${r.o.b}/${r.o.n} câu"><em>${f0(a)}</em></i>` : ''}</div>${dTag(a, b)}</div>`; }).join('')}</div>`;
+
+  // 3. Đối đầu theo vị
+  const fl = {}; smp.forEach(s => { const k = flvKey(s.flavor), side = isO(s) ? 'o' : 'c'; ((fl[k] = fl[k] || { o: {}, c: {} })[side][s.brand + ' · ' + s.flavor] = 1); });
+  const pairs = Object.entries(fl).filter(([, v]) => Object.keys(v.o).length && Object.keys(v.c).length).map(([k, v]) => {
+    const xo = O.filter(x => flvKey(x.s.flavor) === k), xc = C.filter(x => flvKey(x.s.flavor) === k); return { k, v, o: stat(xo), c: stat(xc), to: topTag(xo), tc: topTag(xc) }; })
+    .filter(p => p.o.n && p.c.n).sort((a, b) => (b.o.p - b.c.p) - (a.o.p - a.c.p));
+  const solo = Object.entries(fl).filter(([, v]) => !(Object.keys(v.o).length && Object.keys(v.c).length)).flatMap(([, v]) => Object.keys(v.o).concat(Object.keys(v.c)));
+  const pm = Math.max(10, ...pairs.flatMap(p => [p.o.p, p.c.p]));
+  const line = (cls, name, st, tag) => `<div class="fl ${cls}"><div class="fn"><b>${esc(name)}</b><span>${f0(st.p)}</span></div><div class="fb"><i style="width:${(st.p / pm * 100).toFixed(1)}%"></i></div>
+    <small>${st.b}/${st.n} câu có vấn đề · điểm TB ${f1(st.sc)}${tag ? ` · hay gặp: ${esc(tag)}` : ''}</small></div>`;
+  const flav = pairs.length ? `<div class="card"><h2>Đối đầu theo vị</h2><p class="sub">Ghép vị tương đương giữa ORION và đối thủ · cặp ORION kém nhất ở trên</p><div class="pairs">
+    ${pairs.map(p => `<div class="pair"><div class="ph"><b>${esc(p.k)}</b>${dTag(p.o.p, p.c.p)}</div>${line('o', Object.keys(p.v.o).join(', '), p.o, p.to)}${line('c', Object.keys(p.v.c).join(', '), p.c, p.tc)}</div>`).join('')}</div>
+    ${solo.length ? `<p class="note" style="text-align:left">Chưa có vị tương ứng để so: ${esc(solo.join(' · '))}</p>` : ''}</div>` : '';
+
+  // 4. Từng câu hỏi
+  const qm = Math.max(10, ...qsAll.flatMap(r => [r.o.p, r.c.p]));
+  const qrows = `<div class="card"><h2>Từng câu hỏi</h2><p class="sub">% câu trả lời "Có vấn đề" của mỗi câu · <span class="ko">■</span> ORION <span class="kc">■</span> Đối thủ</p>
+    ${GRPS.filter(g => qsAll.some(r => (r.q.g || PC.groupOf(r.q.q)) === g)).map(g => `<div class="qgh">${g}</div>` + qsAll.filter(r => (r.q.g || PC.groupOf(r.q.q)) === g).map(r => `<div class="qc">
+      <div class="qct"><span>${esc(PC.stripG(r.q.q))}</span>${dTag(r.o.p, r.c.p)}</div>
+      <div class="qb o"><i style="width:${(r.o.p / qm * 100).toFixed(1)}%"></i><span>${f0(r.o.p)}</span></div>
+      <div class="qb c"><i style="width:${(r.c.p / qm * 100).toFixed(1)}%"></i><span>${f0(r.c.p)}</span></div></div>`).join('')).join('')}</div>`;
+
+  // 5. Lỗi hay gặp: tần suất trên 100 câu trả lời mỗi bên (so được dù số câu khác nhau)
+  const tc = xs => { const m = {}; xs.forEach(x => (x.tags || []).forEach(t => { m[t] = (m[t] || 0) + 1; })); return m; };
+  const tO = tc(O), tC = tc(C), per = (m, t, n) => (m[t] || 0) / n * 100;
+  const tags = [...new Set(Object.keys(tO).concat(Object.keys(tC)))].map(t => ({ t, o: per(tO, t, O.length), c: per(tC, t, C.length) })).sort((a, b) => (b.o + b.c) - (a.o + a.c)).slice(0, 8);
+  const tm = Math.max(1, ...tags.flatMap(r => [r.o, r.c]));
+  const bfly = tags.length ? `<div class="card"><h2>Lỗi hay gặp</h2><p class="sub">Số lần gặp trên 100 câu trả lời · ORION bên trái, đối thủ bên phải</p>
+    <div class="bf hd"><span>ORION</span><span></span><span>Đối thủ</span></div>
+    ${tags.map(r => `<div class="bf"><div class="bl"><span>${r.o.toFixed(1)}</span><i style="width:${(r.o / tm * 100).toFixed(1)}%"></i></div><b>${esc(r.t)}</b><div class="br"><i style="width:${(r.c / tm * 100).toFixed(1)}%"></i><span>${r.c.toFixed(1)}</span></div></div>`).join('')}</div>` : '';
+
+  // 6. Theo bộ phận chấm
+  const dr = [...new Set(ex.map(x => x.dept))].sort().map(d => ({ d, o: stat(O.filter(x => x.dept === d)), c: stat(C.filter(x => x.dept === d)) })).filter(r => r.o.n && r.c.n);
+  const dtab = dr.length ? `<div class="card"><h2>Theo bộ phận chấm</h2><p class="sub">Các bộ phận có cùng nhận định không?</p><div class="scroll"><table class="tbl"><thead><tr><th>Bộ phận</th><th class="c">ORION</th><th class="c">Đối thủ</th><th>Chênh lệch</th></tr></thead><tbody>
+    ${dr.map(r => `<tr><td><b>${esc(r.d)}</b></td><td class="c">${f0(r.o.p)} <small class="mut">· ${r.o.n}</small></td><td class="c">${f0(r.c.p)} <small class="mut">· ${r.c.n}</small></td><td>${dTag(r.o.p, r.c.p)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="note" style="text-align:left">% câu trả lời "Có vấn đề" · số nhỏ = số câu trả lời</p></div>` : '';
+
+  return filters + duel + dumb + flav + qrows + `<div class="two">${bfly}${dtab}</div>`;
+}
+
 function view() {
   const byId = Object.fromEntries(R.samples.map(s => [s.id, s]));
   const keep = s => s && (fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')) && (!fBrand || s.brand === fBrand);
@@ -215,7 +362,9 @@ function view() {
   return { samples, evals, extra };
 }
 
+const rtabs = () => `<div class="rtabs">${[['all', 'Tổng quan'], ['cmp', 'ORION vs Đối thủ']].map(([v, t]) => `<button class="${tab === v ? 'on' : ''}" data-rt="${v}">${t}</button>`).join('')}</div>`;
 function render() {
+  if (tab === 'cmp') { $('#app').innerHTML = rtabs() + compare(); bind(); return; }
   const { samples, evals, extra } = view();
   const brands = [...new Set(R.samples.filter(s => fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')).map(s => s.brand))].sort();
   if (fBrand && !brands.includes(fBrand)) fBrand = '';
@@ -233,7 +382,7 @@ function render() {
     <div class="kpi red"><small>Lượt có vấn đề</small><b>${pct(nIssue, evals.length)}%</b><span>${nIssue}/${evals.length} lượt</span></div></div>`;
 
   if (!evals.length) {
-    $('#app').innerHTML = filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong ' + PC.monthLabel(R.cycle).toLowerCase()}. Report sẽ hiện ngay khi có người chấm.</div>`
+    $('#app').innerHTML = rtabs() + filters + kpis + `<div class="card empty">Chưa có lượt đánh giá nào${fOrigin !== 'all' || fBrand ? ' cho lựa chọn này' : ' trong ' + PC.monthLabel(R.cycle).toLowerCase()}. Report sẽ hiện ngay khi có người chấm.</div>`
       + freshness(samples, evals) + endCard();
     bind(); return;
   }
@@ -283,7 +432,7 @@ function render() {
     ${e.causeIn.length || e.causeOut.length ? `<p><i>Nguyên nhân nghi ngờ:</i> ${esc(e.causeIn.concat(e.causeOut).join(', '))}</p>` : ''}
     ${e.solution ? `<p><i>Giải pháp đề xuất:</i> ${esc(e.solution)}</p>` : ''}${e.owners.length ? `<p><i>Bộ phận xử lý:</i> ${esc(e.owners.join(', '))}</p>` : ''}</div>`).join('');
 
-  $('#app').innerHTML = (R.ended ? `<div class="done">✓ Đã kết thúc đánh giá ${PC.monthLabel(R.cycle).toLowerCase()} và gửi mail các bộ phận · <a href="improve.html">Xem tiến độ cải thiện →</a></div>` : '') + filters + kpis + heat(evals, extra) + freshness(samples, evals) +
+  $('#app').innerHTML = rtabs() + (R.ended ? `<div class="done">✓ Đã kết thúc đánh giá ${PC.monthLabel(R.cycle).toLowerCase()} và gửi mail các bộ phận · <a href="improve.html">Xem tiến độ cải thiện →</a></div>` : '') + filters + kpis + heat(evals, extra) + freshness(samples, evals) +
     `<div class="card"><h2>Vấn đề theo tiêu chí</h2><p class="sub">% lượt ghi "Có vấn đề" · bên dưới là lỗi gặp nhiều nhất</p>${attrs}</div>
     <div class="two">${causes}${owners}</div>
     ${R.questions.length ? `<div class="card"><h2>Câu hỏi của tháng</h2><p class="sub">${R.questions.length} câu từ RD / MKT / FQS · từ ngoài vào trong</p>${qs}</div>` : ''}
@@ -294,6 +443,9 @@ function render() {
 function bind() {
   document.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { fOrigin = b.dataset.o; render(); });
   const sel = $('#brand'); if (sel) sel.onchange = () => { fBrand = sel.value; render(); };
+  document.querySelectorAll('[data-rt]').forEach(b => b.onclick = () => { tab = b.dataset.rt; try { localStorage.setItem('mqm-rep-tab', tab); } catch (e) {} render(); });
+  document.querySelectorAll('[data-mk]').forEach(b => b.onclick = () => { cMk = b.dataset.mk; render(); });
+  [['#cO', v => { cO = v; }], ['#cC', v => { cC = v; }], ['#cDp', v => { cDp = v; }]].forEach(([id, f]) => { const s = $(id); if (s) s.onchange = () => { f(s.value); render(); }; });
   const eb = $('#endBtn'); if (eb) eb.onclick = endFlow;
   const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); load(ms.value); };
 }
