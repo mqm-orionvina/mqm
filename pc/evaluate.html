@@ -147,6 +147,15 @@ details.ref .scale { margin: 8px 0 0; } .scale.ref button { height: 36px; font-s
 .typebtn:active { transform: scale(.99); }
 .typepill { display: flex; justify-content: space-between; align-items: center; background: #111; color: #fff; border-radius: 999px; padding: 10px 18px; margin-bottom: 12px; font-weight: 800; } .typepill .linkbtn { color: #fff; }
 @media (min-width: 640px) { .typegrid { grid-template-columns: 1fr 1fr; } }
+/* 13/11: thẻ tiến độ + gợi ý tên khi đăng nhập */
+.myprog { padding: 14px 16px; } .mp-h { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+.mp-h b { color: var(--ink); font-size: 14px; font-weight: 700; } .mp-u { font-size: 12px; color: #8a8a8a; }
+.mp-n { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 8px; font-size: 15px; } .mp-n b { font-size: 22px; color: #c8102e; font-weight: 800; }
+.mp-l { font-size: 13px; color: var(--muted); font-weight: 600; } .mp-l.fin { color: #1a7f37; }
+.mp-t { height: 8px; border-radius: 99px; background: #f1f1f1; overflow: hidden; } .mp-t i { display: block; height: 100%; background: #c8102e; border-radius: 99px; transition: width .3s; }
+.mp-f { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; font-size: 12.5px; color: var(--muted); } .mp-f b { color: var(--ink); }
+.nhint { margin-top: 8px; font-size: 13px; color: #1a7f37; font-weight: 600; } .nhint.like { color: var(--ink); font-weight: 500; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.nhint.like button { border: 1px solid #c8102e; color: #c8102e; background: #fff; border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -218,6 +227,8 @@ const I18N = {
     ok: 'Ổn', issue: 'Có vấn đề', scoreL: 'Điểm · 1 tốt → 9 kém *', pickIssue: 'Chọn vấn đề', desc: 'Diễn giải *', descPh: 'VD: gói xẹp, bánh ỉu ở góc, vị nhạt hơn lô trước…', refScore: 'Điểm tham khảo (không bắt buộc) · 1 tốt → 9 kém',
     causeTitle: 'Nguyên nhân & giải pháp tạm thời (nhận định chung)', causeSub: 'Nhóm chuyên gia', causeIn: 'Nguyên nhân nghi ngờ · bên trong', causeOut: 'Nguyên nhân nghi ngờ · bên ngoài',
     nScore: n => `${n} câu chưa chấm điểm`, doneTab: 'Đã đánh giá', reviewH: 'Bài đã chấm · chỉ xem', reviewNote: 'Đã lưu, không sửa được. Cần sửa thì liên hệ anh Thái.', loadingMine: 'Đang tải bài đã chấm…', noAns: 'Chưa có câu trả lời cho mẫu này.', noDone: 'Bạn chưa đánh giá mẫu nào ở tab này.', yourPhotos: 'Ảnh minh chứng',
+    progT: 'Tiến độ của bạn', progN: (a, b) => `Đã chấm <b>${a}</b> / ${b} mẫu`, progLeft: n => n ? `Còn ${n} mẫu` : 'Đã chấm xong', lastAt: (id, t) => `Mẫu chấm gần nhất: <b>${id}</b> · ${t}`,
+    updating: 'Đang cập nhật…', foundPrev: n => `Đã tìm thấy ${n} mẫu bạn chấm trước đó`, nameHas: n => `✓ Tên này đã chấm ${n} mẫu tháng này`, nameLike: 'Đã có bài chấm dưới tên', useName: 'Dùng tên này',
     scoreNote: 'Điểm không quan trọng do số lượng người chấm không nhiều, Nhận xét mới có giá trị.', qWord: 'câu', photoT: 'Ảnh minh chứng', photoBtn: 'Chụp ảnh minh chứng', photoMax: 'Tối đa 3 ảnh',
     noQ: m => `Chưa có câu hỏi đánh giá cho ${m}. Chờ RD / MKT / FQS setup xong.`, qHint: 'Từ ngoài vào trong: nhìn bao bì, in ấn trước rồi mới mở gói xem ngoại quan, cấu trúc, hương vị.',
     qFor: (d, gs) => `${d} chấm câu hỏi: ${gs.join(' · ')}`, month: 'Tháng',
@@ -249,6 +260,8 @@ const I18N = {
     ok: '이상 없음', issue: '문제 있음', scoreL: '점수 · 1 양호 → 9 불량', pickIssue: '문제 선택', desc: '설명 *', descPh: '예: 봉지 납작, 모서리 눅눅, 이전 로트보다 맛이 약함…', refScore: '참고 점수 (선택) · 1 양호 → 9 불량',
     causeTitle: '원인 및 임시 대책', causeSub: '소속 부서 전문성 기준', causeIn: '추정 원인 · 내부', causeOut: '추정 원인 · 외부',
     nScore: n => `점수 미입력 ${n}개`, doneTab: '평가 완료', reviewH: '평가 내용 · 보기 전용', reviewNote: '저장됨, 수정 불가.', loadingMine: '불러오는 중…', noAns: '답변 없음.', noDone: '이 탭에서 평가한 샘플이 없습니다.', yourPhotos: '증빙 사진',
+    progT: '나의 진행 상황', progN: (a, b) => `평가 완료 <b>${a}</b> / ${b}개`, progLeft: n => n ? `남은 샘플 ${n}개` : '모두 완료', lastAt: (id, t) => `최근 평가: <b>${id}</b> · ${t}`,
+    updating: '업데이트 중…', foundPrev: n => `이전에 평가한 샘플 ${n}개를 찾았습니다`, nameHas: n => `✓ 이 이름으로 이번 달 ${n}개 평가함`, nameLike: '이 이름으로 평가 기록 있음', useName: '이 이름 사용',
     scoreNote: '평가자 수가 많지 않아 점수보다 의견이 중요합니다.', qWord: '문항', photoT: '증빙 사진', photoBtn: '증빙 사진 촬영', photoMax: '최대 3장',
     noQ: m => `${m} 평가 질문이 아직 없습니다. RD / MKT / FQS setup을 기다려 주세요.`, qHint: '바깥에서 안으로: 포장 · 인쇄를 먼저 보고, 개봉 후 외관 · 식감 · 맛.',
     qFor: (d, gs) => `${d} 평가 질문: ${gs.join(' · ')}`, month: '월',
@@ -300,7 +313,31 @@ let cycle = '', months = [], current = '';
 let samples = [], evals = [], loaded = false, loadErr = '', view = 'list', cur = null, ev = null, filt = { show: 'todo', q: '' };
 let draft = { name: me ? me.name : '', dept: me ? me.dept : '', brands: me ? me.brands : [] };   // đang nhập ở màn hình đầu / đổi brand
 const doneBy = id => evals.filter(e => e.sampleId === id);
-const mine = id => me && evals.some(e => e.sampleId === id && String(e.name).toLowerCase() === me.name.toLowerCase() && (!e.gs || !e.gs.length || e.gs.some(g => TABS[curTab()].groups.includes(g))));
+// 13/11: so tên không phân biệt hoa/thường, khoảng trắng thừa, kiểu gõ dấu (NFC); nk0 bỏ dấu để gợi ý tên gần giống
+const nk = s => String(s || '').normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
+const nk0 = s => nk(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+const isMe = e => me && nk(e.name) === nk(me.name);
+const mine = id => me && evals.some(e => e.sampleId === id && isMe(e) && (!e.gs || !e.gs.length || e.gs.some(g => TABS[curTab()].groups.includes(g))));
+// 13/11: bài vừa lưu được ghi lại trên máy → mở lại app hiện ngay "đã chấm", không phải chờ máy chủ (~8 giây)
+const MINE_KEY = 'mqm-pc-eval-mine';
+const mineLocal = () => { try { return JSON.parse(localStorage.getItem(MINE_KEY) || '[]'); } catch (e) { return []; } };
+function rememberMine(x) {
+  try { const a = mineLocal().filter(y => !(y.cycle === x.cycle && y.sampleId === x.sampleId && nk(y.name) === nk(x.name))); a.push(x);
+    localStorage.setItem(MINE_KEY, JSON.stringify(a.slice(-300))); } catch (e) {}
+}
+// gộp bài trên máy vào danh sách máy chủ (chỉ những bài máy chủ chưa trả về).
+// fresh = số liệu vừa lấy từ máy chủ: bài trên máy quá 15 phút thì bỏ (máy chủ là chuẩn, tránh giữ mãi bài đã bị xoá)
+function mergeMine(fresh) {
+  let a = mineLocal();
+  if (fresh) { const lim = Date.now() - 15 * 60e3, b = a.filter(x => x.cycle !== cycle || Date.parse(x.at) > lim);
+    if (b.length !== a.length) { a = b; try { localStorage.setItem(MINE_KEY, JSON.stringify(a)); } catch (e) {} } }
+  a.filter(x => x.cycle === cycle).forEach(x => {
+    const e = evals.find(y => y.sampleId === x.sampleId && nk(y.name) === nk(x.name));
+    if (!e) evals.push({ sampleId: x.sampleId, name: x.name, dept: x.dept, at: x.at, gs: x.gs });
+    else if (x.gs && e.gs && e.gs.length) e.gs = [...new Set(e.gs.concat(x.gs))];
+  });
+}
+let refreshing = false;
 // Brand có trong các mẫu đã đăng ký, chia ORION / đối thủ, kèm số mẫu
 function brandGroups() {
   const m = {};
@@ -339,10 +376,22 @@ function viewType() {
 function viewLogin() {
   if (!etype) return viewType();
   return `<div class="typepill"><span>${esc(TABS[etype][lang] || TABS[etype].vi)}</span><button class="linkbtn" id="chgType">${T('chgType')}</button></div><div class="card">
-    <div class="field"><span class="label">${T('name')} <span class="req">*</span></span><input id="name" autocomplete="name" value="${esc(draft.name)}" placeholder="${esc(T('namePh'))}"></div>
+    <div class="field"><span class="label">${T('name')} <span class="req">*</span></span><input id="name" autocomplete="name" value="${esc(draft.name)}" placeholder="${esc(T('namePh'))}"><div id="nhint">${nameHint()}</div></div>
     <div class="field"><span class="label">${T('dept')} <span class="req">*</span></span><div class="chips" id="dept">${deptsFor(etype).map(x => `<button class="chip ${draft.dept === x ? 'on' : ''}" data-v="${x}">${x}</button>`).join('')}</div></div>
     <div class="field"><span class="label">${T('brands')} <span class="req">*</span></span>${brandPicker()}</div>
     <button class="btn full" id="go">${T('go')}</button></div>`;
+}
+// 13/11: gõ tên → báo tên này đã chấm bao nhiêu mẫu; gõ khác dấu / thiếu dấu thì gợi ý đúng tên đã dùng
+const nDoneOf = name => new Set(evals.filter(e => nk(e.name) === nk(name)).map(e => e.sampleId)).size;
+function nameHint() {
+  const v = nk(draft.name); if (!v || !loaded) return '';
+  const n = nDoneOf(v); if (n) return `<div class="nhint">${T('nameHas')(n)}</div>`;
+  if (v.length < 3) return '';
+  const like = [...new Map(evals.filter(e => nk0(e.name) === nk0(v)).map(e => [nk(e.name), String(e.name).trim()])).values()].slice(0, 3);
+  return like.length ? `<div class="nhint like"><span>${T('nameLike')}:</span>${like.map(x => `<button type="button" data-usename="${esc(x)}">${esc(x)} · ${T('useName')}</button>`).join('')}</div>` : '';
+}
+function bindNameHint() {
+  document.querySelectorAll('[data-usename]').forEach(b => b.onclick = () => { draft.name = b.dataset.usename; const i = $('#name'); if (i) i.value = draft.name; $('#nhint').innerHTML = nameHint(); bindNameHint(); });
 }
 function viewBrands() {
   return `<div class="card">${brandPicker()}</div><button class="btn full" id="saveBrands">${T('saveBrands')}</button>`;
@@ -360,11 +409,17 @@ function viewList() {
   const cqBox = cq.length ? `<details class="card cqprev" open><summary><b>${T('cqTitle')}</b> <span>${T('cqSub')(cq.length)}</span></summary>
       <ol>${cq.map(q => `<li><span class="tag">${esc(q.g)}</span> ${esc(q.text)}</li>`).join('')}</ol><p class="hint">${T('cqHint')}</p></details>` : '';
   const gs = TABS[curTab()].groups, ts = tabsFor(me.dept);
-  return `<div class="etabs">${ts.map(t => `<button class="${t === curTab() ? 'on' : ''}" data-etab="${t}">${esc(TABS[t][lang] || TABS[t].vi)}</button>`).join('')}</div>
+  // 13/11: thẻ tiến độ của người đang chấm — biết mình đã chấm tới đâu
+  const nd = pool.length - todo, pct = pool.length ? Math.round(nd / pool.length * 100) : 0;
+  const last = evals.filter(e => isMe(e) && pool.some(s => s.id === e.sampleId) && mine(e.sampleId)).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
+  const hm = t => { const d = new Date(t); return isNaN(d) ? '' : `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${d.getDate()}/${d.getMonth() + 1}`; };
+  const prog = `<div class="card myprog"><div class="mp-h"><b>${T('progT')}</b>${refreshing ? `<span class="mp-u">${T('updating')}</span>` : ''}</div>
+    <div class="mp-n"><span>${T('progN')(nd, pool.length)}</span><span class="mp-l ${todo ? '' : 'fin'}">${T('progLeft')(todo)}</span></div>
+    <div class="mp-t"><i style="width:${pct}%"></i></div>
+    <div class="mp-f"><small>${last ? T('lastAt')(esc(last.sampleId), hm(last.at)) : ''}</small><button class="linkbtn" id="editBrands">${T('changeBrands')}</button></div></div>`;
+  return prog + `<div class="etabs">${ts.map(t => `<button class="${t === curTab() ? 'on' : ''}" data-etab="${t}">${esc(TABS[t][lang] || TABS[t].vi)}</button>`).join('')}</div>
     <div class="stat" style="margin-bottom:12px">${PC.monthSelect(months, cycle)}<span>${esc(T('qFor')(me.dept, gs))}</span></div>${cq.length ? '' : `<div class="card note">${esc(T('noQ')(PC.monthLabel(cycle)))}</div>`}
-    <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'done' ? 'on' : ''}" data-show="done">${T('doneTab')} · ${pool.length - todo}</button></div>
-    <div class="stat"><span>${T('left')(todo, pool.length, esc(nb))}</span><button class="linkbtn" id="editBrands">${T('changeBrands')}</button></div>
-    ${xs.length ? xs.map(s => { const n = doneBy(s.id).length, m = mine(s.id);
+    <div class="tools"><input id="q" placeholder="${esc(T('search'))}" value="${esc(filt.q)}"><button class="chip ${filt.show === 'todo' ? 'on' : ''}" data-show="todo">${T('todo')}</button><button class="chip ${filt.show === 'done' ? 'on' : ''}" data-show="done">${T('doneTab')} · ${pool.length - todo}</button></div>    ${xs.length ? xs.map(s => { const n = doneBy(s.id).length, m = mine(s.id);
       return `<button class="sample ${m ? 'done' : ''}" data-id="${esc(s.id)}"><div class="th" style="${s.thumb ? `background-image:url(${s.thumb})` : ''}">${s.thumb ? '' : T('noPhoto')}</div>
         <div><span class="id">${esc(s.id)}</span> ${originTag(s)}<b>${esc(s.brand)} · ${esc(s.flavor)}</b><small>${s.sku ? esc(s.sku) + ' · ' : ''}${T('mfdShort')} ${dmy(s.mfd)} · ${esc(L('market', s.market))}</small></div>
         <div class="st">${m ? `<span class="tag ok">${T('scored')}</span>` : ''}${lowTag(s)}<div>${T('people')(n)}</div></div></button>`; }).join('')
@@ -464,7 +519,7 @@ function bind() {
     document.querySelectorAll('[data-etype]').forEach(b => b.onclick = () => { setType(b.dataset.etype); if (draft.dept && !deptsFor(etype).includes(draft.dept)) draft.dept = ''; render(); scrollTo(0, 0); });
     const ct = $('#chgType'); if (ct) ct.onclick = () => { setType(''); render(); };
     if (!etype) return;
-    const name = $('#name'); name.oninput = () => { draft.name = name.value; };
+    const name = $('#name'); name.oninput = () => { draft.name = name.value; $('#nhint').innerHTML = nameHint(); bindNameHint(); }; bindNameHint();
     document.querySelectorAll('#dept button').forEach(b => b.onclick = () => { draft.dept = b.dataset.v; render(); });
     bindPicker();
     $('#go').onclick = () => {
@@ -472,7 +527,8 @@ function bind() {
       if (!nm || !draft.dept) return toast(T('needName'));
       if (draft.brands !== 'all' && !draft.brands.length) return toast(T('needBrand'));
       etab = etype; try { localStorage.setItem('mqm-pc-eval-tab', etab); } catch (e) {}
-      setMe({ name: nm, dept: draft.dept, brands: draft.brands }); view = 'list'; render();
+      setMe({ name: nm, dept: draft.dept, brands: draft.brands }); view = 'list'; filt.show = 'todo'; render();
+      const n0 = nDoneOf(nm); if (n0) toast(T('foundPrev')(n0));
     };
     return;
   }
@@ -551,8 +607,12 @@ async function save() {
       extra: cq.map(q => { const x = ev.xq[q.id]; return { id: q.id, team: q.team, g: q.g, q: q.g + ' · ' + q.text, st: x.st, score: x.score || '', tags: x.st === 'issue' ? x.tags : [], d: x.st === 'issue' ? x.d.trim() : '' }; }) };
     const r = await api.post('saveEval', data);
     if (!r.ok) throw new Error(r.error || '?');
-    evals = evals.filter(e => !(e.sampleId === ev.sampleId && String(e.name).toLowerCase() === me.name.toLowerCase()));
-    evals.push({ sampleId: ev.sampleId, name: me.name, at: r.at, gs: [...new Set(cq.map(q => q.g))] }); myEv = null;
+    const old = evals.find(e => e.sampleId === ev.sampleId && isMe(e)), gs1 = [...new Set(cq.map(q => q.g).concat(old && old.gs ? old.gs : []))];
+    evals = evals.filter(e => !(e.sampleId === ev.sampleId && isMe(e)));
+    const ne = { sampleId: ev.sampleId, name: me.name, dept: me.dept, at: r.at || new Date().toISOString(), gs: gs1 };
+    evals.push(ne); myEv = null;
+    rememberMine(Object.assign({ cycle }, ne));
+    try { const k = 'samples' + (cycle ? '&cycle=' + cycle : ''), c = PC.peek(k); if (c && c.ok) { c.evals = evals; localStorage.setItem('pcc:' + k, JSON.stringify(c)); } } catch (x) {}
     toast(T('saved')(ev.sampleId));
     view = 'list'; render(); scrollTo(0, 0);
   } catch (err) { toast(T('saveErr') + err.message); b.disabled = false; b.textContent = T('save'); }
@@ -561,16 +621,18 @@ async function save() {
 async function loadAll() {
   loadErr = '';
   const q = cycle ? '&cycle=' + cycle : '', c0 = PC.peek('samples' + q);
-  if (c0 && c0.ok) { months = c0.months || []; current = c0.current || c0.cycle; cycle = c0.cycle; samples = c0.samples; evals = c0.evals;
+  if (c0 && c0.ok) { months = c0.months || []; current = c0.current || c0.cycle; cycle = c0.cycle; samples = c0.samples; evals = c0.evals; mergeMine();
     const cq0 = PC.peek('questions' + q), pl0 = PC.peek('plan' + q); cqAll = cq0 && cq0.ok ? cq0.questions : []; cq = cqFor(); plan = pl0 && pl0.ok ? pl0 : null; loaded = true; }
   else loaded = false;
+  refreshing = true;
   if (view !== 'score') render();
   try {
     const [r, qr, pl] = await Promise.all([api.get('samples' + q), api.get('questions' + q).catch(() => ({})), api.get('plan' + q).catch(() => ({}))]);
     if (!r.ok) throw new Error(r.error);
     months = r.months || []; current = r.current || r.cycle; cycle = r.cycle;
-    samples = r.samples; evals = r.evals; cqAll = qr.ok ? qr.questions : []; cq = cqFor(); plan = pl.ok ? pl : null; loaded = true;
+    samples = r.samples; evals = r.evals; mergeMine(true); cqAll = qr.ok ? qr.questions : []; cq = cqFor(); plan = pl.ok ? pl : null; loaded = true;
   } catch (err) { if (!loaded) loadErr = err.message; }
+  refreshing = false;
   if (view !== 'score') { const y = scrollY; render(); scrollTo(0, y); }
 }
 const shrinkImg = (src, max, q) => new Promise(res => { const im = new Image(); im.onload = () => { const k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
