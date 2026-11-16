@@ -146,6 +146,8 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
   .itbl > thead { display: none; } .itbl, .itbl > tbody, .itbl > tbody > tr, .itbl > tbody > tr > td { display: block; width: 100% !important; } .itbl > tbody > tr { border-bottom: 1.5px solid #ececec; padding: 8px 0; } .itbl > tbody > tr > td { border: 0; padding: 4px 4px; } .itbl td.c { text-align: left; }
 }
 /* 16/11 v5: nút ngôn ngữ + xem ảnh toàn màn hình */
+.facn { display: inline-block; margin-top: 4px; border-radius: 6px; padding: 1px 7px; font-size: 11px; font-weight: 700; } .facn.fYP { background: #e8f0fe; color: #1a4fb0; } .facn.fMP { background: #fff1e0; color: #a3530a; } .facn.fc { background: #f1f1f1; color: #777; }
+.chip small.cn { margin-left: 6px; font-weight: 600; opacity: .6; font-size: 12px; } .ptbl .facn { font-size: 7pt; padding: .3mm 1.8mm; }
 .lgsw { display: flex; background: var(--soft); border-radius: 999px; padding: 3px; } .lgsw button { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 13.5px; padding: 8px 14px; border-radius: 999px; cursor: pointer; color: var(--muted); } .lgsw button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .phov { position: fixed; inset: 0; z-index: 200; background: #0b0b0b; display: flex; align-items: center; justify-content: center; }
 .phov img { width: 100vw; height: 100vh; object-fit: contain; display: block; user-select: none; }
@@ -632,7 +634,10 @@ function view() {
 
 // ===== 16/11: thanh bên trái 2 tab lớn · Kết quả đánh giá | Danh sách cải thiện (mọi vấn đề từ đánh giá, chưa cần FQS xác nhận; ai cũng xem được) =====
 let big = (() => { try { return sessionStorage.getItem('mqm-rep-big') || 'eval'; } catch (e) { return 'eval'; } })();
-let IL = null, ILerr = '', fOwn = '', fStt = '';
+let IL = null, ILerr = '', fOwn = '', fStt = '', fFac = '';
+// 16/11: nhà máy của mẫu ORION → YP (Yên Phong) / MP (Mỹ Phước); mẫu đối thủ không có nhà máy
+const facCode = f => /yên phong|^yp$/i.test(String(f || '').trim()) ? 'YP' : /mỹ phước|^mp$/i.test(String(f || '').trim()) ? 'MP' : '';
+const facName = c => c === 'YP' ? L2('Nhà máy Yên Phong (YP)', 'Yên Phong 공장 (YP)') : c === 'MP' ? L2('Nhà máy Mỹ Phước (MP)', 'Mỹ Phước 공장 (MP)') : L2('Đối thủ · không có nhà máy', '경쟁사 · 공장 없음');
 const IST = ['Chưa xử lý', 'Đang xử lý', 'Đã xử lý'];
 function renderSide() {
   // 16/11 v4: kiểu danh sách có biểu tượng (anh Thái gửi mẫu): tiêu đề nhỏ "XEM", dòng đang chọn tô nền
@@ -659,7 +664,7 @@ function impGroups() {
       o.tags = uq(o.tags.concat(w.tags || [])); if (w.note) o.note = uq(o.note.split(' · ').concat(w.note)).join(' · '); }));
     const acts = new Map(); xs.forEach(x => (x.actions || []).forEach(a => { const o = acts.get(a.who); if (!o || IST.indexOf(a.status) < IST.indexOf(o.status)) acts.set(a.who, a); }));
     const owners = uq(xs.flatMap(x => x.owners || []));
-    return { sampleId: sid, sku: xs[0].sku, mfd: xs[0].mfd, origin: xs[0].origin, from: uq(xs.map(x => x.from)), at: xs.map(x => x.at).sort()[0],
+    return { sampleId: sid, sku: xs[0].sku, mfd: xs[0].mfd, origin: xs[0].origin, fac: facCode(xs.map(x => x.fac).find(Boolean)), from: uq(xs.map(x => x.from)), at: xs.map(x => x.at).sort()[0],
       what: [...W.values()].sort((a, b) => GO.indexOf(a.g) - GO.indexOf(b.g)), cause: uq(xs.flatMap(x => x.cause || [])), solution: uq(xs.flatMap(x => String(x.solution || '').split(/\s*[·\n]\s*/)).map(s => s.trim()).filter(s => s.replace(/[-–.\s]/g, '').length > 1)).join(' · '),
       photos: [...new Map(xs.flatMap(x => x.photos || []).map(p => [p.id, p])).values()], owners: owners.map(o => acts.get(o) || { who: o, status: IST[0], when: '' }) };
   }).sort((a, b) => String(a.sampleId).localeCompare(String(b.sampleId)));
@@ -676,13 +681,13 @@ const imon = c => IK ? (m => m ? `${m[1]}년 ${+m[2]}월` : c)(String(c).match(/
 const stPill = a => `<span class="spill s${Math.max(0, IST.indexOf(a.status))}">${esc(ist(a.status))}</span>${lateA(a) ? `<span class="spill late">${L2('Quá hạn', '기한 초과')}</span>` : ''}`;
 const issH = g => `<table class="iq2"><tbody>${g.what.map((w, i) => `${i === 0 || g.what[i - 1].g !== w.g ? `<tr class="gh"><td colspan="3">${esc(ig(w.g))}</td></tr>` : ''}<tr><td class="q">${esc(iq(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).map(it).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`).join('')}</tbody></table>`;
 // 16/11 v3: cột Mẫu (bộ phận đánh giá nằm dưới) · cột cuối gộp Nguyên nhân nghi ngờ · Giải pháp tạm thời · Bộ phận xử lý
-const sampleCell = (g, web) => `<b>${esc(g.sampleId)}</b><span class="skl">${esc(g.sku)}</span>${g.mfd ? `<small>${L2('NSX', '제조일')} ${dmy(g.mfd)}</small>` : ''}
+const sampleCell = (g, web) => `<b>${esc(g.sampleId)}</b><span class="skl">${esc(g.sku)}</span>${g.mfd ? `<small>${L2('NSX', '제조일')} ${dmy(g.mfd)}</small>` : ''}<span class="facn ${g.fac ? 'f' + g.fac : 'fc'}">${esc(facName(g.fac))}</span>
   <small class="lb2 mt">${L2('Bộ phận đánh giá', '평가 부서')}</small>${web ? g.from.map(d => `<span class="dtag">${esc(idp(d))}</span>`).join('') : `<span class="fromp">${esc(g.from.map(idp).join(', '))}</span>`}`;
 const actCell = (g, web) => `<small class="lb2">${L2('Nguyên nhân nghi ngờ', '추정 원인')}</small><p>${g.cause.length ? esc(g.cause.map(ic).join(', ')) : `<span class="mut">${L2('Chưa ghi', '미입력')}</span>`}</p>
   <small class="lb2">${L2('Giải pháp tạm thời', '임시 대책 (원문)')}</small><p>${g.solution ? esc(g.solution) : `<span class="mut">${L2('Chưa ghi', '미입력')}</span>`}</p>
   <small class="lb2">${L2('Bộ phận xử lý', '담당 부서')}</small>${g.owners.map(a => `<div class="own"><b>${esc(idp(a.who))}</b>${stPill(a)}${a.when ? `<small>${L2('Hạn', '기한')} ${dmy(a.when)}${web && a.doneDate ? L2(' · xong ', ' · 완료 ') + dmy(a.doneDate) : ''}</small>` : ''}</div>`).join('') || `<p class="mut">${L2('Chưa giao', '미배정')}</p>`}`;
 function impFiltered() {
-  return impGroups().filter(g => (!fOwn || g.owners.some(a => a.who === fOwn)) && (!fStt || g.owners.some(a => (!fOwn || a.who === fOwn) && (fStt === 'late' ? lateA(a) : a.status === fStt))));
+  return impGroups().filter(g => (!fFac || g.fac === fFac) && (!fOwn || g.owners.some(a => a.who === fOwn)) && (!fStt || g.owners.some(a => (!fOwn || a.who === fOwn) && (fStt === 'late' ? lateA(a) : a.status === fStt))));
 }
 function renderImp() {
   $('#h1').textContent = L2('Danh sách cải thiện', '개선 목록');
@@ -697,6 +702,7 @@ function renderImp() {
       <div class="kpi"><small>${L2('Việc giao bộ phận', '부서 배정 업무')}</small><b>${acts.length}</b><span>${owners.length} ${L2('bộ phận xử lý', '개 담당 부서')}</span></div>
       <div class="kpi"><small>${L2('Đã xử lý', '처리 완료')}</small><b>${acts.length ? Math.round(nDone / acts.length * 100) : 0}%</b><span>${nDone}/${acts.length} ${L2('việc', '건')}</span></div>
       <div class="kpi red"><small>${L2('Quá hạn', '기한 초과')}</small><b>${nLate}</b><span>${L2('việc chưa xử lý xong', '건 미완료')}</span></div></div>
+    <div class="filters fl2"><span class="fl">${L2('Nhà máy', '공장')}</span>${[['', L2('Tất cả', '전체'), all.length], ['YP', 'Yên Phong (YP)', all.filter(g => g.fac === 'YP').length], ['MP', 'Mỹ Phước (MP)', all.filter(g => g.fac === 'MP').length]].map(([v, t, n]) => `<button class="chip ${fFac === v ? 'on' : ''}" data-ff="${v}">${t}<small class="cn">${n}</small></button>`).join('')}</div>
     <div class="filters fl2"><span class="fl">${L2('Bộ phận xử lý', '담당 부서')}</span><button class="chip ${!fOwn ? 'on' : ''}" data-fo="">${L2('Tất cả', '전체')}</button>${owners.map(o => `<button class="chip ${fOwn === o ? 'on' : ''}" data-fo="${esc(o)}">${esc(idp(o))}</button>`).join('')}</div>
     <div class="filters fl2"><span class="fl">${L2('Trạng thái', '상태')}</span>${[['', L2('Tất cả', '전체')]].concat(IST.map(s => [s, ist(s)]), [['late', L2('Quá hạn', '기한 초과')]]).map(([v, t]) => `<button class="chip ${fStt === v ? 'on' : ''}" data-fs="${esc(v)}">${t}</button>`).join('')}</div>`;
   const body = gs.length ? `<div class="card ilist"><table class="itbl"><thead><tr><th style="width:4%">#</th><th style="width:15%">${L2('Mẫu · bộ phận đánh giá', '샘플 · 평가 부서')}</th><th style="width:33%">${L2('Vấn đề', '문제')}</th><th style="width:22%">${L2('Hình ảnh', '사진')}</th><th>${L2('Nguyên nhân · giải pháp · bộ phận xử lý', '원인 · 대책 · 담당 부서')}</th></tr></thead><tbody>
@@ -706,6 +712,7 @@ function renderImp() {
     : `<div class="card empty">${all.length ? L2('Không có mẫu nào khớp bộ lọc.', '조건에 맞는 샘플이 없습니다.') : L2(`Chưa có vấn đề nào được ghi nhận ${PC.monthLabel(IL.cycle).toLowerCase()}.`, `${imon(IL.cycle)} 기록된 문제가 없습니다.`)}</div>`;
   $('#app').innerHTML = head + body;
   document.querySelectorAll('[data-il]').forEach(b => b.onclick = () => { IK = b.dataset.il === 'ko'; try { localStorage.setItem('mqm-imp-lang', IK ? 'ko' : 'vi'); } catch (e) {} render(); });
+  document.querySelectorAll('[data-ff]').forEach(b => b.onclick = () => { fFac = b.dataset.ff; render(); });
   document.querySelectorAll('[data-fo]').forEach(b => b.onclick = () => { fOwn = b.dataset.fo; render(); });
   document.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { fStt = b.dataset.fs; render(); });
   const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); IL = null; load(ms.value); loadImp(ms.value); };
@@ -746,7 +753,7 @@ function impPhoto(list, idx, sid) {
 async function impPdf() {
   const b = $('#impPdf'), gs = impFiltered(); if (!gs.length) return; b.disabled = true; b.textContent = L2('Đang chuẩn bị…', '준비 중…');
   const yymm = String(IL.cycle).slice(2, 4) + String(IL.cycle).slice(5, 7), now = new Date(), p2 = n => String(n).padStart(2, '0'), today = IK ? `${now.getFullYear()}.${p2(now.getMonth() + 1)}.${p2(now.getDate())}` : `${p2(now.getDate())}/${p2(now.getMonth() + 1)}/${now.getFullYear()}`;
-  const fl = [fOwn ? L2('Bộ phận xử lý: ', '담당 부서: ') + idp(fOwn) : '', fStt ? L2('Trạng thái: ', '상태: ') + (fStt === 'late' ? L2('Quá hạn', '기한 초과') : ist(fStt)) : ''].filter(Boolean).join(' · ');
+  const fl = [fFac ? facName(fFac) : '', fOwn ? L2('Bộ phận xử lý: ', '담당 부서: ') + idp(fOwn) : '', fStt ? L2('Trạng thái: ', '상태: ') + (fStt === 'late' ? L2('Quá hạn', '기한 초과') : ist(fStt)) : ''].filter(Boolean).join(' · ');
   const nIss = gs.reduce((n, g) => n + g.what.length, 0);
   // ảnh minh chứng cho PDF: TẤT CẢ ảnh của mẫu, không giới hạn (anh Thái 16/11); 3 ảnh tải cùng lúc
   const PH = {}, ids = [...new Set(gs.flatMap(g => g.photos.map(p => p.id)))];
@@ -786,7 +793,7 @@ async function impPdf() {
       if (i) pdf.addPage('a4', 'landscape');
       pdf.addImage(cv.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 297, 210);
     }
-    const fn = `${yymm}_MQM_Danh sach cai thien${IK ? '_KO' : ''}.pdf`; pdf.save(fn); toastMsg(L2('Đã tải ', '다운로드 완료: ') + fn);
+    const fn = `${yymm}_MQM_Danh sach cai thien${fFac ? '_' + fFac : ''}${IK ? '_KO' : ''}.pdf`; pdf.save(fn); toastMsg(L2('Đã tải ', '다운로드 완료: ') + fn);
   } catch (x) { toastMsg('Chưa tạo được PDF: ' + x.message); }
   host.remove(); b.disabled = false; b.textContent = '⬇ ' + L2('Tải PDF', 'PDF 다운로드');
 }
