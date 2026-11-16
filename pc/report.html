@@ -100,6 +100,51 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 .modal h3 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.02em; } .modal .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
 .modal table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; } .modal td, .modal th { padding: 8px 6px; border-bottom: 1px solid #efefef; text-align: left; }
 .modal .miss { color: var(--red); font-weight: 600; }
+/* 16/11: thanh bên trái 2 tab lớn + Danh sách cải thiện (đã FQS xác nhận) */
+.lay { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 8px; max-width: 1380px; margin: 0 auto; padding: 0 16px; }
+.side { position: sticky; top: 76px; align-self: start; padding: 26px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.side .sk { color: #8a8a8a; font-size: 11.5px; letter-spacing: .08em; font-weight: 700; padding: 0 12px 8px; }
+.sb { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 12px; padding: 11px 12px; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; color: #333; }
+.sb svg { width: 20px; height: 20px; flex: none; fill: none; stroke: #555; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sb span { flex: 1; font-size: 15.5px !important; white-space: nowrap; } .side { min-width: 0; } .sb em { font-style: normal; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--red); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+.sb:hover { background: #f5f5f5; } .sb.on { background: #fde8eb; color: #111; font-weight: 800; } .sb.on svg { stroke: var(--red); }.col .head, .col .wrap { max-width: none; }
+.pdfb { padding: 10px 18px; font-size: 14px; }
+.fl2 { justify-content: flex-start; margin: -6px 0 10px; } .fl2 .fl { align-self: center; font-size: 12.5px; color: var(--muted); font-weight: 700; margin-right: 4px; }
+.ilist { padding: 8px 14px; } .itbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.itbl th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; padding: 10px 8px; border-bottom: 1.5px solid #ececec; }
+.itbl > tbody > tr > td { padding: 12px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: top; } .itbl td.c { text-align: center; color: var(--muted); }
+.skl { display: block; font-size: 12.5px; color: #444; margin-top: 2px; } .itbl td small, .ptbl td small { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+.dtag { display: inline-block; background: #eef3ff; color: #2a4a9a; border-radius: 999px; padding: 2px 9px; font-size: 11.5px; font-weight: 700; margin: 0 4px 4px 0; }
+.iq2 { width: 100%; border-collapse: collapse; font-size: 12.5px; } .iq2 td { padding: 3px 6px 3px 0; vertical-align: top; border: 0; }
+.iq2 tr.gh td { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #777; padding-top: 6px; }
+.iq2 td.q { width: 46%; } .iq2 td.p { color: var(--red); width: 26%; } .iq2 td.n { color: #555; font-style: italic; }
+.lb2 { font-size: 10.5px !important; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #888 !important; margin-top: 0 !important; }
+.itbl td p, .ptbl td p { margin: 1px 0 6px; font-size: 12.5px; }
+.own { margin-bottom: 7px; } .own b { font-size: 13px; margin-right: 6px; }
+.spill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 700; margin-right: 4px; }
+.spill.s0 { background: #f3f3f3; color: #555; } .spill.s1 { background: #fff4d6; color: #8a5a00; } .spill.s2 { background: #e6f4ea; color: #1a7f37; } .spill.late { background: #fde8eb; color: var(--red); }
+.iph { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; } .iph a { width: 104px; height: 104px; border-radius: 10px; background: #eee center/cover; display: grid; place-items: center; cursor: pointer; font-size: 18px; }
+.phbox { max-width: 900px; } .phbox img { width: 100%; border-radius: 14px; display: block; }
+#impPdfHost { position: fixed; left: -4000px; top: 0; z-index: -1; }
+/* 16/11 v3: lưới ảnh 3×3 (tối đa 9) + cột gộp */
+.igrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; } .igrid.c4 { grid-template-columns: repeat(4, 1fr); gap: 4px; } .igrid a { aspect-ratio: 1; border-radius: 10px; background: #eee center/cover; display: grid; place-items: center; cursor: pointer; font-size: 18px; }
+.lb2.mt { margin-top: 8px !important; } .mut { color: #aaa; } .fromp { font-size: 8pt; }
+.pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5mm; } .pgrid.c4 { grid-template-columns: repeat(4, 1fr); gap: 1mm; } .pgrid.c5 { grid-template-columns: repeat(5, 1fr); gap: 1mm; } .pgrid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 1.2mm; border: 1px solid #e3e3e3; display: block; }
+.ipg { width: 297mm; height: 210mm; background: #fff; padding: 10mm 12mm 13mm; position: relative; overflow: hidden; font: 9pt/1.35 "Segoe UI", Arial, sans-serif; color: #111; margin-bottom: 10px; }
+.ph1 { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--red); padding-bottom: 5px; margin-bottom: 4mm; }
+.ph1 .pl { display: flex; align-items: center; gap: 10px; } .ph1 .pl svg { width: 16mm; height: auto; }
+.ph1 .pk { color: var(--red); font-size: 7.5pt; letter-spacing: .2em; font-weight: 800; } .ph1 h1 { font-size: 16pt; margin: 2px 0 1px; letter-spacing: -.02em; } .ph1 p { margin: 0; color: #666; font-size: 8.5pt; } .ph1 .pr { color: #666; font-size: 8pt; }
+.ptbl { width: 100%; border-collapse: collapse; font-size: 8.3pt; } .ptbl th { text-align: left; font-size: 7.5pt; color: #666; font-weight: 700; background: #f3f3f3; padding: 1.5mm 2mm; }
+.ptbl > tbody > tr > td { border-bottom: 1px solid #e6e6e6; padding: 1.8mm 2mm; vertical-align: top; } .ptbl td.c { text-align: center; color: #888; }
+.ptbl .iq2 { font-size: 8pt; } .ptbl .iq2 tr.gh td { font-size: 6.8pt; padding-top: 2px; } .ptbl .skl { font-size: 8pt; } .ptbl td p { font-size: 8pt; } .ptbl .own b { font-size: 8.5pt; } .ptbl .spill { font-size: 7pt; }
+.pph { display: flex; gap: 2mm; flex-wrap: wrap; align-items: center; margin-top: 1.5mm; } .pph img { width: 26mm; height: 26mm; object-fit: cover; border-radius: 1.5mm; border: 1px solid #e3e3e3; }
+.pph span { font-size: 7.5pt; color: #777; } .pph.many img { width: 19mm; height: 19mm; }
+.ipg .pf { position: absolute; left: 12mm; right: 12mm; bottom: 5mm; display: flex; justify-content: space-between; font-size: 7pt; color: #999; border-top: 1px solid #eee; padding-top: 1.2mm; }
+@media (max-width: 900px) {
+  .lay { grid-template-columns: minmax(0, 1fr); padding: 0; } .side { position: static; flex-direction: row; padding: 14px 16px 0; overflow-x: auto; } .side .sk { display: none; }
+  .sb { flex: 1; min-width: 150px; padding: 10px 12px; font-size: 14px; }
+  .itbl > thead { display: none; } .itbl, .itbl > tbody, .itbl > tbody > tr, .itbl > tbody > tr > td { display: block; width: 100% !important; } .itbl > tbody > tr { border-bottom: 1.5px solid #ececec; padding: 8px 0; } .itbl > tbody > tr > td { border: 0; padding: 4px 4px; } .itbl td.c { text-align: left; }
+}
 /* 13/11: Report A4 — xem trên trang (khung xám, từng tờ trắng) và in ra PDF đúng khổ A4 */
 .rtop { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; } .rtop .rtabs { margin: 0; } .a4go { padding: 11px 18px; font-size: 14px; }
 body.a4on { overflow: hidden; }
@@ -212,8 +257,9 @@ body.a4on { overflow: hidden; }
 </head>
 <body>
 <div class="pc-bar" id="pcbar"></div>
-<header class="head"><div class="k">MQM ORION VINA · REPORT</div><h1>Kết quả đánh giá</h1><p id="sub">Fact từ các lượt đánh giá của chu kỳ hiện tại. Ai cũng xem được.</p></header>
-<main class="wrap" id="app"><div class="card empty">Đang tải…</div></main>
+<div class="lay"><aside class="side" id="side"></aside><div class="col">
+<header class="head"><div class="k">MQM ORION VINA · REPORT</div><h1 id="h1">Kết quả đánh giá</h1><p id="sub">Fact từ các lượt đánh giá của chu kỳ hiện tại. Ai cũng xem được.</p></header>
+<main class="wrap" id="app"><div class="card empty">Đang tải…</div></main></div></div>
 <script src="pc.js?v=20261116a"></script>
 <script>
 // MQM ORION VINA · Report: chỉ Fact (đếm, tỉ lệ, lỗi gặp nhiều, ghi nhận vấn đề). Deepdive làm sau.
@@ -575,9 +621,148 @@ function view() {
   return { samples, evals, extra };
 }
 
+// ===== 16/11: thanh bên trái 2 tab lớn · Kết quả đánh giá | Danh sách cải thiện (mọi vấn đề từ đánh giá, chưa cần FQS xác nhận; ai cũng xem được) =====
+let big = (() => { try { return sessionStorage.getItem('mqm-rep-big') || 'eval'; } catch (e) { return 'eval'; } })();
+let IL = null, ILerr = '', fOwn = '', fStt = '';
+const IST = ['Chưa xử lý', 'Đang xử lý', 'Đã xử lý'];
+function renderSide() {
+  // 16/11 v4: kiểu danh sách có biểu tượng (anh Thái gửi mẫu): tiêu đề nhỏ "XEM", dòng đang chọn tô nền
+  const ICON = { eval: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>', imp: '<svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 5.5l1 1 2-2M4 11.5l1 1 2-2M4 17.5l1 1 2-2"/></svg>' };
+  const nImp = IL ? new Set((IL.items || []).map(x => x.sampleId)).size : 0;
+  $('#side').innerHTML = `<div class="sk">XEM</div>${[['eval', 'Kết quả đánh giá'], ['imp', 'Danh sách cải thiện']].map(([v, t]) =>
+    `<button class="sb ${big === v ? 'on' : ''}" data-big="${v}">${ICON[v]}<span>${t}</span>${v === 'imp' && nImp ? `<em>${nImp}</em>` : ''}</button>`).join('')}`;
+  document.querySelectorAll('[data-big]').forEach(b => b.onclick = () => { big = b.dataset.big; try { sessionStorage.setItem('mqm-rep-big', big); } catch (e) {} renderSide(); render(); if (big === 'imp' && !IL) loadImp(R ? R.cycle : PC.month()); scrollTo(0, 0); });
+}
+async function loadImp(c) {
+  ILerr = ''; const q = 'improveList' + (c ? '&cycle=' + c : ''), pk = PC.peek(q);
+  if (pk && pk.ok) { IL = pk; if (big === 'imp') render(); }
+  try { const r = await PC.get(q); if (!r.ok) throw new Error(r.error); IL = r; } catch (e) { if (!IL) ILerr = e.message; }
+  renderSide();
+  if (big === 'imp') render();
+}
+// gom các lượt cùng 1 mẫu thành 1 dòng (giống tab Cải thiện)
+function impGroups() {
+  const m = new Map();
+  (IL.items || []).forEach(x => { if (!m.has(x.sampleId)) m.set(x.sampleId, []); m.get(x.sampleId).push(x); });
+  const uq = a => [...new Set(a.filter(Boolean))], GO = PC.GROUPS || [];
+  return [...m].map(([sid, xs]) => { const W = new Map();
+    xs.forEach(x => (x.what || []).forEach(w => { const k = w.g + '|' + w.q; if (!W.has(k)) W.set(k, { g: w.g, q: w.q, tags: [], note: '' }); const o = W.get(k);
+      o.tags = uq(o.tags.concat(w.tags || [])); if (w.note) o.note = uq(o.note.split(' · ').concat(w.note)).join(' · '); }));
+    const acts = new Map(); xs.forEach(x => (x.actions || []).forEach(a => { const o = acts.get(a.who); if (!o || IST.indexOf(a.status) < IST.indexOf(o.status)) acts.set(a.who, a); }));
+    const owners = uq(xs.flatMap(x => x.owners || []));
+    return { sampleId: sid, sku: xs[0].sku, mfd: xs[0].mfd, origin: xs[0].origin, from: uq(xs.map(x => x.from)), at: xs.map(x => x.at).sort()[0],
+      what: [...W.values()].sort((a, b) => GO.indexOf(a.g) - GO.indexOf(b.g)), cause: uq(xs.flatMap(x => x.cause || [])), solution: uq(xs.flatMap(x => String(x.solution || '').split(/\s*[·\n]\s*/)).map(s => s.trim()).filter(s => s.replace(/[-–.\s]/g, '').length > 1)).join(' · '),
+      photos: [...new Map(xs.flatMap(x => x.photos || []).map(p => [p.id, p])).values()], owners: owners.map(o => acts.get(o) || { who: o, status: IST[0], when: '' }) };
+  }).sort((a, b) => String(a.sampleId).localeCompare(String(b.sampleId)));
+}
+const lateA = a => a.status !== IST[2] && a.when && a.when < new Date().toISOString().slice(0, 10);
+const stPill = a => `<span class="spill s${Math.max(0, IST.indexOf(a.status))}">${esc(a.status)}</span>${lateA(a) ? '<span class="spill late">Quá hạn</span>' : ''}`;
+const issH = g => `<table class="iq2"><tbody>${g.what.map((w, i) => `${i === 0 || g.what[i - 1].g !== w.g ? `<tr class="gh"><td colspan="3">${esc(w.g)}</td></tr>` : ''}<tr><td class="q">${esc(String(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`).join('')}</tbody></table>`;
+// 16/11 v3: cột Mẫu (bộ phận đánh giá nằm dưới) · cột cuối gộp Nguyên nhân nghi ngờ · Giải pháp tạm thời · Bộ phận xử lý
+const sampleCell = (g, web) => `<b>${esc(g.sampleId)}</b><span class="skl">${esc(g.sku)}</span>${g.mfd ? `<small>NSX ${dmy(g.mfd)}</small>` : ''}
+  <small class="lb2 mt">Bộ phận đánh giá</small>${web ? g.from.map(d => `<span class="dtag">${esc(d)}</span>`).join('') : `<span class="fromp">${esc(g.from.join(', '))}</span>`}`;
+const actCell = (g, web) => `<small class="lb2">Nguyên nhân nghi ngờ</small><p>${g.cause.length ? esc(g.cause.join(', ')) : '<span class="mut">Chưa ghi</span>'}</p>
+  <small class="lb2">Giải pháp tạm thời</small><p>${g.solution ? esc(g.solution) : '<span class="mut">Chưa ghi</span>'}</p>
+  <small class="lb2">Bộ phận xử lý</small>${g.owners.map(a => `<div class="own"><b>${esc(a.who)}</b>${stPill(a)}${a.when ? `<small>Hạn ${dmy(a.when)}${web && a.doneDate ? ' · xong ' + dmy(a.doneDate) : ''}</small>` : ''}</div>`).join('') || '<p class="mut">Chưa giao</p>'}`;
+function impFiltered() {
+  return impGroups().filter(g => (!fOwn || g.owners.some(a => a.who === fOwn)) && (!fStt || g.owners.some(a => (!fOwn || a.who === fOwn) && (fStt === 'late' ? lateA(a) : a.status === fStt))));
+}
+function renderImp() {
+  $('#h1').textContent = 'Danh sách cải thiện';
+  $('#sub').textContent = `Các vấn đề người chấm ghi nhận ${IL ? PC.monthLabel(IL.cycle).toLowerCase() : ''}, kèm ảnh minh chứng và tiến độ xử lý của từng bộ phận. Ai cũng xem được.`;
+  if (!IL) { $('#app').innerHTML = `<div class="card empty">${ILerr ? 'Không tải được danh sách (' + esc(ILerr) + '). Kiểm tra mạng rồi tải lại trang.' : 'Đang tải…'}</div>`; return; }
+  const all = impGroups(), gs = impFiltered(), acts = all.flatMap(g => g.owners), owners = [...new Set(acts.map(a => a.who))].sort();
+  const nDone = acts.filter(a => a.status === IST[2]).length, nLate = acts.filter(lateA).length;
+  const months = [...new Set([IL.cycle].concat(IL.months || []))];
+  const head = `<div class="filters">${PC.monthSelect(months, IL.cycle)}<button class="btn pdfb" id="impPdf" ${gs.length ? '' : 'disabled'}>⬇ Tải PDF</button></div>
+    <div class="kpis"><div class="kpi"><small>Mẫu có vấn đề</small><b>${all.length}</b><span>${all.reduce((n, g) => n + g.what.length, 0)} vấn đề</span></div>
+      <div class="kpi"><small>Việc giao bộ phận</small><b>${acts.length}</b><span>${owners.length} bộ phận xử lý</span></div>
+      <div class="kpi"><small>Đã xử lý</small><b>${acts.length ? Math.round(nDone / acts.length * 100) : 0}%</b><span>${nDone}/${acts.length} việc</span></div>
+      <div class="kpi red"><small>Quá hạn</small><b>${nLate}</b><span>việc chưa xử lý xong</span></div></div>
+    <div class="filters fl2"><span class="fl">Bộ phận xử lý</span><button class="chip ${!fOwn ? 'on' : ''}" data-fo="">Tất cả</button>${owners.map(o => `<button class="chip ${fOwn === o ? 'on' : ''}" data-fo="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+    <div class="filters fl2"><span class="fl">Trạng thái</span>${[['', 'Tất cả']].concat(IST.map(s => [s, s]), [['late', 'Quá hạn']]).map(([v, t]) => `<button class="chip ${fStt === v ? 'on' : ''}" data-fs="${esc(v)}">${t}</button>`).join('')}</div>`;
+  const body = gs.length ? `<div class="card ilist"><table class="itbl"><thead><tr><th style="width:4%">#</th><th style="width:15%">Mẫu · bộ phận đánh giá</th><th style="width:33%">Vấn đề</th><th style="width:22%">Hình ảnh</th><th>Nguyên nhân · giải pháp · bộ phận xử lý</th></tr></thead><tbody>
+    ${gs.map((g, i) => `<tr><td class="c">${i + 1}</td><td>${sampleCell(g, true)}</td><td>${issH(g)}</td>
+      <td>${g.photos.length ? `<div class="igrid ${g.photos.length > 9 ? 'c4' : ''}">${g.photos.map(p => `<a data-ph="${esc(p.id)}" style="${p.t ? `background-image:url(${p.t})` : ''}">${p.t ? '' : '📷'}</a>`).join('')}</div>` : '<span class="mut">Không có ảnh</span>'}</td>
+      <td>${actCell(g, true)}</td></tr>`).join('')}</tbody></table></div>`
+    : `<div class="card empty">${all.length ? 'Không có mẫu nào khớp bộ lọc.' : `Chưa có vấn đề nào được ghi nhận ${PC.monthLabel(IL.cycle).toLowerCase()}.`}</div>`;
+  $('#app').innerHTML = head + body;
+  document.querySelectorAll('[data-fo]').forEach(b => b.onclick = () => { fOwn = b.dataset.fo; render(); });
+  document.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { fStt = b.dataset.fs; render(); });
+  const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); IL = null; load(ms.value); loadImp(ms.value); };
+  const pb = $('#impPdf'); if (pb) pb.onclick = impPdf;
+  document.querySelectorAll('[data-ph]').forEach(a => a.onclick = () => impPhoto(a.dataset.ph, a));
+  impThumbs();
+}
+// ảnh: bản nhỏ có sẵn thì hiện ngay; chưa có thì tải qua Apps Script, thu nhỏ, nhớ trong máy (giống tab Cải thiện)
+function impThumbs() {
+  document.querySelectorAll('.igrid a[data-ph]').forEach(a => { if (a.style.backgroundImage) return; const id = a.dataset.ph; let u = null; try { u = localStorage.getItem('mqm-th:' + id); } catch (e) {}
+    if (u) { a.style.backgroundImage = `url(${u})`; a.textContent = ''; return; }
+    fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json()).then(d => { if (!d.ok) return; const im = new Image(); im.onload = () => { const s = Math.min(1, 360 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); const t = c.toDataURL('image/jpeg', .7); try { localStorage.setItem('mqm-th:' + id, t); } catch (e) {}
+      document.querySelectorAll(`.igrid a[data-ph="${id}"]`).forEach(x => { x.style.backgroundImage = `url(${t})`; x.textContent = ''; }); }; im.src = d.data; }).catch(() => {}); });
+}
+function impPhoto(id, a) {
+  const box = document.createElement('div'); box.className = 'modal'; box.innerHTML = `<div class="box phbox"><img alt="Ảnh minh chứng" src="${a.style.backgroundImage.slice(5, -2) || ''}"><p class="sub" style="text-align:center;margin:8px 0 0">Đang tải ảnh lớn…</p></div>`;
+  box.onclick = () => box.remove(); document.body.appendChild(box);
+  fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json()).then(d => { if (d.ok) { box.querySelector('img').src = d.data; box.querySelector('p').remove(); } }).catch(() => {});
+}
+// ===== PDF A4 ngang: header + tiêu đề "Danh sách cải thiện", có ảnh minh chứng, chia trang theo chiều cao từng dòng =====
+async function impPdf() {
+  const b = $('#impPdf'), gs = impFiltered(); if (!gs.length) return; b.disabled = true; b.textContent = 'Đang chuẩn bị…';
+  const yymm = String(IL.cycle).slice(2, 4) + String(IL.cycle).slice(5, 7), now = new Date(), today = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+  const fl = [fOwn ? 'Bộ phận xử lý: ' + fOwn : '', fStt ? 'Trạng thái: ' + (fStt === 'late' ? 'Quá hạn' : fStt) : ''].filter(Boolean).join(' · ');
+  const nIss = gs.reduce((n, g) => n + g.what.length, 0);
+  // ảnh minh chứng cho PDF: TẤT CẢ ảnh của mẫu, không giới hạn (anh Thái 16/11); 3 ảnh tải cùng lúc
+  const PH = {}, ids = [...new Set(gs.flatMap(g => g.photos.map(p => p.id)))];
+  const shrink = (src, max) => new Promise(ok => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+    c.width = Math.round(im.width * s); c.height = Math.round(im.height * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .82)); }; im.onerror = () => ok(''); im.src = src; });
+  let done = 0; const q = ids.slice();
+  await Promise.all([0, 1, 2].map(async () => { while (q.length) { const id = q.shift();
+    // ảnh đã tải khi xem trang (360px, đủ rõ ở khổ 26mm) → dùng luôn; chưa có mới tải ảnh gốc
+    const pt = (gs.flatMap(x => x.photos).find(p => p.id === id) || {}).t || '';
+    try { PH[id] = localStorage.getItem('mqm-th:' + id) || pt; } catch (e) { PH[id] = pt; }
+    if (!PH[id]) { try { const d = await fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json()); PH[id] = d.ok ? await shrink(d.data, 640) : ''; } catch (e) { PH[id] = ''; } }
+    if (!PH[id]) { const g = gs.flatMap(x => x.photos).find(p => p.id === id); try { PH[id] = (g && g.t) || localStorage.getItem('mqm-th:' + id) || ''; } catch (e) {} }
+    b.textContent = `Đang tải ảnh… ${++done}/${ids.length}`; } }));
+  const phH = g => { const ps = g.photos.filter(p => PH[p.id]), more = g.photos.length - ps.length;
+    return ps.length ? `<div class="pgrid ${ps.length > 16 ? 'c5' : ps.length > 9 ? 'c4' : ''}">${ps.map(p => `<img src="${PH[p.id]}" alt="">`).join('')}</div>${more > 0 ? `<small>${more} ảnh chưa tải được (xem trên app)</small>` : ''}` : (g.photos.length ? `<small>📷 ${g.photos.length} ảnh (xem trên app)</small>` : '<span class="mut">Không có ảnh</span>'); };
+  const hdr = `<div class="ph1"><div class="pl">${typeof PC_LOGO === 'string' ? PC_LOGO : ''}<div><div class="pk">MQM ORION VINA · CẢI THIỆN CHẤT LƯỢNG</div><h1>Danh sách cải thiện</h1>
+    <p>${PC.monthLabel(IL.cycle)} · ${gs.length} mẫu · ${nIss} vấn đề${fl ? ' · ' + esc(fl) : ''}</p></div></div><div class="pr">Xuất ngày ${today}</div></div>`;
+  const th = `<thead><tr><th style="width:4%">#</th><th style="width:14%">Mẫu · bộ phận đánh giá</th><th style="width:34%">Vấn đề (câu hỏi · lỗi · ghi chú)</th><th style="width:22%">Hình ảnh</th><th>Nguyên nhân · giải pháp · bộ phận xử lý</th></tr></thead>`;
+  const row = (g, i) => `<tr><td class="c">${i + 1}</td><td>${sampleCell(g, false)}</td><td>${issH(g)}</td><td>${phH(g)}</td><td>${actCell(g, false)}</td></tr>`;
+  const host = document.createElement('div'); host.id = 'impPdfHost'; document.body.appendChild(host);
+  try {
+    // đo chiều cao từng dòng trên đúng khổ trang rồi xếp vào trang
+    host.innerHTML = `<section class="ipg">${hdr}<table class="ptbl">${th}<tbody>${gs.map(row).join('')}</tbody></table></section>`;
+    const sec = host.querySelector('.ipg'), cs = getComputedStyle(sec);
+    const cap = sec.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - host.querySelector('.ph1').offsetHeight - 16 - host.querySelector('.ptbl > thead').offsetHeight - 12;
+    const hs = [...host.querySelectorAll('.ptbl > tbody > tr')].map(tr => tr.offsetHeight), pages = []; let cur = [], h = 0;
+    gs.forEach((g, i) => { if (cur.length && h + hs[i] > cap) { pages.push(cur); cur = []; h = 0; } cur.push(i); h += hs[i]; }); if (cur.length) pages.push(cur);
+    host.innerHTML = pages.map((p, k) => `<section class="ipg">${hdr}<table class="ptbl">${th}<tbody>${p.map(i => row(gs[i], i)).join('')}</tbody></table>
+      <div class="pf"><span>MQM ORION VINA · Danh sách cải thiện · ${PC.monthLabel(IL.cycle)}</span><span>Trang ${k + 1}/${pages.length}</span></div></section>`).join('');
+    await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    await loadJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const secs = [...host.querySelectorAll('.ipg')], pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+    for (let i = 0; i < secs.length; i++) {
+      b.textContent = `Đang tạo PDF… ${i + 1}/${secs.length}`;
+      const src = [...secs[i].querySelectorAll('*')].map(el => getComputedStyle(el).color);
+      const cv = await html2canvas(secs[i], { scale: 2, backgroundColor: '#ffffff', logging: false, onclone: (doc, el) => { [...(el || doc.querySelectorAll('.ipg')[i]).querySelectorAll('*')].forEach((e, k) => { if (src[k]) e.style.color = src[k]; }); } });
+      if (i) pdf.addPage('a4', 'landscape');
+      pdf.addImage(cv.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 297, 210);
+    }
+    pdf.save(`${yymm}_MQM_Danh sach cai thien.pdf`); toastMsg(`Đã tải ${yymm}_MQM_Danh sach cai thien.pdf`);
+  } catch (x) { toastMsg('Chưa tạo được PDF: ' + x.message); }
+  host.remove(); b.disabled = false; b.textContent = '⬇ Tải PDF';
+}
+
 const rtabs = () => `<div class="rtop"><div class="rtabs">${[['all', 'Tổng quan'], ['cmp', 'ORION vs Đối thủ']].map(([v, t]) => `<button class="${tab === v ? 'on' : ''}" data-rt="${v}">${t}</button>`).join('')}</div>
   ${R.extra && R.extra.length ? '<button class="btn a4go" id="a4btn">Report A4 · PDF</button>' : ''}</div>`;
 function render() {
+  if (big === 'imp') return renderImp();
+  $('#h1').textContent = 'Kết quả đánh giá';
+  if (R) $('#sub').textContent = `Fact từ các lượt đánh giá ${PC.monthLabel(R.cycle).toLowerCase()}. Ai cũng xem được.`;
+  if (!R) { $('#app').innerHTML = '<div class="card empty">Đang tải…</div>'; return; }
   if (tab === 'cmp') { $('#app').innerHTML = rtabs() + compare(); bind(); return; }
   const { samples, evals, extra } = view();
   const brands = [...new Set(R.samples.filter(s => fOrigin === 'all' || (fOrigin === 'ORION' ? s.origin === 'ORION' : s.origin !== 'ORION')).map(s => s.brand))].sort();
@@ -662,19 +847,22 @@ function bind() {
   document.querySelectorAll('[data-mk]').forEach(b => b.onclick = () => { cMk = b.dataset.mk; render(); });
   [['#cO', v => { cO = v; }], ['#cC', v => { cC = v; }], ['#cDp', v => { cDp = v; }]].forEach(([id, f]) => { const s = $(id); if (s) s.onchange = () => { f(s.value); render(); }; });
   const eb = $('#endBtn'); if (eb) eb.onclick = endFlow;
-  const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); load(ms.value); };
+  const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); IL = null; load(ms.value); };
 }
 async function load(c) {
   try {
     R = await PC.get('report' + (c ? '&cycle=' + c : ''));
     if (!R.ok) throw new Error(R.error);
-    $('#sub').textContent = `Fact từ các lượt đánh giá ${PC.monthLabel(R.cycle).toLowerCase()}. Ai cũng xem được.`;
     render();
+    if (big === 'imp' && !IL) loadImp(R.cycle);
     if (location.hash === '#a4' && R.extra && R.extra.length) openA4();   // link thẳng tới Report A4
-  } catch (e) { $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
+  } catch (e) { if (big !== 'imp') $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }
 (async () => {
   PC.bar($('#pcbar'), 'Report');
+  if (location.hash === '#cai-thien') { big = 'imp'; try { sessionStorage.setItem('mqm-rep-big', big); } catch (e) {} }   // link thẳng tới Danh sách cải thiện
+  renderSide(); render();
+  if (big === 'imp') loadImp(PC.month());
   load(PC.month());
 })();
 </script>
