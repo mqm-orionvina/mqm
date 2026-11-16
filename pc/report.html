@@ -101,13 +101,13 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 .modal table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; } .modal td, .modal th { padding: 8px 6px; border-bottom: 1px solid #efefef; text-align: left; }
 .modal .miss { color: var(--red); font-weight: 600; }
 /* 16/11: thanh bên trái 2 tab lớn + Danh sách cải thiện (đã FQS xác nhận) */
-.lay { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 8px; max-width: 1380px; margin: 0 auto; padding: 0 16px; }
+.lay { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 8px; max-width: 1380px; margin: 0 auto; padding: 0 16px; }
 .side { position: sticky; top: 76px; align-self: start; padding: 26px 0 0; display: flex; flex-direction: column; gap: 4px; }
-.side .sk { color: #8a8a8a; font-size: 11.5px; letter-spacing: .08em; font-weight: 700; padding: 0 12px 8px; }
-.sb { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 12px; padding: 11px 12px; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; color: #333; }
-.sb svg { width: 20px; height: 20px; flex: none; fill: none; stroke: #555; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.sb span { flex: 1; font-size: 15.5px !important; white-space: nowrap; } .side { min-width: 0; } .sb em { font-style: normal; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--red); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
-.sb:hover { background: #f5f5f5; } .sb.on { background: #fde8eb; color: #111; font-weight: 800; } .sb.on svg { stroke: var(--red); }.col .head, .col .wrap { max-width: none; }
+.side .sk { color: #9a9a9a; font-size: 10.5px; letter-spacing: .1em; font-weight: 600; padding: 0 10px 6px; }
+.sb { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 10px; padding: 8px 10px; cursor: pointer; font: inherit; font-size: 13.5px !important; font-weight: 500 !important; color: #444; }
+.sb svg { width: 17px; height: 17px; flex: none; fill: none; stroke: #666; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sb span { flex: 1; min-width: 0; font-size: 13.5px !important; white-space: nowrap; } .side { min-width: 0; } .sb em { flex: none; font-style: normal; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #f1f1f1; color: #666; font-size: 10.5px; font-weight: 600; display: grid; place-items: center; }
+.sb:hover { background: #f6f6f6; } .sb.on { background: #fdf0f2; color: #111; font-weight: 600 !important; } .sb.on svg { stroke: var(--red); } .sb.on em { background: #fbdde2; color: var(--red); }.col .head, .col .wrap { max-width: none; }
 .pdfb { padding: 10px 18px; font-size: 14px; }
 .fl2 { justify-content: flex-start; margin: -6px 0 10px; } .fl2 .fl { align-self: center; font-size: 12.5px; color: var(--muted); font-weight: 700; margin-right: 4px; }
 .ilist { padding: 8px 14px; } .itbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
@@ -145,6 +145,15 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
   .sb { flex: 1; min-width: 150px; padding: 10px 12px; font-size: 14px; }
   .itbl > thead { display: none; } .itbl, .itbl > tbody, .itbl > tbody > tr, .itbl > tbody > tr > td { display: block; width: 100% !important; } .itbl > tbody > tr { border-bottom: 1.5px solid #ececec; padding: 8px 0; } .itbl > tbody > tr > td { border: 0; padding: 4px 4px; } .itbl td.c { text-align: left; }
 }
+/* 16/11 v5: nút ngôn ngữ + xem ảnh toàn màn hình */
+.lgsw { display: flex; background: var(--soft); border-radius: 999px; padding: 3px; } .lgsw button { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 13.5px; padding: 8px 14px; border-radius: 999px; cursor: pointer; color: var(--muted); } .lgsw button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.phov { position: fixed; inset: 0; z-index: 200; background: #0b0b0b; display: flex; align-items: center; justify-content: center; }
+.phov img { width: 100vw; height: 100vh; object-fit: contain; display: block; user-select: none; }
+.phtop { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; color: #ddd; font-size: 14px; font-weight: 600; background: linear-gradient(rgba(0,0,0,.55), transparent); z-index: 2; }
+.phx { border: 0; background: rgba(255,255,255,.15); color: #fff; width: 40px; height: 40px; border-radius: 999px; font-size: 26px; line-height: 1; cursor: pointer; }
+.phnav { position: absolute; top: 50%; transform: translateY(-50%); border: 0; background: rgba(255,255,255,.15); color: #fff; width: 48px; height: 64px; border-radius: 14px; font-size: 38px; cursor: pointer; z-index: 2; } .phnav.prev { left: 12px; } .phnav.next { right: 12px; } .phnav:hover, .phx:hover { background: rgba(255,255,255,.28); }
+.phload { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); color: #ccc; font-size: 13px; }
+.ipg.l-ko { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif; }
 /* 13/11: Report A4 — xem trên trang (khung xám, từng tờ trắng) và in ra PDF đúng khổ A4 */
 .rtop { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; } .rtop .rtabs { margin: 0; } .a4go { padding: 11px 18px; font-size: 14px; }
 body.a4on { overflow: hidden; }
@@ -598,7 +607,7 @@ function openA4() {
       await loadJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
       wrap.style.zoom = ''; const secs = [...wrap.querySelectorAll('section.a4')], pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
       for (let i = 0; i < secs.length; i++) {
-        b.textContent = `Đang tạo PDF… ${i + 1}/${secs.length}`;
+        b.textContent = `${L2('Đang tạo PDF…', 'PDF 생성 중…')} ${i + 1}/${secs.length}`;
         // html2canvas đôi khi lấy sai màu chữ kế thừa → ghi cố định màu chữ của từng phần tử vào bản sao trước khi chụp
         const src = [...secs[i].querySelectorAll('*')].map(el => getComputedStyle(el).color);
         const cv = await html2canvas(secs[i], { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false,
@@ -656,42 +665,52 @@ function impGroups() {
   }).sort((a, b) => String(a.sampleId).localeCompare(String(b.sampleId)));
 }
 const lateA = a => a.status !== IST[2] && a.when && a.when < new Date().toISOString().slice(0, 10);
-const stPill = a => `<span class="spill s${Math.max(0, IST.indexOf(a.status))}">${esc(a.status)}</span>${lateA(a) ? '<span class="spill late">Quá hạn</span>' : ''}`;
-const issH = g => `<table class="iq2"><tbody>${g.what.map((w, i) => `${i === 0 || g.what[i - 1].g !== w.g ? `<tr class="gh"><td colspan="3">${esc(w.g)}</td></tr>` : ''}<tr><td class="q">${esc(String(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`).join('')}</tbody></table>`;
+// 16/11 v5: Tiếng Việt / 한국어 cho tab Danh sách cải thiện (trang + PDF); chữ người chấm tự gõ (ghi chú, giải pháp) giữ nguyên văn
+let IK = (() => { try { return localStorage.getItem('mqm-imp-lang') === 'ko'; } catch (e) { return false; } })();
+const L2 = (vi, ko) => IK ? ko : vi;
+const KO_ST = { 'Chưa xử lý': '미처리', 'Đang xử lý': '처리 중', 'Đã xử lý': '처리 완료' };
+const iq = q => { const s = String(q || ''); return IK ? (KO_Q[s] || KO_Q[s + '?'] || KO_Q[PC.stripG(s)] || s) : s; };
+const it = t => IK ? (KO_T[t] || (Object.entries(KO_T).find(([k]) => String(t).length >= 20 && k.startsWith(t)) || [0, t])[1]) : t;
+const ic = t => IK ? (KO_C[t] || t) : t, idp = t => IK ? (KO_D[t] || t) : t, ig = t => IK ? (KO_G[t] || t) : t, ist = t => IK ? (KO_ST[t] || t) : t;
+const imon = c => IK ? (m => m ? `${m[1]}년 ${+m[2]}월` : c)(String(c).match(/^(\d{4})-(\d{2})$/)) : PC.monthLabel(c);
+const stPill = a => `<span class="spill s${Math.max(0, IST.indexOf(a.status))}">${esc(ist(a.status))}</span>${lateA(a) ? `<span class="spill late">${L2('Quá hạn', '기한 초과')}</span>` : ''}`;
+const issH = g => `<table class="iq2"><tbody>${g.what.map((w, i) => `${i === 0 || g.what[i - 1].g !== w.g ? `<tr class="gh"><td colspan="3">${esc(ig(w.g))}</td></tr>` : ''}<tr><td class="q">${esc(iq(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).map(it).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`).join('')}</tbody></table>`;
 // 16/11 v3: cột Mẫu (bộ phận đánh giá nằm dưới) · cột cuối gộp Nguyên nhân nghi ngờ · Giải pháp tạm thời · Bộ phận xử lý
-const sampleCell = (g, web) => `<b>${esc(g.sampleId)}</b><span class="skl">${esc(g.sku)}</span>${g.mfd ? `<small>NSX ${dmy(g.mfd)}</small>` : ''}
-  <small class="lb2 mt">Bộ phận đánh giá</small>${web ? g.from.map(d => `<span class="dtag">${esc(d)}</span>`).join('') : `<span class="fromp">${esc(g.from.join(', '))}</span>`}`;
-const actCell = (g, web) => `<small class="lb2">Nguyên nhân nghi ngờ</small><p>${g.cause.length ? esc(g.cause.join(', ')) : '<span class="mut">Chưa ghi</span>'}</p>
-  <small class="lb2">Giải pháp tạm thời</small><p>${g.solution ? esc(g.solution) : '<span class="mut">Chưa ghi</span>'}</p>
-  <small class="lb2">Bộ phận xử lý</small>${g.owners.map(a => `<div class="own"><b>${esc(a.who)}</b>${stPill(a)}${a.when ? `<small>Hạn ${dmy(a.when)}${web && a.doneDate ? ' · xong ' + dmy(a.doneDate) : ''}</small>` : ''}</div>`).join('') || '<p class="mut">Chưa giao</p>'}`;
+const sampleCell = (g, web) => `<b>${esc(g.sampleId)}</b><span class="skl">${esc(g.sku)}</span>${g.mfd ? `<small>${L2('NSX', '제조일')} ${dmy(g.mfd)}</small>` : ''}
+  <small class="lb2 mt">${L2('Bộ phận đánh giá', '평가 부서')}</small>${web ? g.from.map(d => `<span class="dtag">${esc(idp(d))}</span>`).join('') : `<span class="fromp">${esc(g.from.map(idp).join(', '))}</span>`}`;
+const actCell = (g, web) => `<small class="lb2">${L2('Nguyên nhân nghi ngờ', '추정 원인')}</small><p>${g.cause.length ? esc(g.cause.map(ic).join(', ')) : `<span class="mut">${L2('Chưa ghi', '미입력')}</span>`}</p>
+  <small class="lb2">${L2('Giải pháp tạm thời', '임시 대책 (원문)')}</small><p>${g.solution ? esc(g.solution) : `<span class="mut">${L2('Chưa ghi', '미입력')}</span>`}</p>
+  <small class="lb2">${L2('Bộ phận xử lý', '담당 부서')}</small>${g.owners.map(a => `<div class="own"><b>${esc(idp(a.who))}</b>${stPill(a)}${a.when ? `<small>${L2('Hạn', '기한')} ${dmy(a.when)}${web && a.doneDate ? L2(' · xong ', ' · 완료 ') + dmy(a.doneDate) : ''}</small>` : ''}</div>`).join('') || `<p class="mut">${L2('Chưa giao', '미배정')}</p>`}`;
 function impFiltered() {
   return impGroups().filter(g => (!fOwn || g.owners.some(a => a.who === fOwn)) && (!fStt || g.owners.some(a => (!fOwn || a.who === fOwn) && (fStt === 'late' ? lateA(a) : a.status === fStt))));
 }
 function renderImp() {
-  $('#h1').textContent = 'Danh sách cải thiện';
-  $('#sub').textContent = `Các vấn đề người chấm ghi nhận ${IL ? PC.monthLabel(IL.cycle).toLowerCase() : ''}, kèm ảnh minh chứng và tiến độ xử lý của từng bộ phận. Ai cũng xem được.`;
+  $('#h1').textContent = L2('Danh sách cải thiện', '개선 목록');
+  $('#sub').textContent = IL ? L2(`Các vấn đề người chấm ghi nhận ${PC.monthLabel(IL.cycle).toLowerCase()}, kèm ảnh minh chứng và tiến độ xử lý của từng bộ phận. Ai cũng xem được.`,
+    `${imon(IL.cycle)} 평가에서 기록된 문제, 증빙 사진, 부서별 처리 현황 · 누구나 볼 수 있음`) : '';
   if (!IL) { $('#app').innerHTML = `<div class="card empty">${ILerr ? 'Không tải được danh sách (' + esc(ILerr) + '). Kiểm tra mạng rồi tải lại trang.' : 'Đang tải…'}</div>`; return; }
   const all = impGroups(), gs = impFiltered(), acts = all.flatMap(g => g.owners), owners = [...new Set(acts.map(a => a.who))].sort();
   const nDone = acts.filter(a => a.status === IST[2]).length, nLate = acts.filter(lateA).length;
   const months = [...new Set([IL.cycle].concat(IL.months || []))];
-  const head = `<div class="filters">${PC.monthSelect(months, IL.cycle)}<button class="btn pdfb" id="impPdf" ${gs.length ? '' : 'disabled'}>⬇ Tải PDF</button></div>
-    <div class="kpis"><div class="kpi"><small>Mẫu có vấn đề</small><b>${all.length}</b><span>${all.reduce((n, g) => n + g.what.length, 0)} vấn đề</span></div>
-      <div class="kpi"><small>Việc giao bộ phận</small><b>${acts.length}</b><span>${owners.length} bộ phận xử lý</span></div>
-      <div class="kpi"><small>Đã xử lý</small><b>${acts.length ? Math.round(nDone / acts.length * 100) : 0}%</b><span>${nDone}/${acts.length} việc</span></div>
-      <div class="kpi red"><small>Quá hạn</small><b>${nLate}</b><span>việc chưa xử lý xong</span></div></div>
-    <div class="filters fl2"><span class="fl">Bộ phận xử lý</span><button class="chip ${!fOwn ? 'on' : ''}" data-fo="">Tất cả</button>${owners.map(o => `<button class="chip ${fOwn === o ? 'on' : ''}" data-fo="${esc(o)}">${esc(o)}</button>`).join('')}</div>
-    <div class="filters fl2"><span class="fl">Trạng thái</span>${[['', 'Tất cả']].concat(IST.map(s => [s, s]), [['late', 'Quá hạn']]).map(([v, t]) => `<button class="chip ${fStt === v ? 'on' : ''}" data-fs="${esc(v)}">${t}</button>`).join('')}</div>`;
-  const body = gs.length ? `<div class="card ilist"><table class="itbl"><thead><tr><th style="width:4%">#</th><th style="width:15%">Mẫu · bộ phận đánh giá</th><th style="width:33%">Vấn đề</th><th style="width:22%">Hình ảnh</th><th>Nguyên nhân · giải pháp · bộ phận xử lý</th></tr></thead><tbody>
+  const head = `<div class="filters">${PC.monthSelect(months, IL.cycle)}<div class="lgsw"><button class="${IK ? '' : 'on'}" data-il="vi">Tiếng Việt</button><button class="${IK ? 'on' : ''}" data-il="ko">한국어</button></div><button class="btn pdfb" id="impPdf" ${gs.length ? '' : 'disabled'}>⬇ ${L2('Tải PDF', 'PDF 다운로드')}</button></div>
+    <div class="kpis"><div class="kpi"><small>${L2('Mẫu có vấn đề', '문제 샘플')}</small><b>${all.length}</b><span>${all.reduce((n, g) => n + g.what.length, 0)} ${L2('vấn đề', '건의 문제')}</span></div>
+      <div class="kpi"><small>${L2('Việc giao bộ phận', '부서 배정 업무')}</small><b>${acts.length}</b><span>${owners.length} ${L2('bộ phận xử lý', '개 담당 부서')}</span></div>
+      <div class="kpi"><small>${L2('Đã xử lý', '처리 완료')}</small><b>${acts.length ? Math.round(nDone / acts.length * 100) : 0}%</b><span>${nDone}/${acts.length} ${L2('việc', '건')}</span></div>
+      <div class="kpi red"><small>${L2('Quá hạn', '기한 초과')}</small><b>${nLate}</b><span>${L2('việc chưa xử lý xong', '건 미완료')}</span></div></div>
+    <div class="filters fl2"><span class="fl">${L2('Bộ phận xử lý', '담당 부서')}</span><button class="chip ${!fOwn ? 'on' : ''}" data-fo="">${L2('Tất cả', '전체')}</button>${owners.map(o => `<button class="chip ${fOwn === o ? 'on' : ''}" data-fo="${esc(o)}">${esc(idp(o))}</button>`).join('')}</div>
+    <div class="filters fl2"><span class="fl">${L2('Trạng thái', '상태')}</span>${[['', L2('Tất cả', '전체')]].concat(IST.map(s => [s, ist(s)]), [['late', L2('Quá hạn', '기한 초과')]]).map(([v, t]) => `<button class="chip ${fStt === v ? 'on' : ''}" data-fs="${esc(v)}">${t}</button>`).join('')}</div>`;
+  const body = gs.length ? `<div class="card ilist"><table class="itbl"><thead><tr><th style="width:4%">#</th><th style="width:15%">${L2('Mẫu · bộ phận đánh giá', '샘플 · 평가 부서')}</th><th style="width:33%">${L2('Vấn đề', '문제')}</th><th style="width:22%">${L2('Hình ảnh', '사진')}</th><th>${L2('Nguyên nhân · giải pháp · bộ phận xử lý', '원인 · 대책 · 담당 부서')}</th></tr></thead><tbody>
     ${gs.map((g, i) => `<tr><td class="c">${i + 1}</td><td>${sampleCell(g, true)}</td><td>${issH(g)}</td>
-      <td>${g.photos.length ? `<div class="igrid ${g.photos.length > 9 ? 'c4' : ''}">${g.photos.map(p => `<a data-ph="${esc(p.id)}" style="${p.t ? `background-image:url(${p.t})` : ''}">${p.t ? '' : '📷'}</a>`).join('')}</div>` : '<span class="mut">Không có ảnh</span>'}</td>
+      <td>${g.photos.length ? `<div class="igrid ${g.photos.length > 9 ? 'c4' : ''}">${g.photos.map((p, k) => `<a data-ph="${esc(p.id)}" data-gi="${i}" data-pi="${k}" style="${p.t ? `background-image:url(${p.t})` : ''}">${p.t ? '' : '📷'}</a>`).join('')}</div>` : `<span class="mut">${L2('Không có ảnh', '사진 없음')}</span>`}</td>
       <td>${actCell(g, true)}</td></tr>`).join('')}</tbody></table></div>`
-    : `<div class="card empty">${all.length ? 'Không có mẫu nào khớp bộ lọc.' : `Chưa có vấn đề nào được ghi nhận ${PC.monthLabel(IL.cycle).toLowerCase()}.`}</div>`;
+    : `<div class="card empty">${all.length ? L2('Không có mẫu nào khớp bộ lọc.', '조건에 맞는 샘플이 없습니다.') : L2(`Chưa có vấn đề nào được ghi nhận ${PC.monthLabel(IL.cycle).toLowerCase()}.`, `${imon(IL.cycle)} 기록된 문제가 없습니다.`)}</div>`;
   $('#app').innerHTML = head + body;
+  document.querySelectorAll('[data-il]').forEach(b => b.onclick = () => { IK = b.dataset.il === 'ko'; try { localStorage.setItem('mqm-imp-lang', IK ? 'ko' : 'vi'); } catch (e) {} render(); });
   document.querySelectorAll('[data-fo]').forEach(b => b.onclick = () => { fOwn = b.dataset.fo; render(); });
   document.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { fStt = b.dataset.fs; render(); });
   const ms = $('#month'); if (ms) ms.onchange = () => { PC.setMonth(ms.value); IL = null; load(ms.value); loadImp(ms.value); };
   const pb = $('#impPdf'); if (pb) pb.onclick = impPdf;
-  document.querySelectorAll('[data-ph]').forEach(a => a.onclick = () => impPhoto(a.dataset.ph, a));
+  document.querySelectorAll('[data-ph]').forEach(a => a.onclick = () => impPhoto(gs[+a.dataset.gi].photos, +a.dataset.pi, gs[+a.dataset.gi].sampleId));
   impThumbs();
 }
 // ảnh: bản nhỏ có sẵn thì hiện ngay; chưa có thì tải qua Apps Script, thu nhỏ, nhớ trong máy (giống tab Cải thiện)
@@ -702,16 +721,32 @@ function impThumbs() {
       c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); const t = c.toDataURL('image/jpeg', .7); try { localStorage.setItem('mqm-th:' + id, t); } catch (e) {}
       document.querySelectorAll(`.igrid a[data-ph="${id}"]`).forEach(x => { x.style.backgroundImage = `url(${t})`; x.textContent = ''; }); }; im.src = d.data; }).catch(() => {}); });
 }
-function impPhoto(id, a) {
-  const box = document.createElement('div'); box.className = 'modal'; box.innerHTML = `<div class="box phbox"><img alt="Ảnh minh chứng" src="${a.style.backgroundImage.slice(5, -2) || ''}"><p class="sub" style="text-align:center;margin:8px 0 0">Đang tải ảnh lớn…</p></div>`;
-  box.onclick = () => box.remove(); document.body.appendChild(box);
-  fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json()).then(d => { if (d.ok) { box.querySelector('img').src = d.data; box.querySelector('p').remove(); } }).catch(() => {});
+// 16/11 v5: xem ảnh toàn màn hình, ảnh vừa khít (không cắt, không cuộn); ‹ › hoặc phím ← → chuyển ảnh cùng mẫu; bấm nền / × / Esc để đóng
+function impPhoto(list, idx, sid) {
+  const ov = document.createElement('div'); ov.className = 'phov';
+  ov.innerHTML = `<div class="phtop"><span id="phCap"></span><button class="phx" aria-label="Đóng">×</button></div><button class="phnav prev" aria-label="Ảnh trước">‹</button><img alt=""><button class="phnav next" aria-label="Ảnh sau">›</button><div class="phload" id="phLoad"></div>`;
+  document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+  const img = ov.querySelector('img'), big = {};
+  const show = i => {
+    idx = (i + list.length) % list.length; const p = list[idx];
+    let small = p.t || ''; try { small = localStorage.getItem('mqm-th:' + p.id) || small; } catch (e) {}
+    img.src = big[p.id] || small; $('#phCap').textContent = `${sid} · ${idx + 1}/${list.length}`;
+    ov.querySelectorAll('.phnav').forEach(b => { b.hidden = list.length < 2; });
+    if (big[p.id]) { $('#phLoad').textContent = ''; return; }
+    $('#phLoad').textContent = L2('Đang tải ảnh rõ…', '고화질 불러오는 중…');
+    fetch(`${PC_API}?api=photo&id=${encodeURIComponent(p.id)}`, { credentials: 'omit' }).then(r => r.json()).then(d => { if (!d.ok) return; big[p.id] = d.data; if (list[idx].id === p.id) { img.src = d.data; $('#phLoad').textContent = ''; } }).catch(() => {});
+  };
+  const close = () => { ov.remove(); document.body.style.overflow = ''; removeEventListener('keydown', key); };
+  const key = e => { if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') show(idx - 1); else if (e.key === 'ArrowRight') show(idx + 1); };
+  addEventListener('keydown', key);
+  ov.onclick = e => { if (e.target.closest('.prev')) show(idx - 1); else if (e.target.closest('.next')) show(idx + 1); else if (e.target === ov || e.target.closest('.phx')) close(); };
+  show(idx);
 }
 // ===== PDF A4 ngang: header + tiêu đề "Danh sách cải thiện", có ảnh minh chứng, chia trang theo chiều cao từng dòng =====
 async function impPdf() {
-  const b = $('#impPdf'), gs = impFiltered(); if (!gs.length) return; b.disabled = true; b.textContent = 'Đang chuẩn bị…';
-  const yymm = String(IL.cycle).slice(2, 4) + String(IL.cycle).slice(5, 7), now = new Date(), today = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-  const fl = [fOwn ? 'Bộ phận xử lý: ' + fOwn : '', fStt ? 'Trạng thái: ' + (fStt === 'late' ? 'Quá hạn' : fStt) : ''].filter(Boolean).join(' · ');
+  const b = $('#impPdf'), gs = impFiltered(); if (!gs.length) return; b.disabled = true; b.textContent = L2('Đang chuẩn bị…', '준비 중…');
+  const yymm = String(IL.cycle).slice(2, 4) + String(IL.cycle).slice(5, 7), now = new Date(), p2 = n => String(n).padStart(2, '0'), today = IK ? `${now.getFullYear()}.${p2(now.getMonth() + 1)}.${p2(now.getDate())}` : `${p2(now.getDate())}/${p2(now.getMonth() + 1)}/${now.getFullYear()}`;
+  const fl = [fOwn ? L2('Bộ phận xử lý: ', '담당 부서: ') + idp(fOwn) : '', fStt ? L2('Trạng thái: ', '상태: ') + (fStt === 'late' ? L2('Quá hạn', '기한 초과') : ist(fStt)) : ''].filter(Boolean).join(' · ');
   const nIss = gs.reduce((n, g) => n + g.what.length, 0);
   // ảnh minh chứng cho PDF: TẤT CẢ ảnh của mẫu, không giới hạn (anh Thái 16/11); 3 ảnh tải cùng lúc
   const PH = {}, ids = [...new Set(gs.flatMap(g => g.photos.map(p => p.id)))];
@@ -724,36 +759,36 @@ async function impPdf() {
     try { PH[id] = localStorage.getItem('mqm-th:' + id) || pt; } catch (e) { PH[id] = pt; }
     if (!PH[id]) { try { const d = await fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json()); PH[id] = d.ok ? await shrink(d.data, 640) : ''; } catch (e) { PH[id] = ''; } }
     if (!PH[id]) { const g = gs.flatMap(x => x.photos).find(p => p.id === id); try { PH[id] = (g && g.t) || localStorage.getItem('mqm-th:' + id) || ''; } catch (e) {} }
-    b.textContent = `Đang tải ảnh… ${++done}/${ids.length}`; } }));
+    b.textContent = `${L2('Đang tải ảnh…', '사진 불러오는 중…')} ${++done}/${ids.length}`; } }));
   const phH = g => { const ps = g.photos.filter(p => PH[p.id]), more = g.photos.length - ps.length;
-    return ps.length ? `<div class="pgrid ${ps.length > 16 ? 'c5' : ps.length > 9 ? 'c4' : ''}">${ps.map(p => `<img src="${PH[p.id]}" alt="">`).join('')}</div>${more > 0 ? `<small>${more} ảnh chưa tải được (xem trên app)</small>` : ''}` : (g.photos.length ? `<small>📷 ${g.photos.length} ảnh (xem trên app)</small>` : '<span class="mut">Không có ảnh</span>'); };
-  const hdr = `<div class="ph1"><div class="pl">${typeof PC_LOGO === 'string' ? PC_LOGO : ''}<div><div class="pk">MQM ORION VINA · CẢI THIỆN CHẤT LƯỢNG</div><h1>Danh sách cải thiện</h1>
-    <p>${PC.monthLabel(IL.cycle)} · ${gs.length} mẫu · ${nIss} vấn đề${fl ? ' · ' + esc(fl) : ''}</p></div></div><div class="pr">Xuất ngày ${today}</div></div>`;
-  const th = `<thead><tr><th style="width:4%">#</th><th style="width:14%">Mẫu · bộ phận đánh giá</th><th style="width:34%">Vấn đề (câu hỏi · lỗi · ghi chú)</th><th style="width:22%">Hình ảnh</th><th>Nguyên nhân · giải pháp · bộ phận xử lý</th></tr></thead>`;
+    return ps.length ? `<div class="pgrid ${ps.length > 16 ? 'c5' : ps.length > 9 ? 'c4' : ''}">${ps.map(p => `<img src="${PH[p.id]}" alt="">`).join('')}</div>${more > 0 ? `<small>${more} ${L2('ảnh chưa tải được (xem trên app)', '장 불러오기 실패 (앱에서 확인)')}</small>` : ''}` : (g.photos.length ? `<small>📷 ${g.photos.length} ${L2('ảnh (xem trên app)', '장 (앱에서 확인)')}</small>` : `<span class="mut">${L2('Không có ảnh', '사진 없음')}</span>`); };
+  const hdr = `<div class="ph1"><div class="pl">${typeof PC_LOGO === 'string' ? PC_LOGO : ''}<div><div class="pk">${L2('MQM ORION VINA · CẢI THIỆN CHẤT LƯỢNG', 'MQM ORION VINA · 품질 개선')}</div><h1>${L2('Danh sách cải thiện', '개선 목록')}</h1>
+    <p>${imon(IL.cycle)} · ${gs.length} ${L2('mẫu', '개 샘플')} · ${nIss} ${L2('vấn đề', '건의 문제')}${fl ? ' · ' + esc(fl) : ''}</p></div></div><div class="pr">${L2('Xuất ngày', '출력일')} ${today}</div></div>`;
+  const th = `<thead><tr><th style="width:4%">#</th><th style="width:14%">${L2('Mẫu · bộ phận đánh giá', '샘플 · 평가 부서')}</th><th style="width:34%">${L2('Vấn đề (câu hỏi · lỗi · ghi chú)', '문제 (문항 · 불량 · 의견 원문)')}</th><th style="width:22%">${L2('Hình ảnh', '사진')}</th><th>${L2('Nguyên nhân · giải pháp · bộ phận xử lý', '원인 · 대책 · 담당 부서')}</th></tr></thead>`;
   const row = (g, i) => `<tr><td class="c">${i + 1}</td><td>${sampleCell(g, false)}</td><td>${issH(g)}</td><td>${phH(g)}</td><td>${actCell(g, false)}</td></tr>`;
   const host = document.createElement('div'); host.id = 'impPdfHost'; document.body.appendChild(host);
   try {
     // đo chiều cao từng dòng trên đúng khổ trang rồi xếp vào trang
-    host.innerHTML = `<section class="ipg">${hdr}<table class="ptbl">${th}<tbody>${gs.map(row).join('')}</tbody></table></section>`;
+    host.innerHTML = `<section class="ipg ${IK ? 'l-ko' : ''}">${hdr}<table class="ptbl">${th}<tbody>${gs.map(row).join('')}</tbody></table></section>`;
     const sec = host.querySelector('.ipg'), cs = getComputedStyle(sec);
     const cap = sec.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - host.querySelector('.ph1').offsetHeight - 16 - host.querySelector('.ptbl > thead').offsetHeight - 12;
     const hs = [...host.querySelectorAll('.ptbl > tbody > tr')].map(tr => tr.offsetHeight), pages = []; let cur = [], h = 0;
     gs.forEach((g, i) => { if (cur.length && h + hs[i] > cap) { pages.push(cur); cur = []; h = 0; } cur.push(i); h += hs[i]; }); if (cur.length) pages.push(cur);
-    host.innerHTML = pages.map((p, k) => `<section class="ipg">${hdr}<table class="ptbl">${th}<tbody>${p.map(i => row(gs[i], i)).join('')}</tbody></table>
-      <div class="pf"><span>MQM ORION VINA · Danh sách cải thiện · ${PC.monthLabel(IL.cycle)}</span><span>Trang ${k + 1}/${pages.length}</span></div></section>`).join('');
+    host.innerHTML = pages.map((p, k) => `<section class="ipg ${IK ? 'l-ko' : ''}">${hdr}<table class="ptbl">${th}<tbody>${p.map(i => row(gs[i], i)).join('')}</tbody></table>
+      <div class="pf"><span>MQM ORION VINA · ${L2('Danh sách cải thiện', '개선 목록')} · ${imon(IL.cycle)}</span><span>${L2('Trang', '페이지')} ${k + 1}/${pages.length}</span></div></section>`).join('');
     await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
     await loadJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     const secs = [...host.querySelectorAll('.ipg')], pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
     for (let i = 0; i < secs.length; i++) {
-      b.textContent = `Đang tạo PDF… ${i + 1}/${secs.length}`;
+      b.textContent = `${L2('Đang tạo PDF…', 'PDF 생성 중…')} ${i + 1}/${secs.length}`;
       const src = [...secs[i].querySelectorAll('*')].map(el => getComputedStyle(el).color);
       const cv = await html2canvas(secs[i], { scale: 2, backgroundColor: '#ffffff', logging: false, onclone: (doc, el) => { [...(el || doc.querySelectorAll('.ipg')[i]).querySelectorAll('*')].forEach((e, k) => { if (src[k]) e.style.color = src[k]; }); } });
       if (i) pdf.addPage('a4', 'landscape');
       pdf.addImage(cv.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 297, 210);
     }
-    pdf.save(`${yymm}_MQM_Danh sach cai thien.pdf`); toastMsg(`Đã tải ${yymm}_MQM_Danh sach cai thien.pdf`);
+    const fn = `${yymm}_MQM_Danh sach cai thien${IK ? '_KO' : ''}.pdf`; pdf.save(fn); toastMsg(L2('Đã tải ', '다운로드 완료: ') + fn);
   } catch (x) { toastMsg('Chưa tạo được PDF: ' + x.message); }
-  host.remove(); b.disabled = false; b.textContent = '⬇ Tải PDF';
+  host.remove(); b.disabled = false; b.textContent = '⬇ ' + L2('Tải PDF', 'PDF 다운로드');
 }
 
 const rtabs = () => `<div class="rtop"><div class="rtabs">${[['all', 'Tổng quan'], ['cmp', 'ORION vs Đối thủ']].map(([v, t]) => `<button class="${tab === v ? 'on' : ''}" data-rt="${v}">${t}</button>`).join('')}</div>
