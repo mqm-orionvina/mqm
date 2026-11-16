@@ -164,6 +164,10 @@ table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.row
 
 /* 11/11: gom theo mẫu */
 .c-dep .dtag { margin: 0 4px 4px 0; } .nev { display: block; color: #c8102e; font-size: 12px; margin-top: 4px; }
+/* 16/11: chế độ chỉ xem (tài khoản PC.IMP_VIEWERS) — ẩn mọi nút ghi */
+.robar { background: #f3f3f3; border-radius: 14px; padding: 10px 14px; font-size: 13.5px; color: #333; margin: 0 0 12px; text-align: center; }
+body.ro [data-conf], body.ro [data-rej], body.ro [data-unc], body.ro [data-rmo], body.ro .oadd, body.ro #mail, body.ro [data-rm], body.ro [data-rmn], body.ro .ev .add, body.ro [data-save] { display: none !important; }
+body.ro .seg button:not(.on) { opacity: .35; } body.ro .seg, body.ro textarea, body.ro input.in { pointer-events: none; } body.ro textarea, body.ro input.in { background: #fafafa; }
 </style>
 </head>
 <body>
@@ -172,7 +176,7 @@ table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.row
   <p id="sub">Danh sách vấn đề từ Đánh giá mẫu → FQS xác nhận → gửi mail bộ phận → bộ phận cập nhật tiến độ và kết quả cải tiến.</p></header>
 <main class="wrap" id="app"><div class="empty">Đang tải…</div></main>
 <div class="toast" id="toast" hidden></div>
-<script src="pc.js?v=20261111e"></script>
+<script src="pc.js?v=20261116a"></script>
 <script>
 // Tab Cải thiện (anh Thái 10/11/2026) · 3 sub-tab:
 // 1 Danh sách cải thiện: mọi lượt chấm có vấn đề (mẫu, vấn đề, bộ phận đánh giá, nguyên nhân, ảnh, bộ phận nên xử lý — sửa được) → FQS bấm Xác nhận
@@ -191,6 +195,9 @@ const LINK = { c: url.get('c') || '', d: url.get('d') || '', k: url.get('k') || 
   try { sessionStorage.setItem('mqmImproveKey', JSON.stringify(LINK)); } catch (e) {} history.replaceState(null, '', location.pathname + (LINK.c ? '?c=' + encodeURIComponent(LINK.c) : '')); })();
 const IMP = ['FQS', 'HOST', 'ADMIN', 'ALL'];
 const canImp = () => { const u = PC.user(); return !!u && IMP.includes(u.role); };
+// 16/11: tài khoản chỉ xem (PC.IMP_VIEWERS, vd rd-snack): thấy cả 3 tab con, mọi nút xác nhận / gửi mail / lưu đều ẩn
+const canView = () => canImp() || PC.impViewer();
+const ro = () => !canImp() && PC.impViewer();
 let stab = url.get('tab') === 'prog' || LINK.k ? 'prog' : (() => { try { return sessionStorage.getItem('mqmImpTab') || 'list'; } catch (e) { return 'list'; } })();
 let Ierr = '', cycle = LINK.c || PC.month(), I = null, A = null, months = [], keyDept = '', fDept = LINK.d || '', fSt = 'all', busy = false;
 const ownEdit = {};   // iid → owners đang sửa ở sub-tab 1
@@ -383,10 +390,13 @@ function render() {
     <button class="${stab === 'conf' ? 'on' : ''}" data-tab="conf">2 · Đã xác nhận${I ? `<small>${new Set(I.confirmed.map(x => x.sampleId)).size}</small>` : ''}</button><button class="${stab === 'prog' ? 'on' : ''}" data-tab="prog">3 · Tiến độ cải thiện</button></div>` : '';
   let body;
   if (stab === 'prog') body = A ? progTab() : '<div class="empty">Đang tải…</div>';
-  else if (!canImp()) body = `<div class="empty">Danh sách cải thiện dành cho FQS / Host / quản lý. Đăng nhập để xem, xác nhận và gửi mail.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
+  else if (!canView()) body = `<div class="empty">Danh sách cải thiện dành cho FQS / Host / quản lý. Đăng nhập để xem, xác nhận và gửi mail.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
   else if (!I) body = Ierr ? `<div class="empty">Không tải được danh sách: ${esc(Ierr)}<br><br><button class="btn" id="login">Đăng nhập lại</button></div>` : '<div class="empty">Đang tải…</div>';
   else body = stab === 'list' ? listTab() : confTab();
-  $('#app').innerHTML = `${showLists ? `<div class="filters">${PC.monthSelect(months, cycle)}</div>` : ''}${tabs}${body}`;
+  const roBar = ro() ? '<div class="robar">👁 Chế độ chỉ xem · tài khoản này xem được danh sách và tiến độ cải thiện, không xác nhận, gửi mail hay sửa.</div>' : '';
+  document.body.classList.toggle('ro', ro());
+  $('#app').innerHTML = `${roBar}${showLists ? `<div class="filters">${PC.monthSelect(months, cycle)}</div>` : ''}${tabs}${body}`;
+  if (ro()) document.querySelectorAll('#app textarea, #app input:not([type=file]), #app select:not(#month)').forEach(el => { el.readOnly = true; if (el.tagName === 'SELECT' || el.type === 'date') el.disabled = true; });
   bind();
 }
 const keep = () => { const y = scrollY; render(); scrollTo(0, y); };
@@ -453,8 +463,8 @@ async function load() {
   try { const c = JSON.parse(localStorage.getItem(ckey(q, kq)) || 'null'); if (c && c.a && c.a.ok) { apply(c.a, c.i); render(); shown = true; } } catch (e) {}
   if (!shown) $('#app').innerHTML = '<div class="empty">Đang tải…</div>';
   try {
-    const tq = canImp() ? '&t=' + encodeURIComponent(PC.token()) : '';
-    const [a, i] = await Promise.all([PC.get('actions' + q + kq + tq), canImp() && !kq ? PC.get('issues' + q + tq) : Promise.resolve(null)]);
+    const tq = canView() ? '&t=' + encodeURIComponent(PC.token()) : '';
+    const [a, i] = await Promise.all([PC.get('actions' + q + kq + tq), canView() && !kq ? PC.get('issues' + q + tq) : Promise.resolve(null)]);
     if (!a.ok) throw new Error(a.error);
     try { localStorage.setItem(ckey(q, kq), JSON.stringify({ a, i: i && i.ok ? i : null })); } catch (e) {}
     if (shown && (Object.keys(edits).length || Object.keys(ownEdit).length)) { A = a; if (i && i.ok) I = i; return; }   // đang sửa thì không vẽ lại
