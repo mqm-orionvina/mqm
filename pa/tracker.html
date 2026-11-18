@@ -230,7 +230,7 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 .rp-t { width: 100%; border-collapse: collapse; font-size: 10.5px; font-variant-numeric: tabular-nums; table-layout: fixed; }
 .rp-t th { font-size: 9.5px; font-weight: 700; color: #8a8a92; text-transform: uppercase; letter-spacing: .03em; text-align: left; padding: 3px 5px; border-bottom: 1.5px solid #141414; background: none; white-space: nowrap; overflow: hidden; text-overflow: clip; } .rp-t th.n { text-align: right; }
 .rp-t th:nth-child(1) { width: 29%; } .rp-t th:nth-child(2) { width: 10%; } .rp-t th:nth-child(3) { width: 8%; } .rp-t th:nth-child(4) { width: 21%; } .rp-t th:nth-child(n+5) { width: 10.6%; }
-.rp-t td { padding: 1.4px 5px; line-height: 1.3; border-bottom: 1px solid #ececf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rp-t .n { text-align: right; }
+.rp-t td { padding: 1.1px 5px; line-height: 1.3; border-bottom: 1px solid #ececf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rp-t .n { text-align: right; }
 .rp-t tr.alt td { background: #f8f8fa; } .rp-t tr.dim td { color: #b3b3ba; } .rp-t td.hi { color: #c8102e; font-weight: 800; }
 .rp-t tr.rp-g td { font-weight: 800; font-size: 11px; background: #f0f1f4; padding-block: 3px; }
 .rp-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
@@ -239,6 +239,21 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 .rp-pr .l { font-weight: 700; text-align: right; } .rp-pr .r { font-weight: 700; } .rp-pr .vs { color: #8a8a92; font-size: 9.5px; text-align: center; font-weight: 800; } .rp-pr > b { text-align: right; } .rp-pr .good { color: #1d7a46; } .rp-pr .bad { color: #c8102e; }
 .rp-bf { display: flex; align-items: center; gap: 4px; } .rp-bf i { display: block; height: 10px; } .rp-bf.l { flex-direction: row-reverse; } .rp-bf.l i { border-radius: 3px 0 0 3px; } .rp-bf.r i { border-radius: 0 3px 3px 0; } .rp-bf b { font-size: 11px; }
 .rpg footer { font-size: 9.5px; color: #8a8a92; border-top: 1px solid #e3e4e8; padding-top: 6px; line-height: 1.4; }
+/* 18/11: trang bảng theo Office */
+.rpo-b { min-height: 0; overflow: hidden; }
+.rpo-t { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11px; font-variant-numeric: tabular-nums; }
+.rpo-t th { font-size: 9.5px; font-weight: 700; color: #6b6b73; text-transform: uppercase; letter-spacing: .02em; padding: 3px 5px; background: none; border-bottom: 1px solid #d5d6db; white-space: nowrap; overflow: hidden; text-align: left; line-height: 1.25; vertical-align: bottom; }
+.rpo-t th.n { text-align: right; } .rpo-t th.gh { text-align: center; border-bottom: 1.5px solid #141414; color: #141414; } .rpo-t thead tr:last-child th { border-bottom: 1.5px solid #141414; } .rpo-t th.dvh { text-align: center; white-space: normal; border-bottom: 1.5px solid #141414; }
+.rpo-t td { padding: 2.4px 5px; border-bottom: 1px solid #ececf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; } .rpo-t td.n { text-align: right; } .rpo-t td code { font-size: 9px; color: #8a8a92; font-family: inherit; }
+.rpo-t td.hc { font-weight: 700; } .rpo-t col.go, .rpo-t col.gp { width: 6.4%; } .rpo-t td.hi { color: #c8102e; font-weight: 800; }
+.rpo-t tr.tot td { background: #f0f1f4; font-weight: 800; border-bottom: 1.5px solid #141414; padding-block: 4px; } .rpo-t tr.dim td { color: #b3b3ba; } .rpo-t tr.thin td { opacity: .55; }
+.rpo-t td.dv { display: flex; align-items: center; gap: 6px; } .dvb { position: relative; flex: 1; height: 9px; background: linear-gradient(90deg, transparent calc(50% - .5px), #8a8a92 calc(50% - .5px), #8a8a92 calc(50% + .5px), transparent calc(50% + .5px)); }
+.dvb i { position: absolute; top: 0; bottom: 0; border-radius: 2px; } .rpo-t td.dv b { width: 28px; text-align: right; font-size: 11px; } .rpo-t .good { color: #1d7a46; } .rpo-t .bad { color: #c8102e; }
+
+/* 18/11: câu lưu ý dưới dòng khảo sát */
+.rpg header > div { flex: 1; min-width: 0; } .rpg header p.rp-sl { display: flex; align-items: baseline; gap: 16px; } .rpg header p.rp-sl > span:first-child { white-space: nowrap; }
+.rpg header .rp-nt { margin-left: auto; font-size: 12.5px; color: #c8102e; font-style: normal; white-space: nowrap; } .rpg header { position: relative; } .rpg header .pg { position: absolute; right: 0; top: 4px; }
+.rpg.ko header h1 { line-height: 1.2; } .rpg.ko header p { line-height: 1.25; }
 </style>
 </head>
 <body>
@@ -1096,25 +1111,25 @@ function renderFr() {
       ${s ? `<p class="age-hi" style="margin:0">${s.old}% gói &gt; 90 ngày · ${o120}% &gt; 120 ngày</p>` : ''}</div>`; }).join('');
   drawFrMaps(R);
 }
-// ---------- tab Report (18/11, anh Thái): 10 trang A4 ngang · trang 1 Toàn quốc + 9 trang theo Center ORION ----------
+// ---------- tab Report (18/11, anh Thái): 19 trang A4 ngang · trang 1 Toàn quốc + 9 trang theo Center ORION ----------
 // mỗi trang: nửa trái = 2 bản đồ ORION vs PEPSI + Insight, nửa phải = so sánh từng SKU ORION vs PEPSI. Tiếng Việt / 한국어, tải PDF.
 const RP_T = {
-  vi: { h: 'Báo cáo Product Age · 10 trang A4 ngang', nat: 'Toàn quốc', ctr: 'Center', sub: (d, s, n) => `Khảo sát ${d} · Kênh TT · ${s} shop · ${n} mẫu`,
+  vi: { nt: 'Report dùng để theo dõi tình hình thực tế của sản phẩm, không dùng để đánh giá kết quả của Office hay nhân viên.', h: 'Báo cáo Product Age · 19 trang A4 ngang', nat: 'Toàn quốc', ctr: 'Center', sub: (d, s, n) => `Khảo sát ${d} · Kênh TT · ${s} shop · ${n} mẫu`,
     mAge: 'Tuổi sản phẩm', mCov: 'Độ phủ', mapH: { age: 'Tuổi gói đầu kệ theo tỉnh · ngày TB', cov: 'Độ phủ vị chính theo tỉnh · % shop có hàng' },
     ins: 'Insight', skuH: 'So sánh SKU · ORION vs PEPSI', pairH: 'Đối đầu cùng vị · tuổi TB gói đầu kệ', days: 'ngày', front: 'Đầu kệ', old: 'Cũ nhất', o90: '> 90 ngày', cov: 'Độ phủ', n: 'Mẫu', sku: 'SKU', fresh: 'freshness',
     noData: 'chưa có mẫu', diff: d => d == null ? 'chưa đủ mẫu' : d === 0 ? 'ORION và PEPSI bằng tuổi' : d < 0 ? `ORION mới hơn PEPSI <b>${-d} ngày</b>` : `ORION cũ hơn PEPSI <b>${d} ngày</b>`,
     covLine: (o, p) => `Độ phủ vị chính: ORION <b>${nv(o)}%</b> · PEPSI <b>${nv(p)}%</b>`,
     oldU: { p: 'Tỉnh ORION cũ nhất', o: 'Office ORION cũ nhất' }, worseU: { p: 'Tỉnh ORION cũ hơn PEPSI', o: 'Office ORION cũ hơn PEPSI' }, none: 'Không có', minN: '≥ 5 mẫu ORION',
     foot: 'Tuổi = ngày mua − NSX gói đầu kệ · Freshness = (180 − tuổi) ÷ 180 · Độ phủ = shop có ≥ 1 SKU vị chính ÷ shop đã khảo sát (vị chính ORION: Ostar Tảo + Kim Chi, Swing Bò NY + Phô Mai) · không tính mẫu TEST',
-    pdf: 'Tải PDF (10 trang)', busy: 'Đang tạo PDF…', err: 'Không tạo được PDF', white: 'trắng = chưa có mẫu', lgAge: 'tươi → cũ (ngày)', lgCov: '% shop có hàng', vs: 'vs', chg: 'Chênh', grpAvg: 'TB' },
-  ko: { h: 'Product Age 보고서 · A4 가로 10페이지', nat: '전국', ctr: '센터', sub: (d, s, n) => `조사 ${d} · TT 채널 · 매장 ${s}개 · 샘플 ${n}건`,
+    pdf: 'Tải PDF (19 trang)', busy: 'Đang tạo PDF…', err: 'Không tạo được PDF', white: 'trắng = chưa có mẫu', lgAge: 'tươi → cũ (ngày)', lgCov: '% shop có hàng', vs: 'vs', chg: 'Chênh', grpAvg: 'TB' },
+  ko: { nt: '본 보고서는 제품의 실제 현황 파악용이며, 오피스·직원 평가에는 사용하지 않습니다.', h: 'Product Age 보고서 · A4 가로 19페이지', nat: '전국', ctr: '센터', sub: (d, s, n) => `조사 ${d} · TT 채널 · 매장 ${s}개 · 샘플 ${n}건`,
     mAge: '제품 경과일', mCov: '커버리지', mapH: { age: '성별 맨 앞 제품 경과일 · 평균 일수', cov: '성별 주요 맛 커버리지 · 입점 매장 %' },
     ins: 'Insight', skuH: 'SKU 비교 · ORION vs PEPSI', pairH: '같은 맛 1:1 비교 · 맨 앞 평균 경과일', days: '일', front: '맨 앞', old: '가장 오래된', o90: '90일 초과', cov: '커버리지', n: '샘플', sku: 'SKU', fresh: '신선도',
     noData: '샘플 없음', diff: d => d == null ? '샘플 부족' : d === 0 ? 'ORION과 PEPSI 경과일 동일' : d < 0 ? `ORION이 PEPSI보다 <b>${-d}일</b> 더 신선` : `ORION이 PEPSI보다 <b>${d}일</b> 더 오래됨`,
     covLine: (o, p) => `주요 맛 커버리지: ORION <b>${nv(o)}%</b> · PEPSI <b>${nv(p)}%</b>`,
     oldU: { p: 'ORION 경과일 최고 성', o: 'ORION 경과일 최고 오피스' }, worseU: { p: 'ORION이 PEPSI보다 오래된 성', o: 'ORION이 PEPSI보다 오래된 오피스' }, none: '없음', minN: 'ORION 샘플 5건 이상',
     foot: '경과일 = 구매일 − 맨 앞 제품 제조일 · 신선도 = (180 − 경과일) ÷ 180 · 커버리지 = 주요 맛 SKU 1개 이상 매장 ÷ 조사 매장 (ORION 주요 맛: Ostar 김 + 김치, Swing 뉴욕 스테이크 + 치즈) · TEST 샘플 제외',
-    pdf: 'PDF 다운로드 (10페이지)', busy: 'PDF 생성 중…', err: 'PDF 생성 실패', white: '흰색 = 샘플 없음', lgAge: '신선 → 오래됨 (일)', lgCov: '입점 매장 %', vs: 'vs', chg: '차이', grpAvg: '평균' } };
+    pdf: 'PDF 다운로드 (19페이지)', busy: 'PDF 생성 중…', err: 'PDF 생성 실패', white: '흰색 = 샘플 없음', lgAge: '신선 → 오래됨 (일)', lgCov: '입점 매장 %', vs: 'vs', chg: '차이', grpAvg: '평균' } };
 let rpLang = LS.get('pa.lang', 'vi'), rpMet = LS.get('pa.rpm', 'age');
 const RP_BC = { OStar: '#e8222a', Swing: '#f08a00', "Lay's": '#1f4fa3', "Lay's Wavy": '#4f8fe0' }, rpC = b => RP_BC[b] || '#8a8a92';
 const nv = x => x == null ? '–' : x;
@@ -1128,7 +1143,7 @@ const cbin = p => CBINS.findIndex(b => p >= b[0] && p < b[1]);
 const VNBB = {}; VN34.forEach(v => { const n = v.d.match(/-?\d+(\.\d+)?/g).map(Number); let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
   for (let i = 0; i + 1 < n.length; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]); } VNBB[v.name] = [x0, y0, x1, y1]; });
 function rpVB(provs, W, H) {
-  if (!provs) return [9, 12, 313, 656];
+  if (!provs) { const w = 656 * W / H; return [Math.round((9 + 313 / 2 - w / 2) * 10) / 10, 12, Math.round(w * 10) / 10, 656]; }   // cả nước: nới 2 bên lề để ghi tên tỉnh
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; provs.forEach(p => { const b = VNBB[p]; if (!b) return; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[2]); y1 = Math.max(y1, b[3]); });
   let w = Math.max(40, x1 - x0), h = Math.max(40, y1 - y0); const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
   w *= 1.12; h *= 1.12; if (w / h < W / H) w = h * W / H; else h = w * H / W;   // giữ đúng tỉ lệ khung
@@ -1144,12 +1159,27 @@ function rpProv(R, k) {   // số liệu theo tỉnh cho 1 nhóm (O = ORION, P =
 function rpMap(R, k, provs, W, H) {
   const st = rpProv(R, k), vb = rpVB(provs, W, H), kk = Math.max(vb[2] / W, vb[3] / H), inS = p => !provs || provs.has(p);
   let h = '', lab = '';
+  const unit = rpMet === 'cov' ? '%' : '', cols = { NL: [], NR: [], SL: [], SR: [] };
   VN34.forEach(v => { const b = VNBB[v.name]; if (b[2] < vb[0] || b[0] > vb[0] + vb[2] || b[3] < vb[1] || b[1] > vb[1] + vb[3]) return;
     const x = st[v.name], on = inS(v.name) && x && x.n;
     const fill = on ? (rpMet === 'age' ? FRAMP[fbin(x.v)] : CRAMP[k][cbin(x.v)]) : inS(v.name) ? '#ffffff' : '#eef0f3';
     h += `<path d="${v.d}" fill="${fill}" stroke="${inS(v.name) ? '#a9adb6' : '#ffffff'}" stroke-width="${(.7 * kk).toFixed(2)}" stroke-linejoin="round"/>`;
-    if (on) { const dk = rpMet === 'age' ? (fbin(x.v) === 0 || fbin(x.v) === 5) : cbin(x.v) >= 4;
-      lab += `<text x="${v.cx}" y="${v.cy + 3.5 * kk}" text-anchor="middle" font-size="${(10.5 * kk).toFixed(1)}" font-weight="800" fill="${dk ? '#ffffff' : '#141414'}" paint-order="stroke" stroke="${dk ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.85)'}" stroke-width="${(2.4 * kk).toFixed(1)}">${x.v}${rpMet === 'cov' ? '%' : ''}</text>`; } });
+    if (!on) return;
+    // 18/11 anh Thái: tên tỉnh (chữ mảnh) trên số. Bản đồ cả nước: miền Bắc + Nam Bộ dày đặc → ghi ra lề, có đường dẫn
+    if (!provs && (v.cy < 215 || v.cy > 470)) { cols[v.cy < 215 ? 'NR' : v.cx < 150 ? 'SL' : 'SR'].push({ v, x }); return; }
+    const dk = rpMet === 'age' ? (fbin(x.v) === 0 || fbin(x.v) === 5) : cbin(x.v) >= 4;
+    lab += `<text x="${v.cx}" y="${v.cy - 4.2 * kk}" text-anchor="middle" font-size="${(7 * kk).toFixed(1)}" font-weight="400" fill="${dk ? '#ffffff' : '#2a2a2e'}" paint-order="stroke" stroke="${dk ? 'rgba(0,0,0,.3)' : 'rgba(255,255,255,.85)'}" stroke-width="${(1.8 * kk).toFixed(1)}">${esc(v.name)}</text>`;
+    lab += `<text x="${v.cx}" y="${v.cy + 5.5 * kk}" text-anchor="middle" font-size="${(10.5 * kk).toFixed(1)}" font-weight="800" fill="${dk ? '#ffffff' : '#141414'}" paint-order="stroke" stroke="${dk ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.85)'}" stroke-width="${(2.4 * kk).toFixed(1)}">${x.v}${unit}</text>`; });
+  // cột nhãn ở lề: xếp theo vị trí dọc của tỉnh, giãn cách cho khỏi chồng chữ
+  const COLX = { NL: [vb[0] + 4 * kk, 'start'], NR: [242, 'start'], SL: [vb[0] + 4 * kk, 'start'], SR: [300, 'start'] }, gap = 8.6 * kk;
+  const YR = { N: [vb[1] + 5 * kk, 300], S: [430, vb[1] + vb[3] - 4 * kk] };
+  Object.entries(cols).forEach(([c, xs]) => { if (!xs.length) return; xs.sort((a, b) => a.v.cy - b.v.cy);
+    const [lo, hi] = YR[c[0]]; let ys = []; xs.forEach((o, i) => ys.push(Math.max(o.v.cy, i ? ys[i - 1] + gap : lo)));
+    const over = ys[ys.length - 1] - hi; if (over > 0) ys = ys.map(y => y - over); if (ys[0] < lo) { const d = lo - ys[0]; ys = ys.map(y => y + d); }
+    const [tx, anc] = COLX[c];
+    xs.forEach((o, i) => { const y = ys[i];
+      lab += `<path d="M${o.v.cx},${o.v.cy} L${c[1] === 'L' ? tx + 50 * kk : tx - 3 * kk},${y - 2.6 * kk}" fill="none" stroke="#6f7380" stroke-width="${(.45 * kk).toFixed(2)}"/><circle cx="${o.v.cx}" cy="${o.v.cy}" r="${(1.3 * kk).toFixed(1)}" fill="#141414"/>`;
+      lab += `<text x="${tx}" y="${y}" text-anchor="${anc}" font-size="${(7.2 * kk).toFixed(1)}" fill="#2a2a2e"><tspan font-weight="400">${esc(o.v.name)}</tspan><tspan font-weight="800" fill="#141414" dx="${(2.5 * kk).toFixed(1)}">${o.x.v}${unit}</tspan></text>`; }); });
   return `<svg viewBox="${vb.join(' ')}" width="${W}" height="${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">${h}${lab}</svg>`;
 }
 function rpScope(R) {
@@ -1201,8 +1231,8 @@ function rpLegend() {
   return `<div class="rp-lg"><span>${T.lgCov}</span>${CBINS.map((b, i) => `<span><i style="background:linear-gradient(90deg,${CRAMP.O[i]} 50%,${CRAMP.P[i]} 50%)"></i>${b[2]}</span>`).join('')}<span class="g">${T.white}</span></div>`;
 }
 function rpPage(R, title, provs, unit, no, tot, dTxt) {
-  const T = RPT(), S = rpScope(R), W = 248, H = provs ? 330 : 340;
-  return `<div class="rpg ${rpLang === 'ko' ? 'ko' : ''}"><header><i class="rb"></i><div><h1>${esc(title)}</h1><p>${esc(T.sub(dTxt, S.nS, S.n))}</p></div><span class="pg">${no} / ${tot}</span></header>
+  const T = RPT(), S = rpScope(R), W = 248, H = provs ? 326 : 326;
+  return `<div class="rpg ${rpLang === 'ko' ? 'ko' : ''}"><header><i class="rb"></i><div><h1>${esc(title)}</h1><p class="rp-sl"><span>${esc(T.sub(dTxt, S.nS, S.n))}</span><span class="rp-nt">${T.nt}</span></p></div><span class="pg">${no} / ${tot}</span></header>
     <div class="rp-body"><div class="rp-l"><h2>${T.mapH[rpMet]}</h2>
       <div class="rp-maps"><div><b style="color:${FRG.O.col}">ORION</b><small>Ostar + Swing</small>${rpMap(R, 'O', provs, W, H)}</div><div><b style="color:${FRG.P.col}">PEPSI</b><small>Lay's + Lay's Wavy</small>${rpMap(R, 'P', provs, W, H)}</div></div>
       ${rpLegend()}<h2 class="rp-ih">${T.ins}</h2>${rpInsight(R, S, unit)}</div>
@@ -1211,19 +1241,50 @@ function rpPage(R, title, provs, unit, no, tot, dTxt) {
 }
 function rpDates(R) { const d = R.map(r => r.buy).filter(Boolean).sort(); if (!d.length) return '–'; const a = d[0], b = d[d.length - 1];
   return a === b ? `${fmtD(a)}/${a.slice(0, 4)}` : a.slice(5, 7) === b.slice(5, 7) ? `${a.slice(8, 10)}–${fmtD(b)}/${b.slice(0, 4)}` : `${fmtD(a)}–${fmtD(b)}/${b.slice(0, 4)}`; }
+const FRAMP_L = ['#cfe9d8', '#e0f1d3', '#f3f9d6', '#fff2cc', '#fde0cf', '#f8cdc8'];
+const RP_O = { vi: { sub: 'theo Office', off: 'Office', shop: 'Shop', n: 'Mẫu', age: 'Tuổi TB gói đầu kệ (ngày)', diff: 'ORION − PEPSI (ngày)', o90: '> 90 ngày', cov: 'Độ phủ vị chính', tot: 'Cả Center',
+    note: 'Sắp xếp: Office có ORION cũ nhất ở trên · ô tô màu theo thang tuổi (xanh = tươi, đỏ = cũ) · chênh âm (xanh) = ORION mới hơn PEPSI · Office dưới 5 mẫu một bên: số in nhạt, chỉ để tham khảo' },
+  ko: { sub: '오피스별', off: '오피스', shop: '매장', n: '샘플', age: '맨 앞 평균 경과일 (일)', diff: 'ORION − PEPSI (일)', o90: '90일 초과', cov: '주요 맛 커버리지', tot: '센터 전체',
+    note: '정렬: ORION 경과일이 긴 오피스 순 · 셀 색상 = 경과일 단계 (녹색 = 신선, 빨강 = 오래됨) · 차이 음수(녹색) = ORION이 더 신선 · 한쪽 샘플 5건 미만 오피스는 흐리게 표시 (참고용)' } };
+function rpOffRow(a, name, cls) {
+  const S = rpScope(a), av = b => stats(a.filter(r => r.brand === b).map(r => r.age));
+  const cell = s => s ? `<td class="n hc" style="background:${FRAMP_L[fbin(s.avg)]}">${s.avg}</td>` : '<td class="n g">–</td>';
+  const d = S.O.s && S.P.s ? S.O.s.avg - S.P.s.avg : null, w = d == null ? 0 : Math.min(50, Math.abs(d) / 30 * 50);
+  const thin = !S.O.s || !S.P.s || S.O.s.n < 5 || S.P.s.n < 5;
+  return { k: S.O.s ? S.O.s.avg : -1, h: `<tr class="${cls || ''} ${a.length ? '' : 'dim'} ${a.length && thin ? 'thin' : ''}"><td>${name}</td><td class="n">${S.nS || '–'}</td><td class="n">${S.O.s ? S.O.s.n : '–'}</td><td class="n">${S.P.s ? S.P.s.n : '–'}</td>
+    ${cell(av('OStar'))}${cell(av('Swing'))}${cell(S.O.s)}${cell(av("Lay's"))}${cell(av("Lay's Wavy"))}${cell(S.P.s)}
+    <td class="dv"><span class="dvb"><i style="${d == null ? 'width:0' : d < 0 ? `right:50%;width:${w}%;background:#1d7a46` : `left:50%;width:${w}%;background:#c8102e`}"></i></span><b class="${d == null || !d ? '' : d < 0 ? 'good' : 'bad'}">${d == null ? '–' : d > 0 ? '+' + d : d === 0 ? '0' : '−' + -d}</b></td>
+    <td class="n ${S.O.s && S.O.s.old >= 20 ? 'hi' : ''}">${S.O.s ? S.O.s.old + '%' : '–'}</td><td class="n">${S.P.s ? S.P.s.old + '%' : '–'}</td></tr>` };   // 18/11 anh Thái: bỏ cột độ phủ
+}
+function rpOffPage(RC, c, no, tot, dTxt) {
+  const T = RPT(), O = RP_O[rpLang] || RP_O.vi, S = rpScope(RC);
+  const rs = c.offices.map(o => rpOffRow(RC.filter(r => offCode(r.office) === o.code), `${esc(o.name)} <code>${esc(o.code)}</code>`)).sort((a, b) => b.k - a.k);
+  const gh = (t, n, col) => `<th colspan="${n}" class="gh" ${col ? `style="color:${col}"` : ''}>${t}</th>`;
+  return `<div class="rpg rpo ${rpLang === 'ko' ? 'ko' : ''}"><header><i class="rb"></i><div><h1>Product Age · ${esc(T.ctr)} ${esc(c.center)} · ${O.sub} (${c.offices.length})</h1><p class="rp-sl"><span>${esc(T.sub(dTxt, S.nS, S.n))}</span><span class="rp-nt">${T.nt}</span></p></div><span class="pg">${no} / ${tot}</span></header>
+    <div class="rpo-b"><table class="rpo-t"><colgroup><col style="width:21%"><col><col><col><col><col><col class="go"><col><col><col class="gp"><col style="width:18%"><col><col></colgroup>
+      <thead><tr><th rowspan="2">${O.off}</th><th rowspan="2" class="n">${O.shop}</th>${gh(O.n, 2)}${gh(O.age, 6)}<th rowspan="2" class="dvh">${O.diff}</th>${gh(O.o90, 2)}</tr>
+      <tr><th class="n" style="color:#c8102e">ORION</th><th class="n" style="color:#1f4fa3">PEPSI</th><th class="n">Ostar</th><th class="n">Swing</th><th class="n" style="color:#c8102e">ORION</th><th class="n">Lay's</th><th class="n">Wavy</th><th class="n" style="color:#1f4fa3">PEPSI</th>
+        <th class="n" style="color:#c8102e">ORION</th><th class="n" style="color:#1f4fa3">PEPSI</th></tr></thead>
+      <tbody>${rpOffRow(RC, `<b>${O.tot}</b>`, 'tot').h}${rs.map(x => x.h).join('')}</tbody></table></div>
+    <footer>${O.note} · ${T.foot.split(/ · (?:Độ phủ|커버리지)/)[0]}</footer></div>`;
+}
 function renderRep() {
   const T = RPT();
   if (rpLang === 'ko' && !document.getElementById('rpKoFont')) { const l = document.createElement('link'); l.id = 'rpKoFont'; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap'; document.head.appendChild(l); }
   $('#rpH').textContent = T.h; $('#rpPdf').textContent = T.pdf;
   document.querySelectorAll('[data-rpm]').forEach(b => { b.classList.toggle('on', b.dataset.rpm === rpMet); b.textContent = b.dataset.rpm === 'age' ? T.mAge : T.mCov; });
   document.querySelectorAll('[data-rpl]').forEach(b => b.classList.toggle('on', b.dataset.rpl === rpLang));
-  const R0 = rows.filter(r => r.shop), dTxt = rpDates(R0), tot = CENTERS.length + 1;
+  const R0 = rows.filter(r => r.shop), dTxt = rpDates(R0), tot = 1 + CENTERS.length * 2;
   let h = rpPage(R0, `Product Age · ${T.nat}`, null, 'p', 1, tot, dTxt);
-  CENTERS.forEach((c, i) => { const provs = new Set(c.offices.map(o => OFFICE_PROV[o.code]).filter(Boolean));
-    h += rpPage(R0.filter(r => r.center === c.center), `Product Age · ${T.ctr} ${c.center}`, provs, 'o', i + 2, tot, dTxt); });
+  CENTERS.forEach((c, i) => { const provs = new Set(c.offices.map(o => OFFICE_PROV[o.code]).filter(Boolean)), RC = R0.filter(r => r.center === c.center);
+    h += rpPage(RC, `Product Age · ${T.ctr} ${c.center}`, provs, 'o', i * 2 + 2, tot, dTxt);
+    h += rpOffPage(RC, c, i * 2 + 3, tot, dTxt); });   // 18/11 anh Thái: sau mỗi Center là 1 trang bảng theo Office
   $('#rpScale').innerHTML = h; fitRep();
 }
-function fitRep() { const w = $('#rpWrap'), sc = $('#rpScale'); if (!w || !sc || $('#v-rep').hidden) return; const k = Math.min(1, (w.clientWidth - 2) / 1123); sc.style.transform = `scale(${k})`; w.style.height = Math.ceil(sc.offsetHeight * k) + 'px'; }
+// câu lưu ý luôn nằm 1 dòng cùng dòng Khảo sát: chữ dài quá thì tự thu nhỏ (tối thiểu 9px)
+function rpFitNotes() { document.querySelectorAll('#rpScale .rp-sl').forEach(p => { const a = p.firstElementChild, n = p.querySelector('.rp-nt'); if (!a || !n) return;
+  let fs = 12.5; n.style.fontSize = fs + 'px'; while (fs > 9 && a.offsetWidth + 16 + n.offsetWidth > p.clientWidth) { fs -= .25; n.style.fontSize = fs + 'px'; } }); }
+function fitRep() { rpFitNotes(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(rpFitNotes); const w = $('#rpWrap'), sc = $('#rpScale'); if (!w || !sc || $('#v-rep').hidden) return; const k = Math.min(1, (w.clientWidth - 2) / 1123); sc.style.transform = `scale(${k})`; w.style.height = Math.ceil(sc.offsetHeight * k) + 'px'; }
 addEventListener('resize', () => { if (tab === 'rep') fitRep(); });
 const rpJs = src => new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
 async function rpPdf(btn) {
