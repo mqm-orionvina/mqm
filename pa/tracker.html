@@ -205,6 +205,40 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 .fdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
 .fbar { background: var(--soft); }
 @media (max-width: 700px) { #frIns { grid-template-columns: 1fr; } }
+/* tab Report (18/11): trang A4 ngang 1123 × 794, luôn nền trắng (in / PDF) */
+.rpwrap { overflow: hidden; } #rpScale { width: 1123px; transform-origin: 0 0; display: flex; flex-direction: column; gap: 18px; }
+#v-rep .bar2 .btn { margin-left: 4px; } #v-rep .a4lang { margin-left: 0; }
+.rpg { width: 1123px; height: 794px; flex: none; background: #fff; color: #141414; box-shadow: 0 2px 14px rgba(0,0,0,.14); border-radius: 4px; padding: 20px 26px 14px; box-sizing: border-box;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; font-family: 'Be Vietnam Pro', system-ui, sans-serif; color-scheme: light; overflow: hidden; }
+.rpg.ko { font-family: 'Noto Sans KR', 'Be Vietnam Pro', system-ui, sans-serif; }
+.rpg * { box-sizing: border-box; } .rpg h1, .rpg h2, .rpg p, .rpg ul { margin: 0; } .rpg .g { color: #8a8a92; }
+.rpg header { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #141414; padding-bottom: 10px; }
+.rpg header .rb { width: 10px; height: 40px; background: #c8102e; flex: none; } .rpg header h1 { font-size: 23px; font-weight: 800; letter-spacing: -.01em; } .rpg header p { font-size: 12.5px; color: #4a4a4f; margin-top: 2px; }
+.rpg header .pg { margin-left: auto; font-size: 12px; font-weight: 700; color: #8a8a92; }
+.rp-body { display: grid; grid-template-columns: 540px minmax(0, 1fr); gap: 22px; min-height: 0; }
+.rp-l, .rp-r { min-height: 0; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+.rpg h2 { font-size: 13.5px; font-weight: 800; color: #c8102e; } .rpg h2.rp-ih, .rpg h2.rp-ph { margin-top: 4px; }
+.rp-maps { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .rp-maps > div { border: 1px solid #e3e4e8; border-radius: 10px; padding: 6px 8px 4px; text-align: center; }
+.rp-maps b { font-size: 13px; font-weight: 800; } .rp-maps small { font-size: 10.5px; color: #8a8a92; margin-left: 6px; } .rp-maps svg { display: block; margin: 2px auto 0; }
+.rp-lg { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 10px; font-size: 10px; color: #4a4a4f; } .rp-lg span { display: inline-flex; align-items: center; gap: 4px; } .rp-lg i { width: 16px; height: 9px; border-radius: 2px; display: inline-block; }
+.rp-kp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .rp-k { background: #f4f5f7; border-radius: 10px; padding: 5px 12px; display: grid; }
+.rp-k span { font-weight: 800; font-size: 12px; } .rp-k b { font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; } .rp-k b small { font-size: 12px; color: #8a8a92; font-weight: 600; } .rp-k em { font-style: normal; font-size: 10.5px; color: #4a4a4f; }
+.rp-d { font-size: 12px; line-height: 1.45; color: #3d3d42; } .rp-d b { color: #141414; }
+.rp-ls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .rp-ls > div > b { font-size: 11.5px; } .rp-ls small { font-size: 10px; color: #8a8a92; margin-left: 5px; }
+.rp-ls ul { list-style: none; padding: 0; margin-top: 3px; } .rp-ls li { display: flex; justify-content: space-between; gap: 8px; font-size: 10.5px; padding: 1.5px 0; border-bottom: 1px solid #ececf0; }
+.rp-ls li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .rp-ls li i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+.rp-t { width: 100%; border-collapse: collapse; font-size: 10.5px; font-variant-numeric: tabular-nums; table-layout: fixed; }
+.rp-t th { font-size: 9.5px; font-weight: 700; color: #8a8a92; text-transform: uppercase; letter-spacing: .03em; text-align: left; padding: 3px 5px; border-bottom: 1.5px solid #141414; background: none; white-space: nowrap; overflow: hidden; text-overflow: clip; } .rp-t th.n { text-align: right; }
+.rp-t th:nth-child(1) { width: 29%; } .rp-t th:nth-child(2) { width: 10%; } .rp-t th:nth-child(3) { width: 8%; } .rp-t th:nth-child(4) { width: 21%; } .rp-t th:nth-child(n+5) { width: 10.6%; }
+.rp-t td { padding: 1.4px 5px; line-height: 1.3; border-bottom: 1px solid #ececf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .rp-t .n { text-align: right; }
+.rp-t tr.alt td { background: #f8f8fa; } .rp-t tr.dim td { color: #b3b3ba; } .rp-t td.hi { color: #c8102e; font-weight: 800; }
+.rp-t tr.rp-g td { font-weight: 800; font-size: 11px; background: #f0f1f4; padding-block: 3px; }
+.rp-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.rp-bar { display: inline-block; width: 52px; height: 7px; background: #ececf0; border-radius: 4px; overflow: hidden; vertical-align: middle; margin-right: 6px; } .rp-bar i { display: block; height: 100%; border-radius: 4px; }
+.rp-prs { display: grid; gap: 1px; } .rp-pr { display: grid; grid-template-columns: 118px 1fr 16px 1fr 118px 30px; align-items: center; gap: 6px; font-size: 10.5px; line-height: 1.35; }
+.rp-pr .l { font-weight: 700; text-align: right; } .rp-pr .r { font-weight: 700; } .rp-pr .vs { color: #8a8a92; font-size: 9.5px; text-align: center; font-weight: 800; } .rp-pr > b { text-align: right; } .rp-pr .good { color: #1d7a46; } .rp-pr .bad { color: #c8102e; }
+.rp-bf { display: flex; align-items: center; gap: 4px; } .rp-bf i { display: block; height: 10px; } .rp-bf.l { flex-direction: row-reverse; } .rp-bf.l i { border-radius: 3px 0 0 3px; } .rp-bf.r i { border-radius: 0 3px 3px 0; } .rp-bf b { font-size: 11px; }
+.rpg footer { font-size: 9.5px; color: #8a8a92; border-top: 1px solid #e3e4e8; padding-top: 6px; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -213,7 +247,7 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
 <header class="top"><div class="in">
   <div class="brand"><i>O</i><div><b>Product Age</b><small>Ostar · Swing vs Lay's · Wavy · 9 Center · 196 Office</small></div></div>
   <span class="langsw"><button data-lang="vi" class="on">Tiếng Việt</button><button data-lang="ko">한국어</button></span><span class="live" id="live"><i></i><span id="liveT">Đang kết nối Google Sheets…</span></span>
-  <nav class="tabs" role="tablist"><button role="tab" id="t-prog" class="on" data-tab="prog">Tiến độ Center / Office</button><button role="tab" id="t-age" data-tab="age">Tuổi sản phẩm</button><button role="tab" id="t-cov" data-tab="cov">Độ phủ</button><button role="tab" id="t-fr" data-tab="fr">Freshness</button><button role="tab" id="t-solo" data-tab="solo">Solo</button><button role="tab" id="t-prod" data-tab="prod">Danh sách sản phẩm</button><button role="tab" id="t-info" data-tab="info">Info</button><button role="tab" id="t-guide" data-tab="guide">Hướng dẫn</button></nav>
+  <nav class="tabs" role="tablist"><button role="tab" id="t-prog" class="on" data-tab="prog">Tiến độ Center / Office</button><button role="tab" id="t-age" data-tab="age">Tuổi sản phẩm</button><button role="tab" id="t-cov" data-tab="cov">Độ phủ</button><button role="tab" id="t-fr" data-tab="fr">Freshness</button><button role="tab" id="t-solo" data-tab="solo">Solo</button><button role="tab" id="t-rep" data-tab="rep">Report</button><button role="tab" id="t-prod" data-tab="prod">Danh sách sản phẩm</button><button role="tab" id="t-info" data-tab="info">Info</button><button role="tab" id="t-guide" data-tab="guide">Hướng dẫn</button></nav>
 </div></header>
 
 <main class="wrap">
@@ -642,6 +676,13 @@ tr.dim td { color: var(--muted); } tr.dim td b { opacity: .7; } .mute { color: v
     <div class="tw"><table id="tSolo" class="solo-t"></table></div>
     <p class="foot"><b>Tuổi</b> = ngày mua − ngày sản xuất, tính trung bình các mẫu. <b>Chênh</b> = tuổi ORION − tuổi đối thủ: số âm (xanh) là ORION mới hơn, số dương (đỏ) là ORION cũ hơn. Cặp flavor: Ostar Tảo ↔ Lay's Tảo Nori, Ostar Tự Nhiên ↔ Lay's Tự Nhiên, Swing Bò NY ↔ Wavy Bò Texas, Swing Phô Mai ↔ Wavy Cheddar. Ostar Kim Chi, Trứng Muối, Swing Gà, Maxx Bò không có vị tương ứng nên chỉ nằm trong cặp brand. Center có dưới 3 mẫu ở một bên thì số chỉ để tham khảo (in nhạt). Mẫu thử (TEST) không tính.</p>
   </section>
+  <section id="v-rep" hidden>
+    <div class="bar2"><h2 id="rpH">Báo cáo Product Age</h2>
+      <span class="a4lang"><button data-rpm="age" class="on">Tuổi sản phẩm</button><button data-rpm="cov">Độ phủ</button></span>
+      <span class="a4lang"><button data-rpl="vi">Tiếng Việt</button><button data-rpl="ko">한국어</button></span>
+      <button class="btn" id="rpPdf">Tải PDF</button></div>
+    <div class="rpwrap" id="rpWrap"><div id="rpScale"></div></div>
+  </section>
   <section id="v-prod" hidden>
     <div class="bar2"><h2>Danh sách sản phẩm trong app</h2>
       <label for="pC">Center <select id="pC"><option value="">Tất cả</option></select></label>
@@ -1055,7 +1096,163 @@ function renderFr() {
       ${s ? `<p class="age-hi" style="margin:0">${s.old}% gói &gt; 90 ngày · ${o120}% &gt; 120 ngày</p>` : ''}</div>`; }).join('');
   drawFrMaps(R);
 }
-function render() { if (tab === 'prog') renderProg(); else if (tab === 'prod') renderProd(); else if (tab === 'age') renderAge(); else if (tab === 'cov') renderCov(); else if (tab === 'fr') renderFr(); else if (tab === 'solo') renderSolo(); }
+// ---------- tab Report (18/11, anh Thái): 10 trang A4 ngang · trang 1 Toàn quốc + 9 trang theo Center ORION ----------
+// mỗi trang: nửa trái = 2 bản đồ ORION vs PEPSI + Insight, nửa phải = so sánh từng SKU ORION vs PEPSI. Tiếng Việt / 한국어, tải PDF.
+const RP_T = {
+  vi: { h: 'Báo cáo Product Age · 10 trang A4 ngang', nat: 'Toàn quốc', ctr: 'Center', sub: (d, s, n) => `Khảo sát ${d} · Kênh TT · ${s} shop · ${n} mẫu`,
+    mAge: 'Tuổi sản phẩm', mCov: 'Độ phủ', mapH: { age: 'Tuổi gói đầu kệ theo tỉnh · ngày TB', cov: 'Độ phủ vị chính theo tỉnh · % shop có hàng' },
+    ins: 'Insight', skuH: 'So sánh SKU · ORION vs PEPSI', pairH: 'Đối đầu cùng vị · tuổi TB gói đầu kệ', days: 'ngày', front: 'Đầu kệ', old: 'Cũ nhất', o90: '> 90 ngày', cov: 'Độ phủ', n: 'Mẫu', sku: 'SKU', fresh: 'freshness',
+    noData: 'chưa có mẫu', diff: d => d == null ? 'chưa đủ mẫu' : d === 0 ? 'ORION và PEPSI bằng tuổi' : d < 0 ? `ORION mới hơn PEPSI <b>${-d} ngày</b>` : `ORION cũ hơn PEPSI <b>${d} ngày</b>`,
+    covLine: (o, p) => `Độ phủ vị chính: ORION <b>${nv(o)}%</b> · PEPSI <b>${nv(p)}%</b>`,
+    oldU: { p: 'Tỉnh ORION cũ nhất', o: 'Office ORION cũ nhất' }, worseU: { p: 'Tỉnh ORION cũ hơn PEPSI', o: 'Office ORION cũ hơn PEPSI' }, none: 'Không có', minN: '≥ 5 mẫu ORION',
+    foot: 'Tuổi = ngày mua − NSX gói đầu kệ · Freshness = (180 − tuổi) ÷ 180 · Độ phủ = shop có ≥ 1 SKU vị chính ÷ shop đã khảo sát (vị chính ORION: Ostar Tảo + Kim Chi, Swing Bò NY + Phô Mai) · không tính mẫu TEST',
+    pdf: 'Tải PDF (10 trang)', busy: 'Đang tạo PDF…', err: 'Không tạo được PDF', white: 'trắng = chưa có mẫu', lgAge: 'tươi → cũ (ngày)', lgCov: '% shop có hàng', vs: 'vs', chg: 'Chênh', grpAvg: 'TB' },
+  ko: { h: 'Product Age 보고서 · A4 가로 10페이지', nat: '전국', ctr: '센터', sub: (d, s, n) => `조사 ${d} · TT 채널 · 매장 ${s}개 · 샘플 ${n}건`,
+    mAge: '제품 경과일', mCov: '커버리지', mapH: { age: '성별 맨 앞 제품 경과일 · 평균 일수', cov: '성별 주요 맛 커버리지 · 입점 매장 %' },
+    ins: 'Insight', skuH: 'SKU 비교 · ORION vs PEPSI', pairH: '같은 맛 1:1 비교 · 맨 앞 평균 경과일', days: '일', front: '맨 앞', old: '가장 오래된', o90: '90일 초과', cov: '커버리지', n: '샘플', sku: 'SKU', fresh: '신선도',
+    noData: '샘플 없음', diff: d => d == null ? '샘플 부족' : d === 0 ? 'ORION과 PEPSI 경과일 동일' : d < 0 ? `ORION이 PEPSI보다 <b>${-d}일</b> 더 신선` : `ORION이 PEPSI보다 <b>${d}일</b> 더 오래됨`,
+    covLine: (o, p) => `주요 맛 커버리지: ORION <b>${nv(o)}%</b> · PEPSI <b>${nv(p)}%</b>`,
+    oldU: { p: 'ORION 경과일 최고 성', o: 'ORION 경과일 최고 오피스' }, worseU: { p: 'ORION이 PEPSI보다 오래된 성', o: 'ORION이 PEPSI보다 오래된 오피스' }, none: '없음', minN: 'ORION 샘플 5건 이상',
+    foot: '경과일 = 구매일 − 맨 앞 제품 제조일 · 신선도 = (180 − 경과일) ÷ 180 · 커버리지 = 주요 맛 SKU 1개 이상 매장 ÷ 조사 매장 (ORION 주요 맛: Ostar 김 + 김치, Swing 뉴욕 스테이크 + 치즈) · TEST 샘플 제외',
+    pdf: 'PDF 다운로드 (10페이지)', busy: 'PDF 생성 중…', err: 'PDF 생성 실패', white: '흰색 = 샘플 없음', lgAge: '신선 → 오래됨 (일)', lgCov: '입점 매장 %', vs: 'vs', chg: '차이', grpAvg: '평균' } };
+let rpLang = LS.get('pa.lang', 'vi'), rpMet = LS.get('pa.rpm', 'age');
+const RP_BC = { OStar: '#e8222a', Swing: '#f08a00', "Lay's": '#1f4fa3', "Lay's Wavy": '#4f8fe0' }, rpC = b => RP_BC[b] || '#8a8a92';
+const nv = x => x == null ? '–' : x;
+const RPT = () => RP_T[rpLang] || RP_T.vi;
+const rpFl = f => { const v = flName(f); return rpLang === 'ko' ? (KO_MAP.get(v) || v) : v; };
+const rpAvg = a => { const v = a.filter(x => !isNaN(x)); return v.length ? Math.round(v.reduce((s, x) => s + x, 0) / v.length) : null; };
+const CBINS = [[0, 30, '< 30'], [30, 50, '30–50'], [50, 70, '50–70'], [70, 85, '70–85'], [85, 95, '85–95'], [95, 101, '≥ 95']];
+const CRAMP = { O: ['#fde3e3', '#f9b9bb', '#f48a8e', '#ec565c', '#dc2a31', '#a3131a'], P: ['#e1ecf8', '#bcd3ef', '#8fb5e3', '#5f92d2', '#3570bf', '#1c4794'] };
+const cbin = p => CBINS.findIndex(b => p >= b[0] && p < b[1]);
+// khung bao của từng tỉnh (để phóng bản đồ theo Center)
+const VNBB = {}; VN34.forEach(v => { const n = v.d.match(/-?\d+(\.\d+)?/g).map(Number); let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (let i = 0; i + 1 < n.length; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]); } VNBB[v.name] = [x0, y0, x1, y1]; });
+function rpVB(provs, W, H) {
+  if (!provs) return [9, 12, 313, 656];
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; provs.forEach(p => { const b = VNBB[p]; if (!b) return; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[2]); y1 = Math.max(y1, b[3]); });
+  let w = Math.max(40, x1 - x0), h = Math.max(40, y1 - y0); const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  w *= 1.12; h *= 1.12; if (w / h < W / H) w = h * W / H; else h = w * H / W;   // giữ đúng tỉ lệ khung
+  return [cx - w / 2, cy - h / 2, w, h].map(x => Math.round(x * 10) / 10);
+}
+function rpProv(R, k) {   // số liệu theo tỉnh cho 1 nhóm (O = ORION, P = PEPSI)
+  const bs = FRG[k].brands, m = {};
+  if (rpMet === 'age') { R.forEach(r => { if (!bs.includes(r.brand) || isNaN(r.age)) return; const pv = provOf(r); (m[pv] = m[pv] || []).push(r.age); });
+    return Object.fromEntries(Object.entries(m).map(([p, a]) => [p, { n: a.length, v: rpAvg(a) }])); }
+  R.forEach(r => { const pv = provOf(r), x = m[pv] = m[pv] || { s: new Set(), h: new Set() }, sk = shopId(r); x.s.add(sk); if (bs.includes(r.brand) && inCov(r)) x.h.add(sk); });
+  return Object.fromEntries(Object.entries(m).map(([p, x]) => [p, { n: x.s.size, v: Math.round(x.h.size / x.s.size * 100) }]));
+}
+function rpMap(R, k, provs, W, H) {
+  const st = rpProv(R, k), vb = rpVB(provs, W, H), kk = Math.max(vb[2] / W, vb[3] / H), inS = p => !provs || provs.has(p);
+  let h = '', lab = '';
+  VN34.forEach(v => { const b = VNBB[v.name]; if (b[2] < vb[0] || b[0] > vb[0] + vb[2] || b[3] < vb[1] || b[1] > vb[1] + vb[3]) return;
+    const x = st[v.name], on = inS(v.name) && x && x.n;
+    const fill = on ? (rpMet === 'age' ? FRAMP[fbin(x.v)] : CRAMP[k][cbin(x.v)]) : inS(v.name) ? '#ffffff' : '#eef0f3';
+    h += `<path d="${v.d}" fill="${fill}" stroke="${inS(v.name) ? '#a9adb6' : '#ffffff'}" stroke-width="${(.7 * kk).toFixed(2)}" stroke-linejoin="round"/>`;
+    if (on) { const dk = rpMet === 'age' ? (fbin(x.v) === 0 || fbin(x.v) === 5) : cbin(x.v) >= 4;
+      lab += `<text x="${v.cx}" y="${v.cy + 3.5 * kk}" text-anchor="middle" font-size="${(10.5 * kk).toFixed(1)}" font-weight="800" fill="${dk ? '#ffffff' : '#141414'}" paint-order="stroke" stroke="${dk ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.85)'}" stroke-width="${(2.4 * kk).toFixed(1)}">${x.v}${rpMet === 'cov' ? '%' : ''}</text>`; } });
+  return `<svg viewBox="${vb.join(' ')}" width="${W}" height="${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">${h}${lab}</svg>`;
+}
+function rpScope(R) {
+  const cov = covOf(R), nS = cov.shops.size;
+  const g = k => { const bs = FRG[k].brands, a = R.filter(r => bs.includes(r.brand)), s = stats(a.map(r => r.age));
+    return { s, cov: nS ? Math.round(new Set(bs.flatMap(b => [...cov.br[b]])).size / nS * 100) : null }; };
+  return { nS, n: R.length, O: g('O'), P: g('P') };
+}
+function rpUnits(R, by) {
+  const m = {}; R.forEach(r => { const u = by(r); if (!u) return; const o = m[u] = m[u] || { O: [], P: [] }; if (FRG.O.brands.includes(r.brand)) o.O.push(r.age); else if (FRG.P.brands.includes(r.brand)) o.P.push(r.age); });
+  return Object.entries(m).map(([u, x]) => ({ u, nO: x.O.length, nP: x.P.length, o: rpAvg(x.O), p: rpAvg(x.P) }));
+}
+function rpInsight(R, S, unit) {
+  const T = RPT(), U = rpUnits(R, unit === 'p' ? provOf : r => r.office.replace(/^\S+\s/, ''));
+  const kp = (k, X) => `<div class="rp-k"><span style="color:${FRG[k].col}">${FRG[k].name}</span><b>${X.s ? X.s.avg : '–'}<small> ${T.days}</small></b>
+    <em>${X.s ? `${T.fresh} ${freshPct(X.s.avg)}% · ${X.s.old}% ${T.o90}` : T.noData}</em><em>${T.cov} ${nv(X.cov)}% · ${X.s ? X.s.n : 0} ${T.n.toLowerCase()}</em></div>`;
+  const d = S.O.s && S.P.s ? S.O.s.avg - S.P.s.avg : null;
+  const old = U.filter(x => x.nO >= 5).sort((a, b) => b.o - a.o).slice(0, 3);
+  const worse = U.filter(x => x.nO >= 5 && x.nP >= 3 && x.o > x.p).sort((a, b) => (b.o - b.p) - (a.o - a.p)).slice(0, 3);
+  const li = (xs, f) => xs.length ? xs.map(f).join('') : `<li class="g">${T.none}</li>`;
+  return `<div class="rp-kp">${kp('O', S.O)}${kp('P', S.P)}</div>
+    <p class="rp-d">${T.diff(d)} · ${T.covLine(S.O.cov, S.P.cov)}</p>
+    <div class="rp-ls"><div><b>${T.oldU[unit]}</b><small>${T.minN}</small><ul>${li(old, x => `<li><span><i style="background:${FRAMP[fbin(x.o)]}"></i>${esc(x.u)}</span><b>${x.o}</b></li>`)}</ul></div>
+      <div><b>${T.worseU[unit]}</b><ul>${li(worse, x => `<li><span>${esc(x.u)}</span><b>${x.o} ${T.vs} ${x.p}</b></li>`)}</ul></div></div>`;
+}
+function rpSku(R, nS) {
+  const T = RPT(), cell = s => s ? `<span class="rp-bar" style="background:linear-gradient(90deg,${FRAMP[fbin(s.avg)]} ${Math.min(100, Math.round(s.avg / SHELF * 100))}%,#ececf0 0)"></span><b>${s.avg}</b>` : '<span class="g">–</span>';
+  const shopsWith = a => new Set(a.map(shopId)).size;
+  let h = `<thead><tr><th>${T.sku}</th><th>Size</th><th class="n">${T.n}</th><th>${T.front}</th><th class="n">${T.old}</th><th class="n">${T.o90}</th><th class="n">${T.cov}</th></tr></thead><tbody>`;
+  [['O', 'ORION'], ['P', 'PEPSI']].forEach(([k, gn]) => {
+    const ga = R.filter(r => FRG[k].brands.includes(r.brand)), gs = stats(ga.map(r => r.age));
+    h += `<tr class="rp-g"><td colspan="3" style="color:${FRG[k].col}">${gn}</td><td>${T.grpAvg} ${cell(gs)}</td><td class="n">${nv((stats(ga.map(r => r.ageOld)) || {}).avg)}</td><td class="n">${gs ? gs.old + '%' : '–'}</td><td></td></tr>`;
+    FRG[k].brands.forEach(b => APP_FLAVORS[b].forEach((f, fi) => SIZES.forEach((z, zi) => {
+      const a = R.filter(r => r.brand === b && r.flavor === f && r.size === z), s = stats(a.map(r => r.age)), so = stats(a.map(r => r.ageOld));
+      h += `<tr class="${fi % 2 ? 'alt' : ''} ${s ? '' : 'dim'}"><td>${zi ? '' : `<i class="rp-dot" style="background:${rpC(b)}"></i>${esc(bName(b))} ${esc(rpFl(f))}`}</td><td>${z}</td><td class="n">${a.length || '–'}</td><td>${cell(s)}</td><td class="n">${so ? so.avg : '–'}</td><td class="n ${s && s.old >= 20 ? 'hi' : ''}">${s ? s.old + '%' : '–'}</td><td class="n">${nS && a.length ? Math.round(shopsWith(a) / nS * 100) + '%' : '–'}</td></tr>`; })));
+  });
+  return h + '</tbody>';
+}
+function rpPairs(R) {
+  const T = RPT(), lab = x => x.b.map(bName).join(' + ') + (x.f ? ' ' + rpFl(x.f) : '');
+  const ps = SOLO.filter(P => P.id !== 'all').map(P => { const o = stats(R.filter(r => sHit(P.o, r)).map(r => r.age)), p = stats(R.filter(r => sHit(P.p, r)).map(r => r.age)); return { P, o, p, d: o && p ? o.avg - p.avg : null }; });
+  const mx = Math.max(1, ...ps.flatMap(x => [x.o, x.p].filter(Boolean).map(s => s.avg)));
+  const bar = (s, col, side) => s ? `<span class="rp-bf ${side}"><i style="width:${Math.max(3, s.avg / mx * 100)}%;background:${col}"></i><b>${s.avg}</b></span>` : `<span class="rp-bf ${side} g">–</span>`;
+  return ps.map(({ P, o, p, d }) => `<div class="rp-pr"><span class="l">${esc(lab(P.o))}</span>${bar(o, rpC(P.o.b[0]), 'l')}<span class="vs">${T.vs}</span>${bar(p, rpC(P.p.b[0]), 'r')}<span class="r">${esc(lab(P.p))}</span><b class="${d == null || !d ? '' : d < 0 ? 'good' : 'bad'}">${d == null ? '–' : d > 0 ? '+' + d : d === 0 ? '0' : '−' + -d}</b></div>`).join('');
+}
+function rpLegend() {
+  const T = RPT();
+  if (rpMet === 'age') return `<div class="rp-lg"><span>${T.lgAge}</span>${FRAMP.map((c, i) => `<span><i style="background:${c}"></i>${FBINS[i][2]}</span>`).join('')}<span class="g">${T.white}</span></div>`;
+  return `<div class="rp-lg"><span>${T.lgCov}</span>${CBINS.map((b, i) => `<span><i style="background:linear-gradient(90deg,${CRAMP.O[i]} 50%,${CRAMP.P[i]} 50%)"></i>${b[2]}</span>`).join('')}<span class="g">${T.white}</span></div>`;
+}
+function rpPage(R, title, provs, unit, no, tot, dTxt) {
+  const T = RPT(), S = rpScope(R), W = 248, H = provs ? 330 : 340;
+  return `<div class="rpg ${rpLang === 'ko' ? 'ko' : ''}"><header><i class="rb"></i><div><h1>${esc(title)}</h1><p>${esc(T.sub(dTxt, S.nS, S.n))}</p></div><span class="pg">${no} / ${tot}</span></header>
+    <div class="rp-body"><div class="rp-l"><h2>${T.mapH[rpMet]}</h2>
+      <div class="rp-maps"><div><b style="color:${FRG.O.col}">ORION</b><small>Ostar + Swing</small>${rpMap(R, 'O', provs, W, H)}</div><div><b style="color:${FRG.P.col}">PEPSI</b><small>Lay's + Lay's Wavy</small>${rpMap(R, 'P', provs, W, H)}</div></div>
+      ${rpLegend()}<h2 class="rp-ih">${T.ins}</h2>${rpInsight(R, S, unit)}</div>
+    <div class="rp-r"><h2>${T.skuH}</h2><table class="rp-t">${rpSku(R, S.nS)}</table><h2 class="rp-ph">${T.pairH}</h2><div class="rp-prs">${rpPairs(R)}</div></div></div>
+    <footer>${T.foot}</footer></div>`;
+}
+function rpDates(R) { const d = R.map(r => r.buy).filter(Boolean).sort(); if (!d.length) return '–'; const a = d[0], b = d[d.length - 1];
+  return a === b ? `${fmtD(a)}/${a.slice(0, 4)}` : a.slice(5, 7) === b.slice(5, 7) ? `${a.slice(8, 10)}–${fmtD(b)}/${b.slice(0, 4)}` : `${fmtD(a)}–${fmtD(b)}/${b.slice(0, 4)}`; }
+function renderRep() {
+  const T = RPT();
+  if (rpLang === 'ko' && !document.getElementById('rpKoFont')) { const l = document.createElement('link'); l.id = 'rpKoFont'; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap'; document.head.appendChild(l); }
+  $('#rpH').textContent = T.h; $('#rpPdf').textContent = T.pdf;
+  document.querySelectorAll('[data-rpm]').forEach(b => { b.classList.toggle('on', b.dataset.rpm === rpMet); b.textContent = b.dataset.rpm === 'age' ? T.mAge : T.mCov; });
+  document.querySelectorAll('[data-rpl]').forEach(b => b.classList.toggle('on', b.dataset.rpl === rpLang));
+  const R0 = rows.filter(r => r.shop), dTxt = rpDates(R0), tot = CENTERS.length + 1;
+  let h = rpPage(R0, `Product Age · ${T.nat}`, null, 'p', 1, tot, dTxt);
+  CENTERS.forEach((c, i) => { const provs = new Set(c.offices.map(o => OFFICE_PROV[o.code]).filter(Boolean));
+    h += rpPage(R0.filter(r => r.center === c.center), `Product Age · ${T.ctr} ${c.center}`, provs, 'o', i + 2, tot, dTxt); });
+  $('#rpScale').innerHTML = h; fitRep();
+}
+function fitRep() { const w = $('#rpWrap'), sc = $('#rpScale'); if (!w || !sc || $('#v-rep').hidden) return; const k = Math.min(1, (w.clientWidth - 2) / 1123); sc.style.transform = `scale(${k})`; w.style.height = Math.ceil(sc.offsetHeight * k) + 'px'; }
+addEventListener('resize', () => { if (tab === 'rep') fitRep(); });
+const rpJs = src => new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+async function rpPdf(btn) {
+  const T = RPT(); btn.disabled = true; btn.textContent = T.busy; let host = null;
+  try {
+    await rpJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    await rpJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    host = document.createElement('div'); host.style.cssText = 'position:fixed;left:0;top:0;width:1123px;z-index:-1;pointer-events:none;background:#fff';
+    host.innerHTML = $('#rpScale').innerHTML; document.body.appendChild(host);
+    const pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true }), pages = host.querySelectorAll('.rpg');
+    for (let i = 0; i < pages.length; i++) { btn.textContent = `${T.busy} ${i + 1}/${pages.length}`;
+      const c = await html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff', logging: false, windowWidth: 1123, windowHeight: 794, scrollX: 0, scrollY: 0 });
+      if (i) pdf.addPage(); pdf.addImage(c.toDataURL('image/jpeg', .9), 'JPEG', 0, 0, 297, 210); }
+    const d = new Date(), name = `${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}_Product Age_Report${rpLang === 'ko' ? '_KO' : ''}.pdf`;
+    let done = false;
+    try { const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; if (dl) { await dl.save({ filename: name, data: pdf.output('blob') }); done = true; } } catch (e) {}
+    if (!done) pdf.save(name);
+    btn.textContent = T.pdf;
+  } catch (e) { btn.textContent = T.err; setTimeout(() => { btn.textContent = RPT().pdf; }, 3000); }
+  if (host) host.remove(); btn.disabled = false;
+}
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-rpm]'); if (m) { rpMet = m.dataset.rpm; LS.set('pa.rpm', rpMet); renderRep(); return; }
+  const l = e.target.closest('[data-rpl]'); if (l) { rpLang = l.dataset.rpl; renderRep(); return; }
+  if (e.target.id === 'rpPdf') rpPdf(e.target);
+});
+
+function render() { if (tab === 'prog') renderProg(); else if (tab === 'prod') renderProd(); else if (tab === 'age') renderAge(); else if (tab === 'cov') renderCov(); else if (tab === 'fr') renderFr(); else if (tab === 'solo') renderSolo(); else if (tab === 'rep') renderRep(); }
 function a4Init() { const q = document.getElementById('a4qr'); if (!q || q.dataset.done) return; q.dataset.done = 1;
   try { new QRCode(q, { text: 'https://mqm-orionvina.github.io/mqm/pa/', width: 168, height: 168, colorDark: '#111111', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch (e) {} }
 // thu nhỏ trang A4 (794 px) cho vừa bề ngang màn hình
@@ -1074,7 +1271,7 @@ document.addEventListener('change', e => { if (e.target.id === 'fC') fillFC(); }
 document.addEventListener('click', e => { const b = e.target.closest('[data-reg]'); if (!b) return; reg = b.dataset.reg; document.querySelectorAll('[data-reg]').forEach(x => x.classList.toggle('on', x === b)); fillFC(); shown = 30; renderAge(); });
 $('#pC').innerHTML += CENTERS.map(c => `<option>${esc(c.center)}</option>`).join('');
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b === t)); $('#v-prog').hidden = tab !== 'prog'; $('#v-age').hidden = tab !== 'age'; $('#v-prod').hidden = tab !== 'prod'; $('#v-cov').hidden = tab !== 'cov'; $('#v-fr').hidden = tab !== 'fr'; $('#v-solo').hidden = tab !== 'solo'; $('#v-info').hidden = tab !== 'info'; $('#v-guide').hidden = tab !== 'guide'; if (tab === 'info') drawQR(); if (tab === 'guide') { a4Init(); fitA4(); } LS.set('pa.tab', tab); render(); return; }
+  const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b === t)); $('#v-prog').hidden = tab !== 'prog'; $('#v-age').hidden = tab !== 'age'; $('#v-prod').hidden = tab !== 'prod'; $('#v-cov').hidden = tab !== 'cov'; $('#v-fr').hidden = tab !== 'fr'; $('#v-solo').hidden = tab !== 'solo'; $('#v-rep').hidden = tab !== 'rep'; $('#v-info').hidden = tab !== 'info'; $('#v-guide').hidden = tab !== 'guide'; if (tab === 'info') drawQR(); if (tab === 'guide') { a4Init(); fitA4(); } LS.set('pa.tab', tab); render(); return; }
   const oc = e.target.closest('tr[data-off]'); if (oc) { openOff.has(oc.dataset.off) ? openOff.delete(oc.dataset.off) : openOff.add(oc.dataset.off); renderProg(); return; }
   const c = e.target.closest('tr.c'); if (c) { open.has(c.dataset.c) ? open.delete(c.dataset.c) : open.add(c.dataset.c); renderProg(); return; }
   if (e.target.id === 'more') { shown += 30; renderAge(); }
@@ -1083,7 +1280,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { const c = e.target.closest && e.target.closest('tr.c'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); c.click(); } });
 document.addEventListener('change', e => { shown = 30; render(); });
 document.addEventListener('input', e => { if (e.target.id === 'recQ') { shown = 30; renderAge(); } });
-const savedTab = LS.get('pa.tab', 'prog'); if (['age', 'cov', 'fr', 'solo', 'prod', 'info', 'guide'].includes(savedTab)) document.querySelector(`[data-tab="${savedTab}"]`).click();
+const savedTab = LS.get('pa.tab', 'prog'); if (['age', 'cov', 'fr', 'solo', 'rep', 'prod', 'info', 'guide'].includes(savedTab)) document.querySelector(`[data-tab="${savedTab}"]`).click();
 render();
 
 // ---------- Bản web app: đăng nhập (tab Viewers) → đọc số qua Apps Script mỗi 60 giây ----------
@@ -1152,7 +1349,7 @@ const KO_MAP = new Map(KO_DICT), KO_RE = new RegExp('(?<![\\p{L}])(' + KO_DICT.m
 let LANG = LS.get('pa.lang', 'vi');
 const ORIG = new WeakMap(), DONE = new WeakMap();
 const trKo = t => t.replace(KO_RE, m => KO_MAP.get(m) || m);
-const skipNode = el => !el || el.closest('#v-guide, script, style, template, .langsw, #covMap .mn');
+const skipNode = el => !el || el.closest('#v-guide, #v-rep, script, style, template, .langsw, #covMap .mn');
 function trNode(n) {
   if (n.nodeType === 3) { if (skipNode(n.parentElement)) return; const cur = n.nodeValue; if (DONE.get(n) === cur) return;
     if (LANG === 'ko') { ORIG.set(n, cur); const k = trKo(cur); DONE.set(n, k); if (k !== cur) n.nodeValue = k; } return; }
@@ -1167,11 +1364,14 @@ function setLang(l) {
   if (l === 'ko') trNode(document.body);
   else { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let t; while ((t = w.nextNode())) { if (ORIG.has(t) && DONE.get(t) === t.nodeValue) t.nodeValue = ORIG.get(t); DONE.delete(t); }
     document.querySelectorAll('[data-viplaceholder],[data-vititle],[data-viaria-label]').forEach(e => ['placeholder', 'title', 'aria-label'].forEach(a => { if (e.dataset['vi' + a]) e.setAttribute(a, e.dataset['vi' + a]); })); }
+  rpLang = l;
   const g = document.querySelector(`[data-a4l="${l}"]`); if (g && !g.classList.contains('on')) g.click();
   render(); }
 document.addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b) setLang(b.dataset.lang); });
 if (LANG === 'ko') setTimeout(() => setLang('ko'), 0);
 </script>
+
+
 
 </body>
 </html>
