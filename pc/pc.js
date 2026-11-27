@@ -92,6 +92,14 @@ const PC = {
     PC.save(r.token, r.user); location.reload();
   }).catch(e => alert('Link quản lý không dùng được: ' + e.message));
 })();
+// 27/11 (anh Thái): cả app dùng font Roboto như Zalo (đủ dấu tiếng Việt); PDF / ảnh xuất ra cũng dùng font này
+(() => {
+  const pre = document.createElement('link'); pre.rel = 'preconnect'; pre.href = 'https://fonts.gstatic.com'; pre.crossOrigin = ''; document.head.appendChild(pre);
+  const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap'; document.head.appendChild(l);
+  const s = document.createElement('style');
+  s.textContent = `html body, html body *:not(svg):not(svg *) { font-family: Roboto, "Segoe UI", system-ui, -apple-system, Arial, sans-serif !important; }`;
+  document.head.appendChild(s);
+})();
 // Kiểu chung: thanh trên, hộp đăng nhập, và giao diện trắng · bo tròn · nút viên thuốc đỏ cho 3 trang (chèn 1 lần, đè kiểu cũ của trang)
 (() => {
   const s = document.createElement('style');
