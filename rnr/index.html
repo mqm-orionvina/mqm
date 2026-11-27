@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Khảo sát chồng lấn R&amp;R</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* RnR Project · Khảo sát MKT Head xác nhận 14 nhận định chồng lấn (bảng rr-chong-lan.html). Câu trả lời ghi vào Google Sheet "RnR - Khảo sát MKT Head" qua Apps Script (ENDPOINT).
+   26/11: giao diện phẳng — nền trắng, viền mảnh, ít khối màu, chữ to rõ. */
+:root { --page:#f6f6f4; --card:#fff; --ink:#1b1b1b; --ink2:#55524e; --muted:#8e8a85; --line:#e4e2de; --soft:#f6f5f2;
+  --hi:#d9465f; --mid:#c99312; --lo:#2f9a76; --blue:#2463c7; --ok:#2f9a76; --warn:#c99312; --bad:#d9465f;
+  --c1:#c99312; --c2:#3f86d9; --c3:#2f9a76; --c4:#e07a3c; --cpr:#d95f86;
+  --body:Roboto,"Helvetica Neue",Arial,sans-serif; }  /* giống Zalo (Roboto) */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page:#161616; --card:#1f1f1f; --ink:#f1f1ef; --ink2:#c4c1bc; --muted:#8e8a85; --line:#333230; --soft:#262624; --blue:#7fb0f0; } }
+:root[data-theme="dark"] { --page:#161616; --card:#1f1f1f; --ink:#f1f1ef; --ink2:#c4c1bc; --muted:#8e8a85; --line:#333230; --soft:#262624; --blue:#7fb0f0; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 400 15px/1.6 var(--body); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 32px 16px 80px; }
+.eyebrow { font: 700 12px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 26px/1.3 var(--body); margin: 6px 0 10px; }
+h2 { font: 700 16px var(--body); margin: 0 0 10px; }
+.lead { color: var(--ink2); margin: 0 0 22px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; margin-bottom: 12px; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); }
+.steps div { padding: 10px 14px 4px 0; font-size: 14px; color: var(--ink2); }
+.steps div + div { padding-left: 14px; border-left: 1px solid var(--line); }
+.steps b { display: block; font-weight: 700; color: var(--ink); }
+.raci-legend { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 12px; font-size: 13px; color: var(--ink2); }
+.raci-legend b { color: var(--ink); }
+.pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.pick label, .opt label { cursor: pointer; }
+.pick input, .opt input { position: absolute; opacity: 0; pointer-events: none; }
+.pick span { display: inline-block; font: 600 14px var(--body); border: 1px solid var(--line); border-radius: 6px; padding: 7px 16px; background: var(--card); }
+.pick input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--card); }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--page); padding: 10px 0; display: flex; align-items: center; gap: 12px; }
+.bar .track { flex: 1; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; } .bar .track i { display: block; height: 100%; background: var(--ok); width: 0; transition: width .2s; }
+.bar small { font: 600 13px var(--body); color: var(--ink2); white-space: nowrap; }
+.item { border-left: 3px solid var(--line); } .item.done { border-left-color: var(--ok); }
+.ihead { display: flex; gap: 12px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.num { font: 700 15px var(--body); color: var(--muted); min-width: 22px; }
+.ititle { flex: 1; } .ititle b { font: 700 17px/1.4 var(--body); display: block; margin-bottom: 4px; }
+.lv { font: 600 12px var(--body); white-space: nowrap; color: var(--ink2); }
+.lv::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.lv.hi::before { background: var(--hi); } .lv.mid::before { background: var(--mid); } .lv.lo::before { background: var(--lo); }
+.part { display: inline-block; font: 700 12px var(--body); margin-right: 10px; color: var(--ink); }
+.part::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
+.p1::before { background: var(--c1); } .p2::before { background: var(--c2); } .p3::before { background: var(--c3); } .p4::before { background: var(--c4); } .pr::before { background: var(--cpr); }
+.dept { font-size: 13px; color: var(--muted); } .dept + .dept::before { content: " · "; }
+.claim { margin: 14px 0 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+.claim .col { display: contents; }
+.claim .box { font-size: 15px; line-height: 1.6; }
+.claim .c2 .box, .claim .c2 .q, .claim .c2 .why { padding-left: 28px; margin-left: -28px; border-left: 1px solid var(--line); }
+.claim .box small { display: block; font: 700 11px var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.claim .c1 .box { order: 1; } .claim .c2 .box { order: 2; } .claim .c1 .q { order: 3; } .claim .c2 .q { order: 4; } .claim .c1 .why { order: 5; } .claim .c2 .why { order: 6; }
+.claim .c1 > * { grid-column: 1; } .claim .c2 > * { grid-column: 2; } .claim .why { align-self: start; }
+.owner { font-weight: 700; color: var(--blue); margin-right: 4px; } .owner::after { content: " —"; color: var(--muted); font-weight: 400; }
+.raci { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.q { margin-top: 14px; } .q > p { margin: 0 0 8px; font-weight: 600; font-size: 14px; }
+.opt { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt span { display: inline-block; font: 500 14px var(--body); border: 1px solid var(--line); border-radius: 6px; padding: 6px 14px; background: var(--card); }
+.opt label:hover span { border-color: var(--muted); }
+.opt input:checked + span { font-weight: 700; }
+.opt input:checked + span.g { border-color: var(--ok); color: var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--card)); }
+.opt input:checked + span.y { border-color: var(--warn); color: #8a6408; background: color-mix(in srgb, var(--warn) 10%, var(--card)); }
+.opt input:checked + span.r { border-color: var(--bad); color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
+.opt input:checked + span.n { background: var(--ink); color: var(--card); border-color: var(--ink); }
+textarea { width: 100%; min-height: 60px; font: 400 14px/1.5 var(--body); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; background: var(--soft); color: var(--ink); resize: vertical; }
+textarea:focus { outline: none; border-color: var(--blue); background: var(--card); }
+.why { display: none; margin-top: 8px; } .why.show { display: block; }
+.sig { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; } .sig:last-child { border-bottom: 0; }
+.top3 label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; cursor: pointer; font-size: 14px; } .top3 input { margin-top: 5px; }
+.send { display: block; width: 100%; font: 700 16px var(--body); border: 0; border-radius: 8px; padding: 14px; background: var(--ink); color: var(--card); cursor: pointer; }
+.note { color: var(--muted); font-size: 13px; margin-top: 10px; }
+.toast { display: none; border: 1px solid var(--ok); color: var(--ok); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-weight: 600; }
+@media (max-width: 640px) { .steps, .claim { grid-template-columns: 1fr; } .steps div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+  .claim .c1 > *, .claim .c2 > * { grid-column: 1; } .claim .c2 .box, .claim .c2 .q, .claim .c2 .why { padding-left: 0; margin-left: 0; border-left: 0; }
+  .claim .c1 .box { order: 1; } .claim .c1 .q { order: 2; } .claim .c1 .why { order: 3; } .claim .c2 .box { order: 4; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); } .claim .c2 .q { order: 5; } .claim .c2 .why { order: 6; }
+  h1 { font-size: 22px; } .sig { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">RnR Project · Khảo sát dành cho MKT Head</div>
+  <h1>MKT đang làm thay việc của bộ phận khác ở đâu? Chị thấy đúng không?</h1>
+  <p class="lead">Team RnR đọc 109 email CC (19–24/10/2026) và ghi lại 14 việc mà MKT đang làm phần việc của bộ phận khác, hoặc 2 part MKT cùng xử lý một việc. Đây mới là nhận định từ email. Nhờ chị xác nhận từng việc trước khi đem đi họp chốt RACI với các bộ phận. Mất khoảng 10–15 phút. Không cần ghi tên, chỉ cần chọn part.</p>
+
+  <div class="card">
+    <h2>Cách trả lời</h2>
+    <div class="steps">
+      <div><b>1 · Nhận định có đúng không?</b>MKT có thật sự đang làm phần việc đó không.</div>
+      <div><b>2 · Đề xuất giao lại có ổn không?</b>Bộ phận được đề xuất làm R có làm được không.</div>
+      <div><b>Ghi chú</b>Chỉ khi chọn "Đúng một phần", "Không đúng", "Cần chỉnh" hoặc "Không hợp lý": ô ghi chú hiện ngay bên dưới.</div>
+    </div>
+    <div class="raci-legend">
+      <div><b>R</b> · người trực tiếp làm</div><div><b>A</b> · người chịu trách nhiệm cuối, ký duyệt</div>
+      <div><b>C</b> · được hỏi ý kiến trước</div><div><b>I</b> · được báo kết quả</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Chị phụ trách part nào?</h2>
+    <div class="pick" id="part">
+      <label><input type="radio" name="part" value="MKT 1"><span>MKT 1</span></label>
+      <label><input type="radio" name="part" value="MKT 2"><span>MKT 2</span></label>
+      <label><input type="radio" name="part" value="MKT 3"><span>MKT 3</span></label>
+      <label><input type="radio" name="part" value="MKT 4"><span>MKT 4</span></label>
+      <label><input type="radio" name="part" value="PR"><span>PR</span></label>
+    </div>
+    <p class="note" id="partNote">Chọn part để đưa các việc của part chị lên đầu.</p>
+  </div>
+
+  <div class="bar"><div class="track"><i id="prog"></i></div><small id="progT">0 / 14 việc</small></div>
+  <div id="items"></div>
+
+  <div class="card">
+    <h2>Phần chung</h2>
+    <p style="margin:0 0 6px;font-weight:600">Team RnR nhận ra 1 việc chồng lấn bằng 4 dấu hiệu dưới đây. Chị có đồng ý không?</p>
+    <div id="sigs"></div>
+    <div class="q"><p>Có việc nào MKT đang làm thay bộ phận khác mà danh sách trên chưa có không?</p><textarea id="missing" placeholder="Ví dụ: tên việc · bộ phận nên làm · vì sao"></textarea></div>
+    <div class="q"><p>Chọn tối đa 3 việc nên xử lý trước</p><div class="top3" id="top3"></div></div>
+  </div>
+
+  <button class="send" id="send">Gửi câu trả lời</button>
+  <div class="toast" id="toast">Bản xem trước: câu trả lời chưa được gửi đi đâu.</div>
+  <p class="note">Bảng chỉ dùng mã bộ phận, không có tên cá nhân. Nhận định dựng từ email nên có thể thiếu bối cảnh; câu trả lời của chị dùng để chỉnh lại trước khi chốt RACI với các bộ phận.</p>
+</div>
+
+<script>
+// 14 nhận định từ rr-chong-lan.html (bản 26/10/2026)
+const ITEMS = [
+ { t: 'Giftset Less Sugar 16P: timeline và sản lượng sản xuất', p: ['MKT 1'], d: ['Sales 2','SCM','Planning nhà máy','PUR','QA','FS','NCC'], lv: 'hi',
+   o: 'MKT đang tự cân đối capa giữa các SKU, đưa phương án sản xuất và nhắc PUR release PO với NCC.', r: 'SCM · Planning',
+   a: 'SCM chủ trì cân đối sale plan và capa (họp S&OP), chốt phương án sản xuất. MKT chỉ cung cấp spec bao bì và thông tin claim.', raci: 'R SCM · A Planning nhà máy · C MKT, Sales 2, QA · I PUR' },
+ { t: 'GS Less Sugar 16P: đề xuất đàm phán giá và chuyển 100% sản lượng sang NCC khác', p: ['MKT 1'], d: ['Design','PUR','NCC','PI','Production'], lv: 'hi',
+   o: 'MKT đánh giá năng lực NCC (tiến độ, chất lượng giấy) và đề xuất đổi NCC.', r: 'PUR · QA',
+   a: 'PUR làm đánh giá NCC theo tiêu chí tiến độ, giá, chất lượng. MKT và Design chỉ đưa tiêu chuẩn chất lượng in.', raci: 'R PUR · A trưởng PUR · C MKT, Design, QA · I Production' },
+ { t: 'Bidding Giftset B2B Tết Y27, đấu thầu giftset Samsung, lỗi giấy in GS An', p: ['MKT 4'], d: ['PUR','NCC','Sales 1','Design','PI','Khách hàng B2B'], lv: 'hi',
+   o: 'MKT phản đối kết quả thầu của PUR, nhưng vẫn phải ký nhận hàng lỗi để kịp đóng hàng. Chưa rõ ai có quyền nghiệm thu chất lượng.', r: 'PUR · QA',
+   a: 'Lập tiêu chí nghiệm thu bao bì, do QA ký. MKT không ký nhận hàng. Sales 1 là đầu mối với khách hàng Samsung.', raci: 'R PUR (thầu) · A QA (nghiệm thu) · C MKT 4, Design · I Sales 1' },
+ { t: 'Issue chất lượng Chocopie Sakura', p: ['MKT 1'], d: ['R&D','QA','PUR','Production','SCM'], lv: 'hi',
+   o: 'MKT đang điều phối các bộ phận theo dõi tiến độ xử lý một lỗi kỹ thuật (giao nhận, kiểm nghiệm nguyên liệu cải tiến).', r: 'R&D · QA',
+   a: 'R&D làm owner của issue, QA theo dõi khắc phục. MKT chỉ nhận báo cáo và quyết định lịch bán.', raci: 'R R&D · A QA · C PUR, Production, SCM · I MKT 1' },
+ { t: 'Goute Topping Cốm giảm gram (18,6 g → 16,3 g): khả thi sản xuất, MFC, semi cho giftset', p: ['MKT 2','MKT 4'], d: ['SCM','Production YP','Planning','PUR','Sales'], lv: 'hi',
+   o: '2 part MKT cùng xử lý 1 thay đổi. MKT 2 đang tự đánh giá tính khả thi vận hành.', r: 'MKT 2 (1 đầu mối) · SCM',
+   a: 'Chỉ 1 đầu mối MKT (brand Goute) gửi thông tin. SCM đánh giá khả thi sản xuất song song 2 trọng lượng. MKT 4 (giftset) chỉ góp ý.', raci: 'R MKT 2 · A trưởng MKT · C MKT 4, SCM, Production · I PUR, Sales' },
+ { t: "C'est Bon Mochi Nếp Xoài 8P và Mix 14P: dời ngày launch vì thiếu nguyên liệu", p: ['MKT 1','MKT 4'], d: ['Sales 1','Sales 2','Production','SCM','PUR','PI','ENG'], lv: 'mid',
+   o: 'MKT phải báo cho toàn công ty về sự cố nguyên liệu và lịch sản xuất mới.', r: 'SCM · PUR',
+   a: 'SCM gửi thông báo thay đổi cung ứng. MKT chỉ cập nhật kế hoạch bán và bao bì.', raci: 'R SCM · C PUR, MKT 1 · I Sales, Production' },
+ { t: 'Dưa hấu 12P: phụ liệu dán sticker W44, tách code phụ liệu hàng Tết và hàng thường', p: ['MKT 1'], d: ['PUR nhà máy','SCM','Production','PI'], lv: 'mid',
+   o: 'MKT theo dõi số case giao về nhà máy, đối chiếu NPL tồn và xin tách code để PUR lên PO.', r: 'PUR · SCM',
+   a: 'PUR và SCM theo dõi NPL. Việc tách code đi theo checklist master data (PI hoặc bộ phận quản lý mã). MKT chỉ báo khi đổi thiết kế.', raci: 'R PUR · C PI, SCM · I MKT 1' },
+ { t: 'Kẹo dẻo King Monkey: cập nhật kế hoạch sản xuất 10Y26', p: ['MKT 2'], d: ['Planning','PUR','QA','Production'], lv: 'mid',
+   o: 'MKT phát lịch sản xuất (ngày, nhà máy) cho các bộ phận.', r: 'Planning',
+   a: 'Planning phát lịch sản xuất. MKT phát thông tin sản phẩm và hồ sơ công bố.', raci: 'R Planning · C MKT 2, QA · I PUR, Production' },
+ { t: 'Miz 8P phase-out 2027: kiểm tồn phụ liệu để clear tồn', p: ['MKT 2'], d: ['PUR YP','SCM','Sales'], lv: 'mid',
+   o: 'MKT đi hỏi tồn phụ liệu thay cho Sales và SCM.', r: 'SCM',
+   a: 'Lập quy trình phase-out do SCM chủ trì. PUR tự báo tồn khi có danh sách phase-out.', raci: 'R SCM · C PUR, Sales · I MKT 2' },
+ { t: 'Set up giá Boom/King Jelly trên hệ thống, tách số Goute Tết theo mã MDM', p: ['MKT 2'], d: ['IT','Sales (KAM)'], lv: 'mid',
+   o: 'MKT nhập giá lên hệ thống để KAM lên đơn, và xin IT tách số liệu bán.', r: 'Sales Admin · IT',
+   a: 'Sales Admin là owner bảng giá trên hệ thống. MKT chỉ duyệt giá. IT làm báo cáo theo SKU.', raci: 'R Sales Admin · A MKT (duyệt giá) · C IT · I KAM' },
+ { t: 'Cà phê Nestle cho GSet An B2B: sản lượng và lead time', p: ['MKT 4'], d: ['PUR','Sales','NCC'], lv: 'mid',
+   o: 'MKT xác nhận sản lượng và lead time với PUR, dù số lấy từ sale plan.', r: 'Sales · SCM',
+   a: 'Sales đưa forecast, SCM chuyển nhu cầu cho PUR. MKT chỉ chốt concept giftset.', raci: 'R SCM · C Sales, MKT 4 · I PUR' },
+ { t: 'CPIE Less Sugar 12P: rủi ro luật định với claim "Giảm 50% đường", "Giảm calo"', p: ['MKT 1'], d: ['QA','FS','Legal','HQ'], lv: 'mid',
+   o: 'MKT đứng giữa chuyển thông tin qua lại giữa QA và Legal về tính hợp lệ của claim.', r: 'QA (Regulatory)',
+   a: 'QA làm owner tính hợp lệ của claim, Legal tư vấn. MKT quyết định thông điệp sau khi có kết luận.', raci: 'R QA · C Legal · A MKT 1 (thông điệp) · I HQ' },
+ { t: "C'est Bon: rủi ro truyền thông từ khiếu nại khách hàng, soạn công văn trả lời", p: ['PR','MKT 1'], d: ['CSR','Legal','HQ','Production'], lv: 'mid',
+   o: 'PR soạn công văn trả lời khiếu nại. Việc xử lý khiếu nại thuộc CS/QA, PR chỉ cần vào khi có rủi ro truyền thông.', r: 'CS · QA',
+   a: 'CS/QA soạn công văn, Legal duyệt. PR chỉ chuẩn bị phương án truyền thông nếu vụ việc lan rộng.', raci: 'R CS/QA · A Legal · C PR · I MKT 1, HQ' },
+ { t: 'Bánh gạo An Gấc hộp 14P: kế hoạch lắp máy và test line mùa Tết', p: ['MKT 3'], d: ['Production','ENG','PI','SCM'], lv: 'lo',
+   o: 'MKT thông báo kế hoạch lắp máy và test line.', r: 'ENG',
+   a: 'ENG gửi kế hoạch lắp máy và test line. MKT chỉ xác nhận ngày cần hàng.', raci: 'R ENG · C PI, Production · I MKT 3, SCM' },
+];
+const SIGS = ['MKT mở email đầu tiên, nhưng nội dung là việc vận hành: capa, sản lượng, lịch sản xuất, tồn phụ liệu, PO, NCC, nhập giá lên hệ thống.',
+  'Việc có nhiều bộ phận tham gia hoặc cần chuyên môn không thuộc MKT, nhưng MKT là người quyết định.',
+  'MKT phải "approve" hoặc "đồng ý / không đồng ý" một việc mà quyền quyết định thuộc bộ phận khác (nghiệm thu hàng, chọn NCC, phương án sản xuất).',
+  '2 part MKT cùng gửi email về 1 sản phẩm hoặc 1 thay đổi.'];
+const LV = { hi: 'Mức cao', mid: 'Trung bình', lo: 'Thấp' }, PC = { 'MKT 1': 'p1', 'MKT 2': 'p2', 'MKT 3': 'p3', 'MKT 4': 'p4', PR: 'pr' };
+const Q1 = [['ok', 'Đúng', 'g'], ['part', 'Đúng một phần', 'y'], ['no', 'Không đúng', 'r']];
+const Q2 = [['ok', 'Hợp lý', 'g'], ['adj', 'Cần chỉnh', 'y'], ['no', 'Không hợp lý', 'r']];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let myPart = '';
+const opts = (name, list) => `<div class="opt">${list.map(([v, l, c]) => `<label><input type="radio" name="${name}" value="${v}"><span class="${c}">${l}</span></label>`).join('')}</div>`;
+function renderItems() {
+  const order = ITEMS.map((x, i) => i).sort((a, b) => (myPart ? (ITEMS[b].p.includes(myPart) - ITEMS[a].p.includes(myPart)) : 0) || a - b);
+  const box = document.getElementById('items'), keep = {};
+  box.querySelectorAll('input:checked, textarea').forEach(e => keep[e.name] = e.type === 'radio' ? e.value : e.value);
+  box.innerHTML = order.map(i => { const x = ITEMS[i], mine = myPart && x.p.includes(myPart);
+    return `<div class="card item" id="it${i}" data-i="${i}">
+    <div class="ihead"><div class="num">${i + 1}</div><div class="ititle"><b>${esc(x.t)}</b>
+      ${x.p.map(p => `<span class="part ${PC[p]}">${p}</span>`).join('')}${x.d.map(d => `<span class="dept">${esc(d)}</span>`).join('')}</div>
+      <span class="lv ${x.lv}">${LV[x.lv]}</span></div>
+    ${!myPart || mine ? '' : `<p class="note" style="margin:10px 0 0">Việc của part khác · trả lời theo những gì chị biết.</p>`}
+    <div class="claim">
+      <div class="col c1"><div class="box"><small>Nhận định</small>${esc(x.o)}</div>
+        <div class="q"><p>1 · Nhận định này có đúng với thực tế không?</p>${opts('q1_' + i, Q1)}</div>
+        <div class="why" id="why1_${i}"><textarea name="c1_${i}" placeholder="Thực tế thế nào? Chỗ nào chưa đúng?"></textarea></div></div>
+      <div class="col c2"><div class="box"><small>Đề xuất giao lại</small><span class="owner">${esc(x.r)}</span>${esc(x.a)}<div class="raci">${esc(x.raci)}</div></div>
+        <div class="q"><p>2 · Đề xuất giao lại có hợp lý không?</p>${opts('q2_' + i, Q2)}</div>
+        <div class="why" id="why2_${i}"><textarea name="c2_${i}" placeholder="Nên giao cho ai (R), vì sao?"></textarea></div></div>
+    </div>
+  </div>`; }).join('');
+  Object.entries(keep).forEach(([n, v]) => { const r = box.querySelector(`input[name="${n}"][value="${v}"]`); if (r) r.checked = true; const t = box.querySelector(`textarea[name="${n}"]`); if (t) t.value = v; });
+  box.querySelectorAll('input, textarea').forEach(e => e.addEventListener('input', update));
+  update();
+}
+function update() {
+  let done = 0;
+  ITEMS.forEach((x, i) => {
+    const a = document.querySelector(`input[name="q1_${i}"]:checked`), b = document.querySelector(`input[name="q2_${i}"]:checked`), el = document.getElementById('it' + i);
+    const ok = a && b; if (ok) done++;
+    el.classList.toggle('done', !!ok);
+    document.getElementById('why1_' + i).classList.toggle('show', !!(a && a.value !== 'ok'));
+    document.getElementById('why2_' + i).classList.toggle('show', !!(b && b.value !== 'ok'));
+  });
+  document.getElementById('prog').style.width = (done / ITEMS.length * 100) + '%';
+  document.getElementById('progT').textContent = `${done} / ${ITEMS.length} việc`;
+}
+document.querySelectorAll('#part input').forEach(r => r.onchange = () => { myPart = r.value;
+  document.getElementById('partNote').textContent = `Các việc của ${myPart} đã đưa lên đầu (${ITEMS.filter(x => x.p.includes(myPart)).length} việc). Việc của part khác ở bên dưới.`; renderItems(); });
+document.getElementById('sigs').innerHTML = SIGS.map((s, i) => `<div class="sig"><span>${i + 1}. ${esc(s)}</span>${opts('s_' + i, [['ok', 'Đồng ý', 'g'], ['no', 'Không đồng ý', 'r']])}</div>`).join('');
+document.getElementById('top3').innerHTML = ITEMS.map((x, i) => `<label><input type="checkbox" value="${i}"><span><b>${i + 1}.</b> ${esc(x.t)}</span></label>`).join('');
+document.querySelectorAll('#top3 input').forEach(c => c.onchange = () => { const on = document.querySelectorAll('#top3 input:checked'); if (on.length > 3) c.checked = false; });
+// URL Apps Script (.../exec) của Sheet khảo sát. Để trống = bản xem trước, không gửi đi đâu.
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzKjHWEAR4cK_rTuW2Owzfy_UA46XR6d2E4WvpldJthoW5h0XADPZYfC-QACLL-iv5H0w/exec'; // Sheet "RnR - Khảo sát MKT Head" (thaixclaude)
+const toast = (msg, bad) => { const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
+  t.style.color = t.style.borderColor = bad ? 'var(--bad)' : 'var(--ok)'; };
+function collect() {
+  const v = n => { const e = document.querySelector(`input[name="${n}"]:checked`); return e ? e.value : ''; };
+  const tx = n => { const e = document.querySelector(`textarea[name="${n}"]`); return e ? e.value.trim() : ''; };
+  return { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), part: myPart,
+    items: ITEMS.map((x, i) => { const q1 = v('q1_' + i), q2 = v('q2_' + i);
+      return { n: i + 1, t: x.t, p: x.p.join(', '), mine: x.p.includes(myPart), q1, c1: q1 && q1 !== 'ok' ? tx('c1_' + i) : '', q2, c2: q2 && q2 !== 'ok' ? tx('c2_' + i) : '' }; }),
+    sigs: SIGS.map((s, i) => ({ n: i + 1, t: s, a: v('s_' + i) })),
+    missing: document.getElementById('missing').value.trim(),
+    top3: [...document.querySelectorAll('#top3 input:checked')].map(c => +c.value + 1) };
+}
+let sent = false;
+document.getElementById('send').onclick = async () => {
+  if (sent) return;
+  if (!myPart) { toast('Chị chọn part ở đầu trang trước khi gửi nhé.', true); document.getElementById('part').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  const d = collect(), miss = d.items.filter(x => !x.q1 || !x.q2);
+  if (miss.length) { toast(`Còn ${miss.length} việc chưa trả lời đủ 2 câu: ${miss.map(x => '#' + x.n).join(', ')}.`, true);
+    document.getElementById('it' + (miss[0].n - 1)).scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (!ENDPOINT) { toast('Bản xem trước: câu trả lời chưa được gửi đi đâu.'); return; }
+  const b = document.getElementById('send'); b.disabled = true; b.textContent = 'Đang gửi…';
+  try {
+    await fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) });
+    sent = true; b.textContent = 'Đã gửi'; toast('Đã gửi câu trả lời. Cảm ơn chị!');
+  } catch (e) { b.disabled = false; b.textContent = 'Gửi câu trả lời'; toast('Chưa gửi được, chị kiểm tra mạng rồi bấm gửi lại nhé.', true); }
+};
+renderItems();
+</script>
+</body>
+</html>
