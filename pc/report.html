@@ -131,11 +131,11 @@ select.chip { appearance: none; -webkit-appearance: none; padding-right: 30px; b
 .lb2.mt { margin-top: 8px !important; } .mut { color: #aaa; } .fromp { font-size: 8pt; }
 .scg { display: grid; grid-template-columns: 1fr; gap: 3px; margin-top: 3px; max-width: 150px; }
 .sci { display: grid; grid-template-columns: 1fr auto; align-items: baseline; font-size: 11px; color: #555; }
-.sci b { font-size: 12.5px; color: #1a1a1a; } .sci b.md { color: #b26a00; } .sci b.lo { color: #c8102e; } .sci b.na { color: #bbb; }
-.sci i { grid-column: 1 / -1; height: 3px; background: #eee; border-radius: 2px; overflow: hidden; } .sci i u { display: block; height: 100%; background: #c8102e; }
+.sci b { font-size: 12.5px; color: #1a1a1a; } .sci b.ok { color: #2e9b4f; } .sci b.md { color: #b26a00; } .sci b.lo { color: #c8102e; } .sci b.na { color: #bbb; }
+.sci i { grid-column: 1 / -1; height: 3px; background: #eee; border-radius: 2px; overflow: hidden; } .sci i u { display: block; height: 100%; background: #c8102e; } .sci i u.ok { background: #2e9b4f; } .sci i u.md { background: #e8a400; }
 .sct { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 5px; margin-top: 7px; padding-top: 6px; border-top: 1px solid #eee; max-width: 150px; }
 .sct span { width: 100%; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #888; }
-.sct b { font-size: 26px; line-height: 1; color: #1a1a1a; } .sct b.md { color: #b26a00; } .sct b.lo { color: #c8102e; } .sct small { font-size: 11px; color: #999; }
+.sct b { font-size: 26px; line-height: 1; color: #1a1a1a; } .sct b.ok { color: #2e9b4f; } .sct b.md { color: #b26a00; } .sct b.lo { color: #c8102e; } .sct small { font-size: 11px; color: #999; }
 .ptbl .sct { max-width: none; margin-top: 1.5mm; padding-top: 1.2mm; } .ptbl .sct span { font-size: 6pt; } .ptbl .sct b { font-size: 15pt; } .ptbl .sct small { font-size: 6.5pt; }
 .ptbl .scg { max-width: none; gap: .6mm 2.5mm; } .ptbl .sci { font-size: 6.5pt; } .ptbl .sci b { font-size: 7.5pt; } .ptbl .sci i { height: .6mm; }
 .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5mm; } .pgrid.c4 { grid-template-columns: repeat(4, 1fr); gap: 1mm; } .pgrid.c5 { grid-template-columns: repeat(5, 1fr); gap: 1mm; } .pgrid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 1.2mm; border: 1px solid #e3e3e3; display: block; }
@@ -344,7 +344,7 @@ function heat(evals, extra) {
     <tr class="tot"><td>Total</td>${cols.map(c => `<td>${sumC(c) || ''}</td>`).join('')}<td>${rows.reduce((a, h) => a + sumR(h), 0)}</td></tr></tbody></table></div></div>`;
 }
 
-// Kết thúc đánh giá (host / quản lý): xem trước số vấn đề theo bộ phận → xác nhận → gửi mail từng bộ phận, hạn cải thiện 2 tuần
+// Kết thúc đánh giá (host / quản lý): xem trước số vấn đề theo bộ phận → xác nhận → gửi mail từng bộ phận, hạn cải thiện 4 tuần
 // 10/11: kết thúc đánh giá chuyển sang tab Cải thiện (FQS xác nhận danh sách → gửi mail bộ phận)
 function endCard() {
   return `<div class="card"><div class="end"><div><h2>Kết thúc đánh giá</h2><p>Khi mọi người đã chấm xong: vào <b>Cải thiện</b> để FQS xác nhận danh sách vấn đề, chọn bộ phận xử lý và gửi mail cho từng bộ phận.</p></div>
@@ -356,7 +356,7 @@ async function endFlow() {
   try {
     const p = await PC.post('endCycle', { send: false, cycle: R.cycle }); if (!p.ok) throw new Error(p.error);
     const box = document.createElement('div'); box.className = 'modal';
-    box.innerHTML = `<div class="box"><h3>Xác nhận kết thúc đánh giá</h3><p class="sub" style="margin:0">${PC.monthLabel(p.cycle)} · ${p.total} vấn đề · hạn cải thiện <b>${dmy(p.deadline)}</b> (2 tuần)</p>
+    box.innerHTML = `<div class="box"><h3>Xác nhận kết thúc đánh giá</h3><p class="sub" style="margin:0">${PC.monthLabel(p.cycle)} · ${p.total} vấn đề · hạn cải thiện <b>${dmy(p.deadline)}</b> (4 tuần)</p>
       ${p.depts.length ? `<table><thead><tr><th>Bộ phận</th><th>Số vấn đề</th><th>Email</th></tr></thead><tbody>${p.depts.map(g => `<tr><td><b>${esc(g.dept)}</b></td><td>${g.n}</td><td class="${g.email ? '' : 'miss'}">${esc(g.email || 'Chưa có, gửi về quản lý')}</td></tr>`).join('')}</tbody></table>`
         : '<p class="sub">Chưa có vấn đề nào được ghi nhận. Vẫn có thể kết thúc, chỉ gửi mail tổng hợp cho quản lý.</p>'}
       <p class="sub" style="margin-top:10px">Mỗi bộ phận nhận 1 mail với danh sách vấn đề, nguyên nhân nghi ngờ, giải pháp tạm thời và link vào tab Cải thiện để cập nhật tiến độ, hướng giải quyết, evidence.</p>
@@ -481,7 +481,7 @@ let a4Lang = (() => { try { return localStorage.getItem('mqm-a4-lang') === 'vi' 
 const KO_Q = {"Gói đủ khí bảo vệ sản phẩm không?": "제품을 보호할 만큼 질소(가스)가 충분합니까?", "Đường seal có kín, thằng và đều không?": "실링이 밀봉되고 곧고 균일합니까?", "Bao bì có nguyên vẹn, không nhăn hoặc rách không?": "포장이 온전하고 주름이나 찢어짐이 없습니까?", "Bước cắt bao bì có ngay ngắn, cân đối không?": "포장 커팅 위치가 반듯하고 균형 잡혀 있습니까?", "Mực in có đều màu, hình ảnh và chũ có sắc nét không?": "인쇄 색상이 균일하고 이미지와 글자가 선명합니까?", "Thiết kế và thông tin trên bao bì có rõ ràng, dễ đọc không?": "포장 디자인과 표시 정보가 명확하고 읽기 쉽습니까?", "Độ nguyên vẹn và hình dạng của lát khoai thế nào?": "감자칩의 온전함과 모양은 어떻습니까?", "Màu sắc và bề mặt lát khoai thế nào?": "감자칩의 색상과 표면은 어떻습니까?", "Độ đồng đều gia vị trên bề mặt lát khoai thế nào?": "감자칩 표면의 시즈닝 균일도는 어떻습니까?", "Độ giòn, xốp của lát khoai khi ăn?": "먹을 때 감자칩의 바삭함과 식감은 어떻습니까?", "Cường độ và độ hài hòa của gia vị khi ăn?": "먹을 때 시즈닝의 강도와 조화는 어떻습니까?", "Mùi dầu của lát khoai khi ăn?": "먹을 때 감자칩의 기름 냄새는 어떻습니까?", "Hậu vị sau khi nuốt có vị lạ không?": "삼킨 후 뒷맛에 이상한 맛이 있습니까?"};
 const KO_T = {"Gãy vụn": "부서짐", "Khoai bị gập": "접힘", "Lát cắt không tròn tự nhiên": "모양이 부자연스러움", "Cháy nguyên lát / cháy đốm": "전체 탐 / 부분 탐", "Khoai xanh": "녹변 감자", "Đốm đen": "검은 반점", "SSN không đều (vón cục)": "시즈닝 불균일 (뭉침)", "SSN ít": "시즈닝 적음", "SSN quá nhiều": "시즈닝 과다", "Vảy gia vị không đều (ớt, rong biển / tảo, rau)": "플레이크 불균일 (고추, 김 / 해조, 채소)", "Giòn cứng (lát dày / sắc nhọn)": "딱딱함 (두꺼움 / 날카로움)", "Cấu trúc giống thủy tinh": "유리 같은 식감", "Kém tan (dính răng)": "잘 안 녹음 (이에 붙음)", "Khoai bị ỉu": "눅눅함", "Ngấm dầu (ngập dầu miệng)": "기름 흡수 (입안 기름짐)", "Cấu trúc bột": "가루 같은 식감", "Cấu trúc giấy (mỏng, khô dai)": "종이 같은 식감 (얇고 질김)", "Bóng khí rỗng": "기포 (빈 공간)", "Yếu topnote": "탑노트 약함", "Vị mặn gắt": "짠맛 강함", "Vị nhạt nhẽo": "싱거움", "Mùi yếu": "향 약함", "Vị cháy": "탄 맛", "Nhiều dầu": "기름짐", "Mùi dầu cũ / ôi dầu": "산패취 / 오래된 기름 냄새", "Đắng chát": "쓰고 떫음", "Mùi nhân tạo / hóa chất": "인공향 / 화학 냄새", "Nhiễm mùi lạ": "이취", "Xì / rò khí": "가스 누출", "Ít khí": "가스 부족", "Seal yếu": "실링 약함", "Nhăn": "주름", "Rách": "찢어짐", "Biến dạng": "변형", "In lệch / mờ": "인쇄 틀어짐 / 흐림", "Lem màu": "번짐", "Code date mờ": "날짜 코드 흐림", "Sai thông tin": "정보 오류", "Nhãn lỗi": "라벨 불량", "Vỡ / vụn": "부서짐", "Cháy / sẫm màu": "탐 / 짙은 색", "Nhạt màu": "옅은 색", "Bong lớp phủ": "코팅 벗겨짐", "Chảy / bloom": "녹음 / 블룸", "Không đều": "불균일", "Ỉu / mềm": "눅눅함 / 물렁함", "Cứng": "딱딱함", "Khô": "건조함", "Đặc": "단단함", "Bở": "부서지기 쉬움", "Dính răng": "이에 붙음", "Bột": "가루감", "Nhạt vị": "맛 약함", "Lạ vị": "이미", "Đắng": "쓴맛", "Quá ngọt": "너무 단맛", "Ôi dầu": "산패취", "Khét": "탄 냄새", "Chua / hỏng": "신맛 / 변질", "Coating không đều": "코팅 불균일"};
 const KO_C = { 'Nguyên liệu': '원료', 'Phụ liệu / bao bì': '부자재 / 포장재', 'Process sản xuất': '생산 공정', 'Bảo quản kho nhà máy': '공장 창고 보관', 'Nhà cung cấp': '협력사', 'Vận chuyển': '운송', 'Kho NPP / đại lý': '대리점 창고', 'Trưng bày / điểm bán': '매장 진열', 'Thị trường / thời tiết': '시장 / 날씨', 'Chưa rõ': '불명' };
-const KO_D = { Production: '생산', Sales: '영업', Design: '디자인', MKT: '마케팅', PUR: '구매', ENG: '설비', Pro: '생산', 'Khác': '기타' };
+const KO_D = { Production: '생산', 'Production Potato': '생산 (감자칩)', Sales: '영업', Design: '디자인', MKT: '마케팅', PUR: '구매', ENG: '설비', Pro: '생산', 'Khác': '기타' };
 const KO_G = { 'Bao bì': '포장', 'In ấn': '인쇄', 'Ngoại quan': '외관', 'Cấu trúc': '식감', 'Hương vị': '맛' };
 const A4L = {
   vi: { k: 'MQM ORION VINA · BÁO CÁO CHẤT LƯỢNG', title: m => `Kết quả đánh giá mẫu · ${m}`, sub: 'Tổng hợp từ các lượt đánh giá trên app MQM · ORION so với đối thủ · chỉ số chính là % câu trả lời "Có vấn đề" (thấp hơn = tốt hơn)',
@@ -690,15 +690,16 @@ const imon = c => IK ? (m => m ? `${m[1]}년 ${+m[2]}월` : c)(String(c).match(/
 const stPill = a => `<span class="spill s${Math.max(0, IST.indexOf(a.status))}">${esc(ist(a.status))}</span>${lateA(a) ? `<span class="spill late">${L2('Quá hạn', '기한 초과')}</span>` : ''}`;
 const issH = g => `<table class="iq2"><tbody>${g.what.map((w, i) => `${i === 0 || g.what[i - 1].g !== w.g ? `<tr class="gh"><td colspan="3">${esc(ig(w.g))}</td></tr>` : ''}<tr><td class="q">${esc(iq(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).map(it).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`).join('')}</tbody></table>`;
 // 16/11 v3: cột Mẫu (bộ phận đánh giá nằm dưới) · cột cuối gộp Nguyên nhân nghi ngờ · Giải pháp tạm thời · Bộ phận xử lý
-// 20/11: điểm TB thang 5 của mẫu theo 4 mục (điểm 1–9 mỗi câu, 1 tốt nhất → 1 + (9 − TB)/2), lấy từ dữ liệu Report cùng tháng
+// 20/11 v2: điểm TB thang 9 như khảo sát (1 tốt nhất, 9 kém nhất; 1–3 xanh · 4–6 vàng · 7–9 đỏ), lấy từ dữ liệu Report cùng tháng
 const SC_G = [['Ngoại quan', 'Ngoại quan', '외관'], ['Cấu trúc', 'Cấu trúc', '식감'], ['Hương vị', 'Hương vị', '맛'], ['Bao bì', 'Bao bì', '포장']];
 function sampleScores(sid) {
   if (!R || !R.extra || (IL && R.cycle !== IL.cycle)) return null;
   const xs = R.extra.filter(x => x.sampleId === sid && typeof x.score === 'number');
-  return SC_G.map(([g]) => { const v = xs.filter(x => x.group === g).map(x => x.score); return v.length ? 1 + (9 - v.reduce((a, b) => a + b, 0) / v.length) / 2 : null; });
+  return SC_G.map(([g]) => { const v = xs.filter(x => x.group === g).map(x => x.score); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; });
 }
+const scC = v => v == null ? 'na' : v < 3.5 ? 'ok' : v < 6.5 ? 'md' : 'lo';
 const scoreH = sid => { const s = sampleScores(sid); if (!s) return '';
-  return `<small class="lb2 mt">${L2('Điểm TB (thang 5)', '평균 점수 (5점)')}</small><div class="scg">${SC_G.map(([, vi, ko], i) => `<div class="sci"><span>${esc(L2(vi, ko))}</span><b class="${s[i] == null ? 'na' : s[i] < 3 ? 'lo' : s[i] < 3.5 ? 'md' : ''}">${s[i] == null ? '–' : s[i].toFixed(1)}</b><i><u style="width:${s[i] == null ? 0 : (s[i] / 5 * 100).toFixed(0)}%"></u></i></div>`).join('')}</div>${(v => v.length ? (a => `<div class="sct"><span>${L2('Điểm TB mẫu', '샘플 평균')}</span><b class="${a < 3 ? 'lo' : a < 3.5 ? 'md' : ''}">${a.toFixed(1)}</b><small>/ 5</small></div>`)(v.reduce((x, y) => x + y, 0) / v.length) : '')(s.filter(x => x != null))}`; };
+  return `<small class="lb2 mt">${L2('Điểm TB (thang 9)', '평균 점수 (9점)')}</small><div class="scg">${SC_G.map(([, vi, ko], i) => `<div class="sci"><span>${esc(L2(vi, ko))}</span><b class="${scC(s[i])}">${s[i] == null ? '–' : s[i].toFixed(1)}</b><i><u class="${scC(s[i])}" style="width:${s[i] == null ? 0 : (s[i] / 9 * 100).toFixed(0)}%"></u></i></div>`).join('')}</div>${(v => v.length ? (a => `<div class="sct"><span>${L2('Điểm TB mẫu', '샘플 평균')}</span><b class="${scC(a)}">${a.toFixed(1)}</b><small>/ 9 · ${L2('1 tốt nhất', '1점 최상')}</small></div>`)(v.reduce((x, y) => x + y, 0) / v.length) : '')(s.filter(x => x != null))}`; };
 const sampleCell = (g, web) => `<b>${esc(g.sampleId)}</b><span class="skl">${esc(g.sku)}</span>${g.mfd ? `<small>${L2('NSX', '제조일')} ${dmy(g.mfd)}</small>` : ''}<span class="facn ${g.fac ? 'f' + g.fac : 'fc'}">${esc(facName(g.fac))}</span>
   <small class="lb2 mt">${L2('Bộ phận đánh giá', '평가 부서')}</small>${web ? g.from.map(d => `<span class="dtag">${esc(idp(d))}</span>`).join('') : `<span class="fromp">${esc(g.from.map(idp).join(', '))}</span>`}${scoreH(g.sampleId)}`;
 const actCell = (g, web) => `<small class="lb2">${L2('Nguyên nhân nghi ngờ', '추정 원인')}</small><p>${g.cause.length ? esc(g.cause.map(ic).join(', ')) : `<span class="mut">${L2('Chưa ghi', '미입력')}</span>`}</p>
@@ -919,6 +920,8 @@ async function load(c) {
   } catch (e) { if (big !== 'imp') $('#app').innerHTML = `<div class="card empty">Không tải được report (${esc(e.message)}). Kiểm tra mạng rồi tải lại trang.</div>`; }
 }
 (async () => {
+  // 27/11 (anh Thái): Report chỉ dành cho người đã đăng nhập; vào đánh giá không đăng nhập thì chỉ thấy Đánh giá
+  if (!PC.user()) { const u = await PC.login('Đăng nhập để xem Report'); if (!u) { location.href = './'; return; } }
   PC.bar($('#pcbar'), 'Report');
   if (location.hash === '#cai-thien') { big = 'imp'; try { sessionStorage.setItem('mqm-rep-big', big); } catch (e) {} }   // link thẳng tới Danh sách cải thiện
   renderSide(); render();

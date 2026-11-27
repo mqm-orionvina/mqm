@@ -166,6 +166,60 @@ table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.row
 .c-dep .dtag { margin: 0 4px 4px 0; } .nev { display: block; color: #c8102e; font-size: 12px; margin-top: 4px; }
 /* 16/11: chế độ chỉ xem (tài khoản PC.IMP_VIEWERS) — ẩn mọi nút ghi */
 .robar { background: #f3f3f3; border-radius: 14px; padding: 10px 14px; font-size: 13.5px; color: #333; margin: 0 0 12px; text-align: center; }
+/* 27/11: Tiến độ — danh sách mẫu bên trái, 1 việc / màn hình */
+body.prog .wrap { max-width: 1320px; }
+.fsp { flex: 1; } .btn.sm2 { padding: 8px 14px; font-size: 13.5px; }
+.pl2 { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+.pside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; border: 1.5px solid #ececec; border-radius: 20px; padding: 8px; }
+.psh { font-size: 12px; font-weight: 700; color: #8a8a8a; padding: 6px 8px 8px; }
+.ps { display: flex; gap: 10px; width: 100%; text-align: left; border: 0; background: none; font: inherit; padding: 8px; border-radius: 14px; cursor: pointer; align-items: center; }
+.ps:hover { background: #f6f6f6; } .ps.on { background: #111; color: #fff; } .ps.on small, .ps.on em { color: #cfcfcf; }
+.pth { flex: none; width: 54px; height: 54px; border-radius: 10px; overflow: hidden; background: #f1f1f1; display: grid; place-items: center; font-size: 20px; }
+.pth img { width: 100%; height: 100%; object-fit: cover; display: block; } .pth.ld img { visibility: hidden; } .pth.ld { background: linear-gradient(90deg,#f1f1f1,#e4e4e4,#f1f1f1) 0 0/200% 100%; animation: shim 1.2s linear infinite; } .pth.noimg img { display: none; } .pth.noimg::after { content: '📷'; }
+.pst { min-width: 0; display: flex; flex-direction: column; } .pst b { font-size: 14px; } .pst small { font-size: 12px; color: #6b6b6b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pst em { font-style: normal; font-size: 11.5px; color: #8a8a8a; margin-top: 2px; }
+.pst i.d { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: 1px; background: #c8102e; } .pst i.d.s1 { background: #e8a400; } .pst i.d.s2 { background: #2e9b4f; } .pst i.d.lt { background: #c8102e; box-shadow: 0 0 0 2px #fde8eb; }
+.pmain .item { margin: 0; padding: 20px 22px; }
+.pnav { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 0 0 10px; } .pnav span { font-size: 13px; color: #6b6b6b; min-width: 54px; text-align: center; }
+.pc-body { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; }
+.pc-body .pc-ph { margin-top: 0; } .pc-body .phrow { gap: 6px; } .pc-body .phrow a { width: calc(33.33% - 4px); height: auto; aspect-ratio: 1; }
+.pmain table.itab { font-size: 14px; } .pmain table.itab td.tg0 { width: 92px; } .pmain table.itab td.q0 { width: 46%; } .pmain table.itab td { padding: 8px 10px; }
+.pmain .pc-two { margin: 12px 0 0; }
+@media (max-width: 1000px) { .pl2 { grid-template-columns: 1fr; } .pside { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; } .psh { display: none; } .ps { flex: none; width: 230px; } .pc-body { grid-template-columns: 1fr; } .pc-body .phrow a { width: 96px; } }
+/* PDF Tiến độ (cùng định dạng PDF Danh sách cải thiện bên Report) */
+#impPdfHost { position: fixed; left: -4000px; top: 0; z-index: -1; }
+.ipg { width: 297mm; height: 210mm; background: #fff; padding: 10mm 12mm 13mm; position: relative; overflow: hidden; font: 9pt/1.35 "Segoe UI", Arial, sans-serif; color: #111; margin-bottom: 10px; }
+.ph1 { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--red); padding-bottom: 5px; margin-bottom: 4mm; }
+.ph1 .pl { display: flex; align-items: center; gap: 10px; } .ph1 .pl svg { width: 16mm; height: auto; }
+.ph1 .pk { color: var(--red); font-size: 7.5pt; letter-spacing: .2em; font-weight: 800; } .ph1 h1 { font-size: 16pt; margin: 2px 0 1px; letter-spacing: -.02em; } .ph1 p { margin: 0; color: #666; font-size: 8.5pt; } .ph1 .pr { color: #666; font-size: 8pt; }
+.ptbl { width: 100%; border-collapse: collapse; font-size: 8.3pt; } .ptbl th { text-align: left; font-size: 7.5pt; color: #666; font-weight: 700; background: #f3f3f3; padding: 1.5mm 2mm; }
+.ptbl > tbody > tr > td { border-bottom: 1px solid #e6e6e6; padding: 1.8mm 2mm; vertical-align: top; } .ptbl td.c { text-align: center; color: #888; }
+.ptbl td p { margin: 1px 0 4px; font-size: 8pt; } .ptbl .skl { display: block; font-size: 8pt; color: #444; margin-top: 1px; } .ptbl small { display: block; }
+.iq2 { width: 100%; border-collapse: collapse; font-size: 8pt; margin-bottom: 1.5mm; } .iq2 td { padding: 1px 4px 1px 0; vertical-align: top; border: 0; }
+.iq2 tr.gh td { font-size: 6.8pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #777; padding-top: 2px; }
+.iq2 td.q { width: 46%; } .iq2 td.p { color: var(--red); width: 26%; } .iq2 td.n { color: #555; font-style: italic; }
+.lb2 { font-size: 6.5pt !important; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #888 !important; } .lb2.mt { margin-top: 1.5mm; } .mut { color: #aaa; }
+.own b { font-size: 8.5pt; margin-right: 4px; } .own small { font-size: 7pt; color: #777; }
+.spill { display: inline-block; border-radius: 999px; padding: 0 6px; font-size: 7pt; font-weight: 700; margin-right: 3px; }
+.spill.s0 { background: #f3f3f3; color: #555; } .spill.s1 { background: #fff4d6; color: #8a5a00; } .spill.s2 { background: #e6f4ea; color: #1a7f37; } .spill.late { background: #fde8eb; color: var(--red); }
+.pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5mm; } .pgrid.c4 { grid-template-columns: repeat(4, 1fr); gap: 1mm; } .pgrid.ev2 { grid-template-columns: repeat(4, 1fr); gap: 1mm; margin-bottom: 1mm; }
+.kv2 { margin: 0 0 1.2mm !important; } .kv2 .lb2 { margin-right: 1mm; }
+.pgrid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 1.2mm; border: 1px solid #e3e3e3; display: block; }
+.ipg .pf { position: absolute; left: 12mm; right: 12mm; bottom: 5mm; display: flex; justify-content: space-between; font-size: 7pt; color: #999; border-top: 1px solid #eee; padding-top: 1.2mm; }
+/* 27/11: khung nội dung email (FQS tự gửi từ email công ty) */
+.mp { background: #fff; border: 1px solid #ececec; border-radius: 18px; padding: 16px 18px; margin: 0 0 14px; }
+.mp-h b { font-size: 15px; font-weight: 600; } .mp-h small { display: block; color: #777; font-size: 13px; margin-top: 3px; line-height: 1.5; } .mp-h small b { font-size: 13px; }
+.mp-wait { color: #888; font-size: 13.5px; padding: 12px 0 2px; }
+.mp-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.mp-tabs button { border: 1px solid #ddd; background: #fff; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; color: #333; }
+.mp-tabs button small { margin-left: 6px; color: #999; } .mp-tabs button.on { background: #1a1a1a; border-color: #1a1a1a; color: #fff; } .mp-tabs button.on small { color: #ccc; }
+.mp-f { display: grid; grid-template-columns: 80px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid #f2f2f2; } .mp-f.top { align-items: start; }
+.mp-f > span { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: .04em; padding-top: 2px; }
+.mp-subj { font-size: 14px; color: #111; }
+.mp-body { font-family: Arial, sans-serif; font-size: 13.5px; color: #222; line-height: 1.55; background: #fafafa; border-radius: 12px; padding: 4px 14px; max-height: 420px; overflow: auto; user-select: text; }
+.mp-body table { margin: 6px 0; } .mp-body a { color: #c8102e; }
+.btn.sm { padding: 6px 10px; font-size: 12.5px; }
+.mp-act { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid #f2f2f2; } .mp-act small { color: #888; }
+@media (max-width: 760px) { .mp-f { grid-template-columns: 1fr; } }
 body.ro [data-conf], body.ro [data-rej], body.ro [data-unc], body.ro [data-rmo], body.ro .oadd, body.ro #mail, body.ro [data-rm], body.ro [data-rmn], body.ro .ev .add, body.ro [data-save] { display: none !important; }
 body.ro .seg button:not(.on) { opacity: .35; } body.ro .seg, body.ro textarea, body.ro input.in { pointer-events: none; } body.ro textarea, body.ro input.in { background: #fafafa; }
 </style>
@@ -248,7 +302,7 @@ function setThumb(a, u) { a.dataset.t = u; a.classList.remove('ld', 'noimg'); co
 const shrinkTo = (src, max) => new Promise(ok => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
   c.width = Math.round(im.width * s); c.height = Math.round(im.height * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .7)); }; im.onerror = () => ok(''); im.src = src; });
 function paintThumbs() {
-  document.querySelectorAll('a[data-pid]').forEach(a => { if (a.dataset.t) return; const u = TH[a.dataset.pid];
+  document.querySelectorAll('[data-pid]').forEach(a => { if (a.dataset.t) return; const u = TH[a.dataset.pid];
     if (u) setThumb(a, u); else if (u === '') { a.classList.remove('ld'); a.classList.add('noimg'); } });
 }
 function pumpThumbs() {
@@ -262,7 +316,7 @@ function pumpThumbs() {
 }
 function fillThumbs() {
   paintThumbs();
-  [...document.querySelectorAll('a[data-pid]')].filter(a => !a.dataset.t).map(a => a.dataset.pid)
+  [...document.querySelectorAll('[data-pid]')].filter(a => !a.dataset.t).map(a => a.dataset.pid)
     .forEach(id => { if (TH[id] === undefined && !thBusy[id]) { thBusy[id] = 1; thQ.push(id); } });
   pumpThumbs();
 }
@@ -303,8 +357,8 @@ function listTab() {
 function confTab() {
   const xs = grp(I.confirmed, true), todo = I.confirmed.filter(x => !x.mailedAt).length;
   // 11/11: bảng dòng như Danh sách cải thiện; cuối dòng nút × trả về tab 1 (khi chưa gửi mail)
-  return `<div class="bar1"><span class="sp">${I.confirmed.length} lượt đã xác nhận (${xs.length} mẫu) · ${todo} chưa gửi mail. Người gửi: <b>${esc(I.sender || '—')}</b> · CC: <b>${esc(I.cc || 'chưa cài (Config improveCc)')}</b></span>
-      <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button><button class="btn" id="mail" ${todo ? '' : 'disabled'}>✉ Gửi email cho các bộ phận</button></div>` +
+  return mailPanel(todo) + `<div class="bar1"><span class="sp">${I.confirmed.length} lượt đã xác nhận (${xs.length} mẫu) · ${todo} chưa gửi mail.</span>
+      <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button></div>` +
     (xs.length ? `<div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w6">Trạng thái</th><th class="w7"></th></tr></thead><tbody>${xs.map(x => `<tr>
       <td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small>${nEv(x)}</td><td class="c-dep">${dtags(x)}</td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>${descH(x)}${photoH(x)}${causeH(x)}</td>
@@ -313,12 +367,68 @@ function confTab() {
       <td class="c-x">${x.mailedAt ? '' : `<button class="x" data-unc="${esc(x.key)}" title="Trả về Danh sách cải thiện" aria-label="Trả về Danh sách cải thiện">×</button>`}</td></tr>`).join('')}</tbody></table></div>`
       : `<div class="empty">Chưa có vấn đề nào được xác nhận. Bấm "Đồng ý" ở "Danh sách cải thiện".</div>`);
 }
+// 27/11 (anh Thái + FQS): FQS gửi mail từ email công ty của mình, theo danh sách người nhận của FQS.
+// Trang chỉ soạn sẵn nội dung cho từng bộ phận (link riêng vào Tiến độ) → FQS sao chép, gửi, rồi bấm "Đã gửi".
+const PILOT_NOTE = 'Hiện tại đang test MQM quy trình mới, pilot trên PC trước, sẽ áp dụng rộng rãi và thông báo quy trình trong tháng 1/2027.';
+let MP = { key: '', data: null, err: '', sel: '' };
+function mailPanel(todo) {
+  if (!todo || ro()) return '';
+  const key = I.cycle + '|' + I.confirmed.filter(x => !x.mailedAt).map(x => x.iid + ':' + x.owners.join('+')).join(',');
+  if (MP.key !== key) { MP = { key, data: null, err: '', sel: MP.sel };
+    PC.post('issueMail', { cycle: I.cycle, send: false }).then(p => { if (MP.key !== key) return; if (!p.ok) throw new Error(p.error); MP.data = p; keep(); })
+      .catch(e => { if (MP.key === key) { MP.err = e.message; keep(); } }); }
+  const head = `<div class="mp-h"><div><b>Nội dung email gửi các bộ phận</b><small>FQS gửi từ email công ty của mình, theo danh sách người nhận của FQS. Sao chép tiêu đề và nội dung vào Outlook, gửi xong bấm <b>Đã gửi</b>.</small></div></div>`;
+  if (!MP.data) return `<section class="mp">${head}<div class="mp-wait">${MP.err ? 'Chưa soạn được nội dung: ' + esc(MP.err) : 'Đang soạn nội dung…'}</div></section>`;
+  const p = MP.data, ds = p.depts; if (!ds.length) return '';
+  const g = ds.find(x => x.dept === MP.sel) || ds[0]; MP.sel = g.dept;
+  const m = mailOf(p, g);
+  return `<section class="mp">${head}
+    <div class="mp-tabs">${ds.map(x => `<button class="${x.dept === g.dept ? 'on' : ''}" data-mpd="${esc(x.dept)}">${esc(x.dept)}<small>${x.n}</small></button>`).join('')}</div>
+    <div class="mp-f"><span>Tiêu đề</span><div class="mp-subj">${esc(m.subject)}</div><button class="btn gray sm" data-cp="subj">Sao chép</button></div>
+    <div class="mp-f top"><span>Nội dung</span><div class="mp-body">${m.html}</div><button class="btn gray sm" data-cp="body">Sao chép</button></div>
+    <div class="mp-act"><small>Hạn xử lý ${dmy(p.deadline)} · ${g.n} vấn đề · link riêng của ${esc(g.dept)}</small><button class="btn" data-mark="${esc(g.dept)}">✓ Đã gửi cho ${esc(g.dept)}</button></div></section>`;
+}
+function mailOf(p, g) {
+  const mon = PC.monthLabel(p.cycle), items = g.items.map(id => I.confirmed.find(x => x.iid === id)).filter(Boolean);
+  const subject = `[MQM ORION VINA] ${mon} · ${g.dept}: ${g.n} vấn đề cần xử lý · hạn ${dmy(p.deadline)}`;
+  const rows = items.map(x => [x.sampleId, x.sku, (x.what || []).length + ' vấn đề']);
+  // 27/11: 4 tuần xử lý, FQS kiểm tra tiến độ mỗi thứ 6 để làm báo cáo tiến độ
+  const fris = (() => { const out = [], end = new Date(p.deadline + 'T12:00:00'), d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + 1);
+    while (d <= end) { if (d.getDay() === 5) out.push(`${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`); d.setDate(d.getDate() + 1); } return out; })();
+  const friTxt = `FQS sẽ kiểm tra tiến độ vào thứ 6 hằng tuần${fris.length ? ' (' + fris.join(', ') + ')' : ''} để làm báo cáo tiến độ. Vui lòng cập nhật tiến độ trên link trước thứ 6.`;
+  const html = `<p>Kính gửi bộ phận <b>${esc(g.dept)}</b>,</p>
+<p>FQS đã xác nhận <b>${g.n}</b> vấn đề từ đánh giá mẫu thị trường ${esc(mon)} cần bộ phận xử lý. Hạn xử lý: <b>${dmy(p.deadline)}</b> (4 tuần).</p>
+<p>${esc(friTxt)}</p>
+<p>Vui lòng vào link dưới đây để xem chi tiết và cập nhật tiến độ xử lý (Chưa / Đang / Đã xử lý), kết quả cải tiến và evidence:<br><a href="${esc(g.url)}">Mở Tiến độ cải thiện · ${esc(g.dept)}</a><br><span style="font-size:12px;color:#666">Đây là link riêng của bộ phận ${esc(g.dept)}, chỉ hiển thị việc của bộ phận ${esc(g.dept)}. Vui lòng không chuyển tiếp ra ngoài bộ phận.</span></p>
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;font-size:13px"><tr style="background:#f2f2f2"><th>#</th><th>Mẫu</th><th>SKU</th><th>Số vấn đề</th></tr>${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</table>
+<p><i>Lưu ý: ${esc(PILOT_NOTE)}</i></p>
+<p>Trân trọng,<br>FQS</p>`;
+  const text = `Kính gửi bộ phận ${g.dept},\n\nFQS đã xác nhận ${g.n} vấn đề từ đánh giá mẫu thị trường ${mon} cần bộ phận xử lý. Hạn xử lý: ${dmy(p.deadline)} (4 tuần).\n\n${friTxt}\n\nVui lòng vào link dưới đây để xem chi tiết và cập nhật tiến độ xử lý (Chưa / Đang / Đã xử lý), kết quả cải tiến và evidence:\n${g.url}\n(Đây là link riêng của bộ phận ${g.dept}, chỉ hiển thị việc của bộ phận ${g.dept}. Vui lòng không chuyển tiếp ra ngoài bộ phận.)\n\n${rows.map((r, i) => `${i + 1}. ${r[0]} · ${r[1]} · ${r[2]}`).join('\n')}\n\nLưu ý: ${PILOT_NOTE}\n\nTrân trọng,\nFQS`;
+  return { subject, html, text };
+}
+async function copyMail(kind) {
+  const p = MP.data, g = p && p.depts.find(x => x.dept === MP.sel); if (!g) return;
+  const m = mailOf(p, g);
+  try {
+    if (kind === 'subj') await navigator.clipboard.writeText(m.subject);
+    else if (window.ClipboardItem) await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([`<div style="font-family:Arial;font-size:14px">${m.html}</div>`], { type: 'text/html' }), 'text/plain': new Blob([m.text], { type: 'text/plain' }) })]);
+    else await navigator.clipboard.writeText(m.text);
+    toast(kind === 'subj' ? 'Đã sao chép tiêu đề' : 'Đã sao chép nội dung · dán vào Outlook (Ctrl+V)');
+  } catch (e) { toast('Chưa sao chép được, hãy bôi đen và Ctrl+C'); }
+}
+async function markSent(dept, b) {
+  if (busy) return; busy = true; b.disabled = true; b.textContent = 'Đang lưu…';
+  try { const r = await PC.post('issueMail', { cycle: I.cycle, mark: true, depts: [dept] }); if (!r.ok) throw new Error(r.error);
+    toast(`Đã ghi: đã gửi mail cho ${dept}`); MP.sel = ''; await load();
+  } catch (e) { toast('Chưa lưu được: ' + e.message); b.disabled = false; b.textContent = `✓ Đã gửi cho ${dept}`; }
+  busy = false;
+}
 async function mailFlow() {
   if (busy) return; busy = true;
   try {
     const p = await PC.post('issueMail', { cycle: I.cycle, send: false }); if (!p.ok) throw new Error(p.error);
     const box = document.createElement('div'); box.className = 'modal';
-    box.innerHTML = `<div class="box"><h3>Gửi email cho các bộ phận</h3><p class="meta" style="margin:0">${PC.monthLabel(p.cycle)} · ${p.total} vấn đề · hạn xử lý <b>${dmy(p.deadline)}</b> (2 tuần)</p>
+    box.innerHTML = `<div class="box"><h3>Gửi email cho các bộ phận</h3><p class="meta" style="margin:0">${PC.monthLabel(p.cycle)} · ${p.total} vấn đề · hạn xử lý <b>${dmy(p.deadline)}</b> (4 tuần)</p>
       <table><thead><tr><th>Bộ phận</th><th>Số vấn đề</th><th>Email nhận</th></tr></thead><tbody>${p.depts.map(g => `<tr><td><b>${esc(g.dept)}</b></td><td>${g.n}</td><td class="${g.email ? '' : 'miss'}">${esc(g.email || 'Chưa có email, gửi về ' + (p.admin || 'quản lý'))}</td></tr>`).join('')}</tbody></table>
       <p class="meta">Người gửi: <b>${esc(p.sender)}</b> · CC: <b>${esc(p.cc || '— (chưa cài)')}</b></p>
       <p class="meta">Mỗi bộ phận nhận 1 mail: danh sách vấn đề + nút vào <b>Tiến độ cải thiện</b> (link riêng, chỉ thấy việc của bộ phận đó).</p>
@@ -355,9 +465,9 @@ function progCard(it) {
     <div class="pc-h"><div><b class="pc-sku">${esc(it.sku || it.sampleId)}</b>
         <div class="pc-meta"><span>Mẫu <b>${esc(it.sampleId)}</b></span><span>Bộ phận đánh giá <b>${esc(it.from || '—')}</b></span><span>Bộ phận xử lý <b>${esc(it.who)}</b></span><span>Hạn <b>${dmy(it.when)}</b></span></div></div>
       <div class="pc-st"><span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}<small>${esc(it.aid)}</small></div></div>
-    ${issueTable(it)}
-    <div class="pc-two">${it.cause ? `<div class="pc-box"><span>Nguyên nhân nghi ngờ</span><p>${esc(it.cause)}</p></div>` : ''}${it.suggest ? `<div class="pc-box"><span>Giải pháp tạm thời đề xuất</span><p>${esc(it.suggest)}</p></div>` : ''}</div>
-    ${(it.photos || []).length ? `<div class="pc-ph"><span class="lb">ẢNH MINH HOẠ</span>${photoH(it)}</div>` : ''}
+    <div class="pc-body"><div>${issueTable(it)}
+      <div class="pc-two">${it.cause ? `<div class="pc-box"><span>Nguyên nhân nghi ngờ</span><p>${esc(it.cause)}</p></div>` : ''}${it.suggest ? `<div class="pc-box"><span>Giải pháp tạm thời đề xuất</span><p>${esc(it.suggest)}</p></div>` : ''}</div></div>
+      <div class="pc-ph"><span class="lb">ẢNH MINH HOẠ VẤN ĐỀ${(it.photos || []).length ? ' · ' + it.photos.length : ''}</span>${(it.photos || []).length ? photoH(it) : '<span class="meta">Không có ảnh</span>'}</div></div>
     <div class="form"><h4>Kết quả cải tiến</h4>
       <div class="seg" data-st="${esc(it.aid)}">${STATUS.map((s, i) => `<button class="s${i} ${s === st ? 'on' : ''}" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div>
       <div class="f2"><div><span class="lb">NGUYÊN NHÂN GỐC (ĐÃ XÁC ĐỊNH)</span><textarea data-f="rootFix" data-a="${esc(it.aid)}" placeholder="VD: lực seal máy đóng gói line 3 thấp hơn tiêu chuẩn">${esc(v.rootFix)}</textarea></div>
@@ -380,8 +490,87 @@ function progTab() {
     ${keyDept ? '' : `<div class="filters"><button class="chip ${!fDept ? 'on' : ''}" data-d="">Mọi bộ phận<small>${all.length}</small></button>${depts.map(d => `<button class="chip ${fDept === d ? 'on' : ''}" data-d="${esc(d)}">${esc(d)}<small>${all.filter(x => x.who === d).length}</small></button>`).join('')}</div>`}
     <div class="kpis"><div class="kpi"><small>Việc cần xử lý</small><b>${pool.length}</b></div><div class="kpi red"><small>${STATUS[0]}</small><b>${n(STATUS[0])}</b></div>
       <div class="kpi"><small>${STATUS[1]}</small><b>${n(STATUS[1])}</b></div><div class="kpi"><small>${STATUS[2]}</small><b>${n(STATUS[2])}</b></div><div class="kpi red"><small>Quá hạn</small><b>${pool.filter(late).length}</b></div></div>
-    <div class="filters">${[['all', 'Tất cả'], [STATUS[0], STATUS[0]], [STATUS[1], STATUS[1]], [STATUS[2], STATUS[2]], ['late', 'Quá hạn']].map(([v, t]) => `<button class="chip ${fSt === v ? 'on' : ''}" data-s="${esc(v)}">${t}</button>`).join('')}</div>
-    ${xs.length ? xs.map(progCard).join('') : `<div class="empty">${all.length ? 'Không có việc nào theo lựa chọn này.' : 'Chưa có việc nào. Việc hiện ở đây ngay khi FQS bấm "Đồng ý" ở Danh sách cải thiện.'}</div>`}`;
+    <div class="filters">${[['all', 'Tất cả'], [STATUS[0], STATUS[0]], [STATUS[1], STATUS[1]], [STATUS[2], STATUS[2]], ['late', 'Quá hạn']].map(([v, t]) => `<button class="chip ${fSt === v ? 'on' : ''}" data-s="${esc(v)}">${t}</button>`).join('')}
+      <span class="fsp"></span><button class="btn gray sm2" id="pPdf" ${xs.length ? '' : 'disabled'}>⬇ Tải PDF</button><button class="btn gray sm2" id="pRaw" ${pool.length ? '' : 'disabled'}>⬇ Dữ liệu RAW (Excel)</button></div>
+    ${xs.length ? progSplit(xs) : `<div class="empty">${all.length ? 'Không có việc nào theo lựa chọn này.' : 'Chưa có việc nào. Việc hiện ở đây ngay khi FQS bấm "Đồng ý" ở Danh sách cải thiện.'}</div>`}`;
+}
+// 27/11 (anh Thái): danh sách mẫu bên trái (có ảnh minh hoạ), bên phải 1 vấn đề / 1 màn hình, nút ‹ › chuyển việc
+let selAid = '';
+function progSplit(xs) {
+  if (!xs.some(x => x.aid === selAid)) selAid = xs[0].aid;
+  const i = xs.findIndex(x => x.aid === selAid), it = xs[i];
+  const side = xs.map(x => { const e = edits[x.aid], st = (e || x).status, p = (x.photos || [])[0], t = p ? (p.t || TH[p.id] || '') : '';
+    return `<button class="ps ${x.aid === selAid ? 'on' : ''}" data-sel="${esc(x.aid)}">
+      <span class="pth ${p ? (t ? '' : 'ld') : 'none'}" ${p ? `data-pid="${esc(p.id)}" data-t="${esc(t)}"` : ''}>${p ? `<img ${t ? `src="${t}"` : ''} alt="">` : '📦'}</span>
+      <span class="pst"><b>${esc(x.sampleId)}</b><small>${esc(String(x.sku || '').split(' · ').slice(0, 2).join(' · '))}</small>
+        <em>${keyDept ? '' : esc(x.who) + ' · '}<i class="d s${STATUS.indexOf(st)}${late(x) ? ' lt' : ''}"></i>${esc(late(x) ? 'Quá hạn' : st)}${e ? ' · chưa lưu' : ''}</em></span></button>`; }).join('');
+  return `<div class="pl2"><aside class="pside"><div class="psh">${xs.length} việc · ${new Set(xs.map(x => x.sampleId)).size} mẫu</div>${side}</aside>
+    <div class="pmain"><div class="pnav"><button class="btn gray sm2" data-go="${i - 1}" ${i ? '' : 'disabled'}>‹ Trước</button><span>${i + 1} / ${xs.length}</span><button class="btn gray sm2" data-go="${i + 1}" ${i < xs.length - 1 ? '' : 'disabled'}>Sau ›</button></div>
+      ${progCard(it)}</div></div>`;
+}
+const progList = () => { const all = A.items, pool = all.filter(x => !fDept || x.who === fDept); return pool.filter(x => fSt === 'all' || (fSt === 'late' ? late(x) : x.status === fSt)); };
+// RAW: mọi thông tin bộ phận đã điền (1 dòng / việc) để tự làm báo cáo
+async function progRaw() {
+  const pool = A.items.filter(x => !fDept || x.who === fDept), txt = it => (it.detail || []).map(w => `${w.g}: ${w.q}${(w.tags || []).length ? ' [' + w.tags.join(', ') + ']' : ''}${w.note ? ' – ' + w.note : ''}`).join('\n') || it.what || '';
+  const rows = [['Mã việc', 'Tháng', 'Mã mẫu', 'SKU', 'Bộ phận đánh giá', 'Vấn đề (câu hỏi · lỗi · ghi chú)', 'Số vấn đề', 'Nguyên nhân nghi ngờ', 'Giải pháp tạm thời đề xuất', 'Bộ phận xử lý', 'Hạn', 'Trạng thái', 'Quá hạn',
+    'Nguyên nhân gốc (đã xác định)', 'Hành động khắc phục đã làm', 'Biện pháp phòng ngừa', 'Người phụ trách', 'Ngày hoàn thành', 'Số evidence', 'Link evidence', 'Số ảnh minh hoạ', 'Cập nhật lúc', 'Cập nhật bởi']]
+    .concat(pool.map(it => [it.aid, A.cycle, it.sampleId, it.sku, it.from, txt(it), (it.detail || []).length, it.cause, it.suggest, it.who, dmy(it.when), it.status, late(it) ? 'Có' : '',
+      it.rootFix, it.plan, it.prevent, it.owner, dmy(it.doneDate), (it.evidence || []).length, (it.evidence || []).map(f => driveUrl(f.id)).join('\n'), (it.photos || []).length, it.updatedAt ? fmtAt(it.updatedAt) : '', it.by || '']));
+  try { await PC.xlsx(`${PC.yymm(A.cycle)}_MQM_Tien_do_cai_thien_RAW${fDept ? '_' + fDept.replace(/\W+/g, '') : keyDept ? '_' + keyDept.replace(/\W+/g, '') : ''}.xlsx`, [{ name: 'RAW', rows, widths: [10, 9, 10, 28, 14, 60, 8, 26, 30, 16, 11, 12, 8, 34, 34, 34, 18, 12, 8, 40, 8, 14, 14] }]); }
+  catch (e) { toast('Chưa tải được Excel: ' + e.message); }
+}
+// PDF A4 ngang cùng định dạng "Danh sách cải thiện" bên Report: header đỏ, bảng chia trang theo chiều cao dòng, có ảnh
+const loadJs = src => new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('Không tải được thư viện PDF')); document.head.appendChild(s); });
+async function progPdf() {
+  const b = $('#pPdf'), xs = progList(); if (!xs.length) return; b.disabled = true; b.textContent = 'Đang chuẩn bị…';
+  const now = new Date(), p2 = n => String(n).padStart(2, '0'), today = `${p2(now.getDate())}/${p2(now.getMonth() + 1)}/${now.getFullYear()}`;
+  const PH = {}, ids = [...new Set(xs.flatMap(x => (x.photos || []).concat((x.evidence || []).filter(f => f.t)).map(p => p.id)))];
+  let done = 0; const q = ids.slice();
+  await Promise.all([0, 1, 2].map(async () => { while (q.length) { const id = q.shift(), p = xs.flatMap(x => (x.photos || []).concat(x.evidence || [])).find(z => z.id === id) || {};
+    PH[id] = TH[id] || p.t || '';
+    if (!PH[id]) { try { const d = await fetch(`${PC_API}?api=photo&id=${encodeURIComponent(id)}`, { credentials: 'omit' }).then(r => r.json()); PH[id] = d.ok ? await shrinkTo(d.data, 480) : ''; } catch (e) { PH[id] = ''; } }
+    b.textContent = `Đang tải ảnh… ${++done}/${ids.length}`; } }));
+  const imgs = (list, cls) => { const ps = (list || []).filter(p => PH[p.id]); return ps.length ? `<div class="pgrid c4 ${cls || ''}">${ps.map(p => `<img src="${PH[p.id]}" alt="">`).join('')}</div>` : ''; };
+  const GO = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'], gi = g => GO.indexOf(g) < 0 ? 9 : GO.indexOf(g);
+  const iss = it => { const d = (it.detail || []).map((w, k) => [w, k]).sort((a, b) => gi(a[0].g) - gi(b[0].g) || a[1] - b[1]).map(z => z[0]); let g0 = null; return d.length ? `<table class="iq2"><tbody>${d.map(w => { const gh = w.g !== g0 ? `<tr class="gh"><td colspan="3">${esc(w.g)}</td></tr>` : ''; g0 = w.g;
+    return `${gh}<tr><td class="q">${esc(String(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`; }).join('')}</tbody></table>` : `<p>${esc(it.what || '')}</p>`; };
+  const kv = (k, v) => `<p class="kv2"><span class="lb2">${k}</span> ${v ? esc(v) : '<span class="mut">Chưa ghi</span>'}</p>`;
+  const row = (it, i) => `<tr><td class="c">${i + 1}</td>
+    <td><b>${esc(it.sampleId)}</b><span class="skl">${esc(it.sku || '')}</span><small class="lb2 mt">Bộ phận đánh giá</small><span class="skl">${esc(it.from || '—')}</span>
+      <small class="lb2 mt">Bộ phận xử lý</small><div class="own"><b>${esc(it.who)}</b><span class="spill s${STATUS.indexOf(it.status)}">${esc(it.status)}</span>${late(it) ? '<span class="spill late">Quá hạn</span>' : ''}<small>Hạn ${dmy(it.when)}</small></div></td>
+    <td>${iss(it)}${it.cause ? kv('Nguyên nhân nghi ngờ', it.cause) : ''}${it.suggest ? kv('Giải pháp tạm thời', it.suggest) : ''}</td>
+    <td>${imgs(it.photos) || ((it.photos || []).length ? `<small>📷 ${it.photos.length} ảnh (xem trên app)</small>` : '<span class="mut">Không có ảnh</span>')}</td>
+    <td>${kv('Nguyên nhân gốc', it.rootFix)}${kv('Hành động khắc phục', it.plan)}${kv('Phòng ngừa tái diễn', it.prevent)}
+      <p class="kv2"><span class="lb2">Phụ trách · hoàn thành</span> ${esc([it.owner, dmy(it.doneDate)].filter(Boolean).join(' · ')) || '<span class="mut">Chưa ghi</span>'}</p>
+      ${(it.evidence || []).length ? `<small class="lb2">Evidence · ${it.evidence.length}</small>${imgs(it.evidence.filter(f => f.t), 'ev2')}${it.evidence.filter(f => !f.t).map(f => `<p>📄 ${esc(f.n)}</p>`).join('')}` : ''}</td></tr>`;
+  const fl = [fDept || keyDept ? 'Bộ phận xử lý: ' + (fDept || keyDept) : '', fSt !== 'all' ? 'Trạng thái: ' + (fSt === 'late' ? 'Quá hạn' : fSt) : ''].filter(Boolean).join(' · ');
+  const nDone = xs.filter(x => x.status === STATUS[2]).length;
+  const hdr = `<div class="ph1"><div class="pl">${typeof PC_LOGO === 'string' ? PC_LOGO : ''}<div><div class="pk">MQM ORION VINA · CẢI THIỆN CHẤT LƯỢNG</div><h1>Tiến độ cải thiện</h1>
+    <p>${PC.monthLabel(A.cycle)} · ${xs.length} việc · ${new Set(xs.map(x => x.sampleId)).size} mẫu · đã xử lý ${nDone}/${xs.length} · quá hạn ${xs.filter(late).length}${fl ? ' · ' + esc(fl) : ''}</p></div></div><div class="pr">Xuất ngày ${today}</div></div>`;
+  const th = `<thead><tr><th style="width:3%">#</th><th style="width:13%">Mẫu · bộ phận</th><th style="width:36%">Vấn đề · nguyên nhân nghi ngờ</th><th style="width:17%">Hình ảnh</th><th>Kết quả cải tiến của bộ phận</th></tr></thead>`;
+  const host = document.createElement('div'); host.id = 'impPdfHost'; document.body.appendChild(host);
+  try {
+    host.innerHTML = `<section class="ipg">${hdr}<table class="ptbl">${th}<tbody>${xs.map(row).join('')}</tbody></table></section>`;
+    const sec = host.querySelector('.ipg'), cs = getComputedStyle(sec);
+    const cap = sec.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - host.querySelector('.ph1').offsetHeight - 16 - host.querySelector('.ptbl > thead').offsetHeight - 12;
+    const hs = [...host.querySelectorAll('.ptbl > tbody > tr')].map(tr => tr.offsetHeight), pages = []; let cur = [], h = 0;
+    xs.forEach((x, i) => { if (cur.length && h + hs[i] > cap) { pages.push(cur); cur = []; h = 0; } cur.push(i); h += hs[i]; }); if (cur.length) pages.push(cur);
+    host.innerHTML = pages.map((p, k) => `<section class="ipg">${hdr}<table class="ptbl">${th}<tbody>${p.map(i => row(xs[i], i)).join('')}</tbody></table>
+      <div class="pf"><span>MQM ORION VINA · Tiến độ cải thiện · ${PC.monthLabel(A.cycle)}</span><span>Trang ${k + 1}/${pages.length}</span></div></section>`).join('');
+    if (window.__noPdf) return;   // xem trước bố cục
+    await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    await loadJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const secs = [...host.querySelectorAll('.ipg')], pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+    for (let i = 0; i < secs.length; i++) {
+      b.textContent = `Đang tạo PDF… ${i + 1}/${secs.length}`;
+      const src = [...secs[i].querySelectorAll('*')].map(el => getComputedStyle(el).color);
+      const cv = await html2canvas(secs[i], { scale: 2, backgroundColor: '#ffffff', logging: false, onclone: (doc, el) => { [...(el || doc.querySelectorAll('.ipg')[i]).querySelectorAll('*')].forEach((e, k) => { if (src[k]) e.style.color = src[k]; }); } });
+      if (i) pdf.addPage('a4', 'landscape');
+      pdf.addImage(cv.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 297, 210);
+    }
+    const fn = `${PC.yymm(A.cycle)}_MQM_Tien do cai thien${fDept || keyDept ? '_' + (fDept || keyDept) : ''}.pdf`; pdf.save(fn); toast('Đã tải ' + fn);
+  } catch (x) { toast('Chưa tạo được PDF: ' + x.message); }
+  finally { if (!window.__noPdf) host.remove(); b.disabled = false; b.textContent = '⬇ Tải PDF'; }
 }
 function render() {
   const showLists = !keyDept;
@@ -394,7 +583,7 @@ function render() {
   else if (!I) body = Ierr ? `<div class="empty">Không tải được danh sách: ${esc(Ierr)}<br><br><button class="btn" id="login">Đăng nhập lại</button></div>` : '<div class="empty">Đang tải…</div>';
   else body = stab === 'list' ? listTab() : confTab();
   const roBar = ro() ? '<div class="robar">👁 Chế độ chỉ xem · tài khoản này xem được danh sách và tiến độ cải thiện, không xác nhận, gửi mail hay sửa.</div>' : '';
-  document.body.classList.toggle('ro', ro());
+  document.body.classList.toggle('ro', ro()); document.body.classList.toggle('prog', stab === 'prog');
   $('#app').innerHTML = `${roBar}${showLists ? `<div class="filters">${PC.monthSelect(months, cycle)}</div>` : ''}${tabs}${body}`;
   if (ro()) document.querySelectorAll('#app textarea, #app input:not([type=file]), #app select:not(#month)').forEach(el => { el.readOnly = true; if (el.tagName === 'SELECT' || el.type === 'date') el.disabled = true; });
   bind();
@@ -423,9 +612,15 @@ PC.bar($('#pcbar'), 'Cải thiện'); load(); };
   document.querySelectorAll('[data-unc]').forEach(b => b.onclick = async () => { b.disabled = true;
     try { const r = await each(b.dataset.unc, { api: 'issueUnconfirm', d: {} }); I = r; toast('Đã đưa về danh sách chờ duyệt'); keep(); }
     catch (e) { toast('Chưa đưa về được: ' + e.message); b.disabled = false; } });
-  const ml = $('#mail'); if (ml) ml.onclick = mailFlow;
+  document.querySelectorAll('[data-mpd]').forEach(b => b.onclick = () => { MP.sel = b.dataset.mpd; keep(); });
+  document.querySelectorAll('[data-cp]').forEach(b => b.onclick = () => copyMail(b.dataset.cp));
+  document.querySelectorAll('[data-mark]').forEach(b => b.onclick = () => markSent(b.dataset.mark, b));
   const xl = $('#xls'); if (xl) xl.onclick = confXls;
   // sub-tab 3
+  document.querySelectorAll('[data-sel]').forEach(b => b.onclick = () => { selAid = b.dataset.sel; render(); const m = document.querySelector('.pmain'); if (m && m.getBoundingClientRect().top < 0) m.scrollIntoView({ block: 'start' }); });
+  document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { const xs = progList(), x = xs[+b.dataset.go]; if (!x) return; selAid = x.aid; render(); const s = document.querySelector('.ps.on'); if (s) s.scrollIntoView({ block: 'nearest' }); });
+  const pp = $('#pPdf'); if (pp) pp.onclick = progPdf;
+  const pr = $('#pRaw'); if (pr) pr.onclick = progRaw;
   document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { fDept = b.dataset.d; render(); });
   document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { fSt = b.dataset.s; render(); });
   document.querySelectorAll('[data-st]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.onclick = () => { touch(sg.dataset.st).status = b.dataset.v; keep(); }));

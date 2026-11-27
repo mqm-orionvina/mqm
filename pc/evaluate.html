@@ -218,7 +218,7 @@ const cqFor = () => { if (!me) return cqAll; const gs = TABS[curTab()].groups;
 // Định tính: mỗi mục ghi "Ổn" hoặc "Có vấn đề" + mô tả; có vấn đề thì ghi nguyên nhân nghi ngờ (trong / ngoài), giải pháp, bộ phận xử lý. Điểm 1–9 chỉ để tham khảo.
 const CAUSE_IN = ['Nguyên liệu', 'Phụ liệu / bao bì', 'Process sản xuất', 'Bảo quản kho nhà máy'];
 const CAUSE_OUT = ['Nhà cung cấp', 'Vận chuyển', 'Kho NPP / đại lý', 'Trưng bày / điểm bán', 'Thị trường / thời tiết', 'Chưa rõ'];
-const OWNERS = ['QA', 'R&D', 'Production', 'Agro', 'PUR', 'SCM', 'Sales', 'MKT', 'Design', 'PI', 'FQS'];
+const OWNERS = ['QA', 'R&D', 'Production Potato', 'Agro', 'PUR', 'SCM', 'Sales', 'MKT', 'Design', 'PI', 'FQS'];
 const I18N = {
   vi: {
     step: 'MQM ORION VINA · ĐÁNH GIÁ MẪU', title: 'Đánh giá mẫu', naH: n => `Chưa có mẫu · ${n} SKU (chưa chấm được)`, na: 'Chưa có', low: (a, b) => `Thiếu ${a}/${b} gói`, subLogin: 'Nhập Họ và Tên, bộ phận và chọn brand mình phụ trách. Đổi người: bấm Đăng xuất.', subList: 'Chọn mẫu để chấm. Mỗi người chấm độc lập.',
@@ -269,7 +269,7 @@ const I18N = {
     need: '미입력: ', nAttr: n => `${n}개 항목 이상 없음 / 문제 있음 미선택`, nDesc: '서술', nCause: '원인', nSol: '대책', nOwner: '처리 부서', ready: '저장 준비 완료',
     allOk: '모두 이상 없음',
     cause: { 'Nguyên liệu': '원료', 'Phụ liệu / bao bì': '부자재 / 포장재', 'Process sản xuất': '생산 공정', 'Bảo quản kho nhà máy': '공장 창고 보관', 'Nhà cung cấp': '협력사',
-      'Vận chuyển': '운송', 'Kho NPP / đại lý': '대리점 창고', 'Trưng bày / điểm bán': '매장 진열', 'Thị trường / thời tiết': '시장 / 날씨', 'Chưa rõ': '불명' }, owner: { Production: '생산' }, brandsTitle: '담당 브랜드', subBrands: '선택한 브랜드의 샘플만 목록에 표시됩니다.',
+      'Vận chuyển': '운송', 'Kho NPP / đại lý': '대리점 창고', 'Trưng bày / điểm bán': '매장 진열', 'Thị trường / thời tiết': '시장 / 날씨', 'Chưa rõ': '불명' }, owner: { Production: '생산', 'Production Potato': '생산 (감자칩)' }, brandsTitle: '담당 브랜드', subBrands: '선택한 브랜드의 샘플만 목록에 표시됩니다.',
     logout: '로그아웃', logoutArm: '한 번 더 누르면 로그아웃', loggedOut: '로그아웃되었습니다. 다른 사람은 이름, 부서, 브랜드를 입력하세요.',
     loading: '불러오는 중…', name: '이름', namePh: '예: 홍길동', dept: '부서', brands: '담당 브랜드', go: '샘플 목록으로',
     needName: '이름을 입력하고 부서를 선택하세요', needBrand: '브랜드를 1개 이상 선택하거나 전체 선택을 누르세요',
