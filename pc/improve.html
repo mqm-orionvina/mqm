@@ -166,11 +166,13 @@ table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.row
 .c-dep .dtag { margin: 0 4px 4px 0; } .nev { display: block; color: #c8102e; font-size: 12px; margin-top: 4px; }
 /* 16/11: chế độ chỉ xem (tài khoản PC.IMP_VIEWERS) — ẩn mọi nút ghi */
 .robar { background: #f3f3f3; border-radius: 14px; padding: 10px 14px; font-size: 13.5px; color: #333; margin: 0 0 12px; text-align: center; }
+/* 27/11: cuộn xuống thì thanh 3 tab con dính ngay dưới thanh trên cùng */
+.stabs { position: sticky; top: calc(var(--barh, 60px) + 8px); z-index: 15; box-shadow: 0 0 0 8px #fff, 0 6px 18px rgba(0,0,0,.06); }
 /* 27/11: Tiến độ — danh sách mẫu bên trái, 1 việc / màn hình */
 body.prog .wrap { max-width: 1320px; }
 .fsp { flex: 1; } .btn.sm2 { padding: 8px 14px; font-size: 13.5px; }
 .pl2 { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
-.pside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; border: 1.5px solid #ececec; border-radius: 20px; padding: 8px; }
+.pside { position: sticky; top: calc(var(--barh, 60px) + 84px); max-height: calc(100vh - var(--barh, 60px) - 96px); overflow: auto; border: 1.5px solid #ececec; border-radius: 20px; padding: 8px; }
 .psh { font-size: 12px; font-weight: 700; color: #8a8a8a; padding: 6px 8px 8px; }
 .ps { display: flex; gap: 10px; width: 100%; text-align: left; border: 0; background: none; font: inherit; padding: 8px; border-radius: 14px; cursor: pointer; align-items: center; }
 .ps:hover { background: #f6f6f6; } .ps.on { background: #111; color: #fff; } .ps.on small, .ps.on em { color: #cfcfcf; }
@@ -683,6 +685,12 @@ function lightbox(id, t) {
 document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[data-pid]'); if (!a) return; e.preventDefault(); lightbox(a.dataset.pid, a.dataset.t); });
 PC.bar($('#pcbar'), 'Cải thiện');
 load();
+// 27/11: chiều cao thanh trên cùng → vị trí dính của thanh tab con
+const setBarH = () => document.documentElement.style.setProperty('--barh', $('#pcbar').offsetHeight + 'px'); setBarH(); addEventListener('resize', setBarH);
+// 27/11: đăng nhập / đăng xuất ở tab khác → trang này tự nhận (không bắt đăng nhập lại); đang sửa dở thì không tải lại
+(() => { const who = () => { const u = PC.user(); return u ? u.user + '|' + u.role : ''; }; let seen = who();
+  const sync = () => { const w = who(); if (w === seen) return; seen = w; if (Object.keys(edits).length || Object.keys(ownEdit).length) return; PC.bar($('#pcbar'), 'Cải thiện'); load(); };
+  addEventListener('storage', e => { if (e.key === 'mqmPcUser' || e.key === null) sync(); }); addEventListener('focus', sync); document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); }); })();
 </script>
 </body>
 </html>

@@ -138,6 +138,8 @@ function renderGate() {
   if (u && PC.can(part, u)) location.href = $(id).href; else if (u) alert('Tài khoản này không có quyền vào phần này.');
 }));
 renderMe();
+// 27/11: đăng nhập / đăng xuất ở tab khác → trang chủ tự cập nhật
+addEventListener('storage', e => { if (e.key === 'mqmPcUser' || e.key === null) renderMe(); });
 // 11/11: bỏ khung tình trạng tháng ở trang chủ (anh Thái)
 </script>
 </body>
