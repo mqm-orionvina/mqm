@@ -167,12 +167,20 @@ table.rows { table-layout: fixed; } table.rows th.w1 { width: 130px; } table.row
 /* 16/11: chế độ chỉ xem (tài khoản PC.IMP_VIEWERS) — ẩn mọi nút ghi */
 .robar { background: #f3f3f3; border-radius: 14px; padding: 10px 14px; font-size: 13.5px; color: #333; margin: 0 0 12px; text-align: center; }
 /* 27/11: cuộn xuống thì thanh 3 tab con dính ngay dưới thanh trên cùng */
-.stabs { position: sticky; top: calc(var(--barh, 60px) + 8px); z-index: 15; box-shadow: 0 0 0 8px #fff, 0 6px 18px rgba(0,0,0,.06); }
+/* 27/11 v2 (anh Thái): thanh tab kiểu Google — nhỏ, full ngang màn hình, gạch chân tab đang chọn */
+html { overflow-x: clip; } body { --wrapw: 1100px; } body.prog { --wrapw: 1320px; }
+.stabs { position: sticky; top: var(--barh, 60px); z-index: 15; display: flex; gap: 4px; width: 100vw; max-width: none; margin: 6px 0 18px calc(50% - 50vw); padding: 0 0 0 calc((100vw - min(100vw, var(--wrapw))) / 2 + 16px);
+  background: #fff; border-radius: 0; border-bottom: 1px solid #e6e6e6; }
+.stabs button { flex: none; border-radius: 0; padding: 13px 18px 11px; font-size: 14px; font-weight: 500; color: #5f6368; border-bottom: 3px solid transparent; background: none; }
+.stabs button:hover { background: #f6f6f6; color: #111; }
+.stabs button.on { background: none; color: var(--red); border-bottom-color: var(--red); font-weight: 600; }
+.stabs button small { font-weight: 500; opacity: 1; margin-left: 6px; background: #f1f1f1; color: #5f6368; border-radius: 999px; padding: 1px 7px; font-size: 12px; }
+.stabs button.on small { background: #fdecee; color: var(--red); }
 /* 27/11: Tiến độ — danh sách mẫu bên trái, 1 việc / màn hình */
 body.prog .wrap { max-width: 1320px; }
 .fsp { flex: 1; } .btn.sm2 { padding: 8px 14px; font-size: 13.5px; }
 .pl2 { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
-.pside { position: sticky; top: calc(var(--barh, 60px) + 84px); max-height: calc(100vh - var(--barh, 60px) - 96px); overflow: auto; border: 1.5px solid #ececec; border-radius: 20px; padding: 8px; }
+.pside { position: sticky; top: calc(var(--barh, 60px) + 60px); max-height: calc(100vh - var(--barh, 60px) - 72px); overflow: auto; border: 1.5px solid #ececec; border-radius: 20px; padding: 8px; }
 .psh { font-size: 12px; font-weight: 700; color: #8a8a8a; padding: 6px 8px 8px; }
 .ps { display: flex; gap: 10px; width: 100%; text-align: left; border: 0; background: none; font: inherit; padding: 8px; border-radius: 14px; cursor: pointer; align-items: center; }
 .ps:hover { background: #f6f6f6; } .ps.on { background: #111; color: #fff; } .ps.on small, .ps.on em { color: #cfcfcf; }
