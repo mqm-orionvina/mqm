@@ -72,6 +72,12 @@ textarea:focus { outline: none; border-color: var(--blue); background: var(--car
 .sig { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; } .sig:last-child { border-bottom: 0; }
 .top3 label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; cursor: pointer; font-size: 14px; } .top3 input { margin-top: 5px; }
 .send { display: block; width: 100%; font: 700 16px var(--body); border: 0; border-radius: 8px; padding: 14px; background: var(--ink); color: var(--card); cursor: pointer; }
+.send:disabled { background: var(--line); color: var(--muted); cursor: default; }
+#start { margin-top: 18px; }
+.pick.big { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.pick.big span { display: block; text-align: center; font-size: 16px; padding: 14px 0; }
+@media (max-width: 640px) { .pick.big { grid-template-columns: repeat(3, 1fr); } }
+.who { font-size: 14px; color: var(--ink2); margin: 0 0 12px; } .who b { color: var(--ink); } .who a { color: var(--blue); }
 .note { color: var(--muted); font-size: 13px; margin-top: 10px; }
 .toast { display: none; border: 1px solid var(--ok); color: var(--ok); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-weight: 600; }
 @media (max-width: 640px) { .steps, .claim { grid-template-columns: 1fr; } .steps div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
@@ -84,8 +90,25 @@ textarea:focus { outline: none; border-color: var(--blue); background: var(--car
 <div class="wrap">
   <div class="eyebrow">RnR Project · Khảo sát dành cho MKT Head</div>
   <h1>MKT đang làm thay việc của bộ phận khác ở đâu? Chị thấy đúng không?</h1>
-  <p class="lead">Team RnR đọc 109 email CC (19–24/10/2026) và ghi lại 14 việc mà MKT đang làm phần việc của bộ phận khác, hoặc 2 part MKT cùng xử lý một việc. Đây mới là nhận định từ email. Nhờ chị xác nhận từng việc trước khi đem đi họp chốt RACI với các bộ phận. Mất khoảng 10–15 phút. Không cần ghi tên, chỉ cần chọn part.</p>
+  <p class="lead">Team RnR đọc 450 email CC (19/10–27/11/2026) và ghi lại 19 việc mà MKT đang làm phần việc của bộ phận khác, hoặc 2 part MKT cùng xử lý một việc. Đây mới là nhận định từ email. Nhờ chị xác nhận từng việc trước khi đem đi họp chốt RACI với các bộ phận. Mất khoảng 15–20 phút. Không cần ghi tên, chỉ cần chọn part.</p>
 
+  <div id="gate">
+  <div class="card">
+    <h2>Chị phụ trách part nào?</h2>
+    <div class="pick big" id="part">
+      <label><input type="radio" name="part" value="MKT 1"><span>MKT 1</span></label>
+      <label><input type="radio" name="part" value="MKT 2"><span>MKT 2</span></label>
+      <label><input type="radio" name="part" value="MKT 3"><span>MKT 3</span></label>
+      <label><input type="radio" name="part" value="MKT 4"><span>MKT 4</span></label>
+      <label><input type="radio" name="part" value="PR"><span>PR</span></label>
+    </div>
+    <p class="note" id="partNote">Chọn part trước, các việc của part chị sẽ được đưa lên đầu.</p>
+    <button class="send" id="start" disabled>Vào đánh giá</button>
+  </div>
+  </div>
+
+  <div id="survey" hidden>
+  <div class="who">Part <b id="whoPart"></b> · <a href="#" id="changePart">Đổi part</a></div>
   <div class="card">
     <h2>Cách trả lời</h2>
     <div class="steps">
@@ -99,19 +122,8 @@ textarea:focus { outline: none; border-color: var(--blue); background: var(--car
     </div>
   </div>
 
-  <div class="card">
-    <h2>Chị phụ trách part nào?</h2>
-    <div class="pick" id="part">
-      <label><input type="radio" name="part" value="MKT 1"><span>MKT 1</span></label>
-      <label><input type="radio" name="part" value="MKT 2"><span>MKT 2</span></label>
-      <label><input type="radio" name="part" value="MKT 3"><span>MKT 3</span></label>
-      <label><input type="radio" name="part" value="MKT 4"><span>MKT 4</span></label>
-      <label><input type="radio" name="part" value="PR"><span>PR</span></label>
-    </div>
-    <p class="note" id="partNote">Chọn part để đưa các việc của part chị lên đầu.</p>
-  </div>
-
-  <div class="bar"><div class="track"><i id="prog"></i></div><small id="progT">0 / 14 việc</small></div>
+  <p class="note" id="partNote2" style="margin:-4px 0 12px"></p>
+  <div class="bar"><div class="track"><i id="prog"></i></div><small id="progT">0 / 19 việc</small></div>
   <div id="items"></div>
 
   <div class="card">
@@ -125,10 +137,11 @@ textarea:focus { outline: none; border-color: var(--blue); background: var(--car
   <button class="send" id="send">Gửi câu trả lời</button>
   <div class="toast" id="toast">Bản xem trước: câu trả lời chưa được gửi đi đâu.</div>
   <p class="note">Bảng chỉ dùng mã bộ phận, không có tên cá nhân. Nhận định dựng từ email nên có thể thiếu bối cảnh; câu trả lời của chị dùng để chỉnh lại trước khi chốt RACI với các bộ phận.</p>
+  </div>
 </div>
 
 <script>
-// 14 nhận định từ rr-chong-lan.html (bản 26/10/2026)
+// 19 nhận định: 14 từ rr-chong-lan.html (26/10) + cập nhật corpus 19/10–27/11/2026 (450 email, 361 chuỗi)
 const ITEMS = [
  { t: 'Giftset Less Sugar 16P: timeline và sản lượng sản xuất', p: ['MKT 1'], d: ['Sales 2','SCM','Planning nhà máy','PUR','QA','FS','NCC'], lv: 'hi',
    o: 'MKT đang tự cân đối capa giữa các SKU, đưa phương án sản xuất và nhắc PUR release PO với NCC.', r: 'SCM · Planning',
@@ -136,12 +149,12 @@ const ITEMS = [
  { t: 'GS Less Sugar 16P: đề xuất đàm phán giá và chuyển 100% sản lượng sang NCC khác', p: ['MKT 1'], d: ['Design','PUR','NCC','PI','Production'], lv: 'hi',
    o: 'MKT đánh giá năng lực NCC (tiến độ, chất lượng giấy) và đề xuất đổi NCC.', r: 'PUR · QA',
    a: 'PUR làm đánh giá NCC theo tiêu chí tiến độ, giá, chất lượng. MKT và Design chỉ đưa tiêu chuẩn chất lượng in.', raci: 'R PUR · A trưởng PUR · C MKT, Design, QA · I Production' },
- { t: 'Bidding Giftset B2B Tết Y27, đấu thầu giftset Samsung, lỗi giấy in GS An', p: ['MKT 4'], d: ['PUR','NCC','Sales 1','Design','PI','Khách hàng B2B'], lv: 'hi',
-   o: 'MKT phản đối kết quả thầu của PUR, nhưng vẫn phải ký nhận hàng lỗi để kịp đóng hàng. Chưa rõ ai có quyền nghiệm thu chất lượng.', r: 'PUR · QA',
+ { t: 'Bidding Giftset B2B Tết Y27, đấu thầu giftset Samsung, lỗi giấy in GS An, phụ liệu An Tài Lộc / An Thịnh (NCC APP)', p: ['MKT 4'], d: ['PUR','NCC','Sales 1','Design','PI','Nhà máy YP','Khách hàng B2B'], lv: 'hi',
+   o: 'MKT phản đối kết quả thầu của PUR, nhưng vẫn phải ký nhận hàng lỗi để kịp đóng hàng. Với phụ liệu lỗi của NCC APP, MKT trực tiếp yêu cầu NCC giải trình, và nhà máy từ chối nhận hàng vì "MKT không đồng ý sử dụng". Chưa rõ ai có quyền nghiệm thu chất lượng.', r: 'PUR · QA',
    a: 'Lập tiêu chí nghiệm thu bao bì, do QA ký. MKT không ký nhận hàng. Sales 1 là đầu mối với khách hàng Samsung.', raci: 'R PUR (thầu) · A QA (nghiệm thu) · C MKT 4, Design · I Sales 1' },
- { t: 'Issue chất lượng Chocopie Sakura', p: ['MKT 1'], d: ['R&D','QA','PUR','Production','SCM'], lv: 'hi',
-   o: 'MKT đang điều phối các bộ phận theo dõi tiến độ xử lý một lỗi kỹ thuật (giao nhận, kiểm nghiệm nguyên liệu cải tiến).', r: 'R&D · QA',
-   a: 'R&D làm owner của issue, QA theo dõi khắc phục. MKT chỉ nhận báo cáo và quyết định lịch bán.', raci: 'R R&D · A QA · C PUR, Production, SCM · I MKT 1' },
+ { t: 'Issue chất lượng sản phẩm: Chocopie Sakura, Jelly King Monkey / King Hải Tặc', p: ['MKT 1','MKT 2'], d: ['R&D','QA','PUR','Production','SCM','Sales 1','Sales 2'], lv: 'hi',
+   o: 'MKT đang điều phối các bộ phận theo dõi tiến độ xử lý lỗi kỹ thuật (Chocopie Sakura), và tự thông báo cho Sales về lỗi máy tiêm nhân ở dây chuyền Jelly Mỹ Phước.', r: 'R&D · QA',
+   a: 'R&D làm owner của issue, QA theo dõi khắc phục và thông báo cho Sales. MKT chỉ nhận báo cáo và quyết định lịch bán.', raci: 'R R&D · A QA · C PUR, Production, SCM · I MKT, Sales' },
  { t: 'Goute Topping Cốm giảm gram (18,6 g → 16,3 g): khả thi sản xuất, MFC, semi cho giftset', p: ['MKT 2','MKT 4'], d: ['SCM','Production YP','Planning','PUR','Sales'], lv: 'hi',
    o: '2 part MKT cùng xử lý 1 thay đổi. MKT 2 đang tự đánh giá tính khả thi vận hành.', r: 'MKT 2 (1 đầu mối) · SCM',
    a: 'Chỉ 1 đầu mối MKT (brand Goute) gửi thông tin. SCM đánh giá khả thi sản xuất song song 2 trọng lượng. MKT 4 (giftset) chỉ góp ý.', raci: 'R MKT 2 · A trưởng MKT · C MKT 4, SCM, Production · I PUR, Sales' },
@@ -157,12 +170,12 @@ const ITEMS = [
  { t: 'Miz 8P phase-out 2027: kiểm tồn phụ liệu để clear tồn', p: ['MKT 2'], d: ['PUR YP','SCM','Sales'], lv: 'mid',
    o: 'MKT đi hỏi tồn phụ liệu thay cho Sales và SCM.', r: 'SCM',
    a: 'Lập quy trình phase-out do SCM chủ trì. PUR tự báo tồn khi có danh sách phase-out.', raci: 'R SCM · C PUR, Sales · I MKT 2' },
- { t: 'Set up giá Boom/King Jelly trên hệ thống, tách số Goute Tết theo mã MDM', p: ['MKT 2'], d: ['IT','Sales (KAM)'], lv: 'mid',
-   o: 'MKT nhập giá lên hệ thống để KAM lên đơn, và xin IT tách số liệu bán.', r: 'Sales Admin · IT',
+ { t: 'Cài giá và quy cách bán trên OMS / SCMZ: Boom/King Jelly, FINDA Tết, Tayo Couple, O\'Star Tết (EA → Case), Giftset Tết B2B', p: ['MKT 2','MKT 3','MKT 4'], d: ['IT','Sales (KAM)','Sales B2B'], lv: 'hi',
+   o: '3 part MKT cùng tự gửi IT cài giá, đổi giá theo yêu cầu KAM và đổi quy cách bán trên hệ thống để Sales lên đơn. MKT cũng xin IT tách số liệu bán theo mã MDM.', r: 'Sales Admin · IT',
    a: 'Sales Admin là owner bảng giá trên hệ thống. MKT chỉ duyệt giá. IT làm báo cáo theo SKU.', raci: 'R Sales Admin · A MKT (duyệt giá) · C IT · I KAM' },
- { t: 'Cà phê Nestle cho GSet An B2B: sản lượng và lead time', p: ['MKT 4'], d: ['PUR','Sales','NCC'], lv: 'mid',
-   o: 'MKT xác nhận sản lượng và lead time với PUR, dù số lấy từ sale plan.', r: 'Sales · SCM',
-   a: 'Sales đưa forecast, SCM chuyển nhu cầu cho PUR. MKT chỉ chốt concept giftset.', raci: 'R SCM · C Sales, MKT 4 · I PUR' },
+ { t: 'Giftset B2B (Samsung, GSet An): MKT chốt số lượng hàng mua ngoài và nhờ PUR lên PO, thuê nhân sự phát quà', p: ['MKT 4'], d: ['PUR','Sales B2B','SCM','NCC','Agency'], lv: 'hi',
+   o: 'MKT tự gửi số lượng đặt hàng (cà phê Nestle, sữa Milo, hạt dẻ CJ, túi vải), cập nhật khi khách tăng số và nhờ PUR lên PO. MKT cũng xin báo giá nhân sự phát quà cho khách Samsung.', r: 'Sales B2B · SCM',
+   a: 'Sales B2B quản lý đơn của khách và gửi số lượng cho SCM, SCM chuyển nhu cầu cho PUR. MKT chỉ chốt concept và thiết kế giftset.', raci: 'R Sales B2B · A SCM · C MKT 4, PUR · I Nhà máy' },
  { t: 'CPIE Less Sugar 12P: rủi ro luật định với claim "Giảm 50% đường", "Giảm calo"', p: ['MKT 1'], d: ['QA','FS','Legal','HQ'], lv: 'mid',
    o: 'MKT đứng giữa chuyển thông tin qua lại giữa QA và Legal về tính hợp lệ của claim.', r: 'QA (Regulatory)',
    a: 'QA làm owner tính hợp lệ của claim, Legal tư vấn. MKT quyết định thông điệp sau khi có kết luận.', raci: 'R QA · C Legal · A MKT 1 (thông điệp) · I HQ' },
@@ -172,6 +185,21 @@ const ITEMS = [
  { t: 'Bánh gạo An Gấc hộp 14P: kế hoạch lắp máy và test line mùa Tết', p: ['MKT 3'], d: ['Production','ENG','PI','SCM'], lv: 'lo',
    o: 'MKT thông báo kế hoạch lắp máy và test line.', r: 'ENG',
    a: 'ENG gửi kế hoạch lắp máy và test line. MKT chỉ xác nhận ngày cần hàng.', raci: 'R ENG · C PI, Production · I MKT 3, SCM' },
+ { t: 'Đơn hàng B2B kẹo cà phê FINDA 180g / 200g (Viettel và các buyer khác)', p: ['MKT 2'], d: ['Sales B2B','SCM','Planning','PUR','PI'], lv: 'hi',
+   o: 'MKT hỏi B2B số lượng và thời gian, giục kết quả thầu để SCM lên kế hoạch sản xuất, rồi tổng hợp 4 đơn hàng gửi các bộ phận.', r: 'Sales B2B · SCM',
+   a: 'Sales B2B làm đầu mối đơn hàng và gửi sales plan cho SCM. MKT chỉ lo quy cách sản phẩm và bao bì (PI request).', raci: 'R Sales B2B · A SCM · C MKT 2, PI · I PUR, Planning' },
+ { t: 'Đề nghị đi air nguyên liệu khi Sales tăng sale plan (semi GSet An, Marine Boy, seasoning O\'Star Festive)', p: ['MKT 3','MKT 4'], d: ['SCM','Planning','PUR'], lv: 'mid',
+   o: 'MKT tự tính lượng nguyên liệu cần đi air và đề nghị SCM/Planning, dù lý do là Sales tăng số.', r: 'SCM · Planning',
+   a: 'SCM so sale plan mới với tồn và lead time, quyết định đi air và chi phí. MKT chỉ được hỏi về giá thành.', raci: 'R SCM · A Planning · C MKT, Sales · I PUR' },
+ { t: 'Line Jelly mới ở nhà máy Yên Phong: nhắc chuẩn bị vật tư, kiểm tồn phụ liệu, bidding NCC', p: ['MKT 2'], d: ['R&D','PUR','Planning','SCM','ENG','Nhà máy MP/YP'], lv: 'mid',
+   o: 'MKT tổng hợp các bước và nhắc PUR, Planning, SCM, ENG chuẩn bị cho việc chuyển sản xuất Jelly sang YP.', r: 'SCM · R&D',
+   a: 'SCM (hoặc R&D) làm chủ dự án chuyển line và theo dõi tiến độ. MKT chỉ cập nhật địa chỉ sản xuất trên thiết kế film.', raci: 'R SCM · C R&D, ENG, PUR · I MKT 2' },
+ { t: 'Master data trên SCMZ / MDM: tạo brand mới cho cả MKT, sửa tên xuất hóa đơn', p: ['MKT 3','MKT 4'], d: ['IT','MDM','Sales Admin'], lv: 'lo',
+   o: 'MKT 4 thay mặt cả team MKT xin tạo / xóa brand trên SCMZ. MKT 3 tự kiểm tra trường tên sản phẩm in trên hóa đơn.', r: 'MDM · Sales Admin',
+   a: 'Bộ phận quản lý master data làm theo checklist khi có sản phẩm mới. MKT chỉ đưa tên brand và tên sản phẩm.', raci: 'R MDM · C MKT · I IT, Sales Admin' },
+ { t: 'Sticker cho Mega Market 10Y26 (60.000 cái): lấy báo giá và hợp đồng với nhà in', p: ['MKT 3'], d: ['PUR','NCC in'], lv: 'lo',
+   o: 'MKT tự làm việc với NCC in để lấy báo giá, hợp đồng draft và lịch giao hàng.', r: 'PUR',
+   a: 'PUR làm báo giá, hợp đồng và đặt hàng. MKT chỉ đưa file thiết kế, số lượng và ngày cần.', raci: 'R PUR · C MKT 3 · I Sales' },
 ];
 const SIGS = ['MKT mở email đầu tiên, nhưng nội dung là việc vận hành: capa, sản lượng, lịch sản xuất, tồn phụ liệu, PO, NCC, nhập giá lên hệ thống.',
   'Việc có nhiều bộ phận tham gia hoặc cần chuyên môn không thuộc MKT, nhưng MKT là người quyết định.',
@@ -218,8 +246,15 @@ function update() {
   document.getElementById('prog').style.width = (done / ITEMS.length * 100) + '%';
   document.getElementById('progT').textContent = `${done} / ${ITEMS.length} việc`;
 }
-document.querySelectorAll('#part input').forEach(r => r.onchange = () => { myPart = r.value;
-  document.getElementById('partNote').textContent = `Các việc của ${myPart} đã đưa lên đầu (${ITEMS.filter(x => x.p.includes(myPart)).length} việc). Việc của part khác ở bên dưới.`; renderItems(); });
+document.querySelectorAll('#part input').forEach(r => r.onchange = () => { myPart = r.value; const st = document.getElementById('start');
+  st.disabled = false; st.textContent = `Vào đánh giá · ${myPart}`;
+  document.getElementById('partNote').textContent = `${myPart} có ${ITEMS.filter(x => x.p.includes(myPart)).length} việc, sẽ hiện lên đầu. Việc của part khác ở bên dưới.`; });
+document.getElementById('start').onclick = () => { if (!myPart) return;
+  document.getElementById('whoPart').textContent = myPart;
+  document.getElementById('partNote2').textContent = `Các việc của ${myPart} ở đầu danh sách (${ITEMS.filter(x => x.p.includes(myPart)).length} việc), việc của part khác ở bên dưới.`;
+  document.getElementById('gate').hidden = true; document.getElementById('survey').hidden = false; renderItems(); window.scrollTo(0, 0); };
+document.getElementById('changePart').onclick = e => { e.preventDefault();
+  document.getElementById('survey').hidden = true; document.getElementById('gate').hidden = false; window.scrollTo(0, 0); };
 document.getElementById('sigs').innerHTML = SIGS.map((s, i) => `<div class="sig"><span>${i + 1}. ${esc(s)}</span>${opts('s_' + i, [['ok', 'Đồng ý', 'g'], ['no', 'Không đồng ý', 'r']])}</div>`).join('');
 document.getElementById('top3').innerHTML = ITEMS.map((x, i) => `<label><input type="checkbox" value="${i}"><span><b>${i + 1}.</b> ${esc(x.t)}</span></label>`).join('');
 document.querySelectorAll('#top3 input').forEach(c => c.onchange = () => { const on = document.querySelectorAll('#top3 input:checked'); if (on.length > 3) c.checked = false; });
