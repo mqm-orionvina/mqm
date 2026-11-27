@@ -187,6 +187,11 @@ body.prog .wrap { max-width: 1320px; }
 .pth { flex: none; width: 54px; height: 54px; border-radius: 10px; overflow: hidden; background: #f1f1f1; display: grid; place-items: center; font-size: 20px; }
 .pth img { width: 100%; height: 100%; object-fit: cover; display: block; } .pth.ld img { visibility: hidden; } .pth.ld { background: linear-gradient(90deg,#f1f1f1,#e4e4e4,#f1f1f1) 0 0/200% 100%; animation: shim 1.2s linear infinite; } .pth.noimg img { display: none; } .pth.noimg::after { content: '📷'; }
 .pst { min-width: 0; display: flex; flex-direction: column; } .pst b { font-size: 14px; } .pst small { font-size: 12px; color: #6b6b6b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pst em { font-style: normal; font-size: 11.5px; color: #8a8a8a; margin-top: 2px; }
+/* 27/11: tag trạng thái sát góc trên bên phải của mỗi mẫu */
+.ps { position: relative; padding-right: 8px; } .pst { padding-top: 14px; }
+.pstag { position: absolute; top: 6px; right: 6px; font-size: 10.5px; font-weight: 600; line-height: 1; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+.pstag.s0 { background: #fdecee; color: #c8102e; } .pstag.s1 { background: #fff4d6; color: #8a5a00; } .pstag.s2 { background: #e6f4ea; color: #1a7f37; } .pstag.lt { background: #c8102e; color: #fff; }
+.ps.on .pstag.s0 { background: #3a1016; color: #ff8a9a; } .ps.on .pstag.s1 { background: #3a2e10; color: #ffcf66; } .ps.on .pstag.s2 { background: #123a20; color: #7fe0a0; }
 .pst i.d { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: 1px; background: #c8102e; } .pst i.d.s1 { background: #e8a400; } .pst i.d.s2 { background: #2e9b4f; } .pst i.d.lt { background: #c8102e; box-shadow: 0 0 0 2px #fde8eb; }
 .pmain .item { margin: 0; padding: 20px 22px; }
 .pnav { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 0 0 10px; } .pnav span { font-size: 13px; color: #6b6b6b; min-width: 54px; text-align: center; }
@@ -195,6 +200,7 @@ body.prog .wrap { max-width: 1320px; }
 .pmain table.itab { font-size: 14px; } .pmain table.itab td.tg0 { width: 92px; } .pmain table.itab td.q0 { width: 46%; } .pmain table.itab td { padding: 8px 10px; }
 .pmain .pc-two { margin: 12px 0 0; }
 @media (max-width: 1000px) { .pl2 { grid-template-columns: 1fr; } .pside { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; } .psh { display: none; } .ps { flex: none; width: 230px; } .pc-body { grid-template-columns: 1fr; } .pc-body .phrow a { width: 96px; } }
+body.notabs .pside { top: calc(var(--barh, 60px) + 12px); max-height: calc(100vh - var(--barh, 60px) - 24px); }
 /* PDF Tiến độ (cùng định dạng PDF Danh sách cải thiện bên Report) */
 #impPdfHost { position: fixed; left: -4000px; top: 0; z-index: -1; }
 .ipg { width: 297mm; height: 210mm; background: #fff; padding: 10mm 12mm 13mm; position: relative; overflow: hidden; font: 9pt/1.35 "Segoe UI", Arial, sans-serif; color: #111; margin-bottom: 10px; }
@@ -459,7 +465,7 @@ async function confXls() {
   try { await PC.xlsx(`${PC.yymm(I.cycle)}_MQM_Danh_sach_cai_thien.xlsx`, [{ name: 'Đã xác nhận', rows, widths: [10, 26, 11, 50, 12, 26, 30, 12, 26, 24, 30, 14, 14] }]); } catch (e) { toast('Chưa tải được Excel: ' + e.message); }
 }
 // ---------- Sub-tab 3: Tiến độ cải thiện + form kết quả cải tiến ----------
-function touch(aid) { const it = A.items.find(x => x.aid === aid); return edits[aid] = edits[aid] || { status: it.status, rootFix: it.rootFix, plan: it.plan, prevent: it.prevent, owner: it.owner, doneDate: it.doneDate, files: [], remove: [] }; }
+function touch(aid) { const it = GMAP[aid] || A.items.find(x => x.aid === aid); return edits[aid] = edits[aid] || { status: it.status, rootFix: it.rootFix, plan: it.plan, prevent: it.prevent, owner: it.owner, doneDate: it.doneDate, files: [], remove: [] }; }
 // 11/11: bảng vấn đề gộp theo nhóm (không tô tag) + nguyên nhân / giải pháp ở cuối bảng
 function issueTable(it) {
   const G = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'], d = (it.detail || []).slice().sort((a, b) => (G.indexOf(a.g) < 0 ? 9 : G.indexOf(a.g)) - (G.indexOf(b.g) < 0 ? 9 : G.indexOf(b.g)));
@@ -474,7 +480,7 @@ function progCard(it) {
   return `<div class="item ${st === STATUS[2] ? 'done' : lt ? 'late' : ''}" data-aid="${esc(it.aid)}">
     <div class="pc-h"><div><b class="pc-sku">${esc(it.sku || it.sampleId)}</b>
         <div class="pc-meta"><span>Mẫu <b>${esc(it.sampleId)}</b></span><span>Bộ phận đánh giá <b>${esc(it.from || '—')}</b></span><span>Bộ phận xử lý <b>${esc(it.who)}</b></span><span>Hạn <b>${dmy(it.when)}</b></span></div></div>
-      <div class="pc-st"><span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}<small>${esc(it.aid)}</small></div></div>
+      <div class="pc-st"><span class="pill s${si}">${esc(st)}</span>${lt ? ' <span class="pill late">Quá hạn</span>' : ''}<small>${it.n > 1 ? `Gộp ${it.n} lượt chấm cùng mẫu` : esc(it.aids ? it.aids[0] : it.aid)}</small></div></div>
     <div class="pc-body"><div>${issueTable(it)}
       <div class="pc-two">${it.cause ? `<div class="pc-box"><span>Nguyên nhân nghi ngờ</span><p>${esc(it.cause)}</p></div>` : ''}${it.suggest ? `<div class="pc-box"><span>Giải pháp tạm thời đề xuất</span><p>${esc(it.suggest)}</p></div>` : ''}</div></div>
       <div class="pc-ph"><span class="lb">ẢNH MINH HOẠ VẤN ĐỀ${(it.photos || []).length ? ' · ' + it.photos.length : ''}</span>${(it.photos || []).length ? photoH(it) : '<span class="meta">Không có ảnh</span>'}</div></div>
@@ -491,9 +497,30 @@ function progCard(it) {
         <label class="add">+ Thêm<br>ảnh / PDF<input type="file" accept="image/*,application/pdf" multiple hidden data-file="${esc(it.aid)}"></label></div>
       <div class="row"><small>${it.updatedAt && it.by ? `Cập nhật ${esc(fmtAt(it.updatedAt))} · ${esc(it.by)}` : ''}</small><button class="btn dark" data-save="${esc(it.aid)}" ${e ? '' : 'disabled'}>💾 Lưu kết quả cải tiến</button></div></div></div>`;
 }
+// 27/11 (anh Thái): gom các việc cùng mẫu + cùng bộ phận xử lý thành 1 (mỗi lượt chấm tạo 1 việc riêng → trước đây 1 mẫu hiện nhiều dòng).
+// Nhóm có 1 form chung; Lưu = ghi cùng nội dung vào mọi việc trong nhóm (evidence mới chỉ tải lên 1 lần, gắn vào việc đầu).
+const GMAP = {};
+const uqs = a => [...new Set(a.filter(Boolean))];
+function groupsOf(list) {
+  const m = new Map();
+  list.forEach(x => { const k = 'G:' + x.sampleId + '|' + x.who; if (!m.has(k)) m.set(k, []); m.get(k).push(x); });
+  return [...m].map(([k, xs]) => {
+    const W = new Map(); xs.forEach(x => (x.detail || []).forEach(w => { const wk = w.g + '|' + w.q; if (!W.has(wk)) W.set(wk, { g: w.g, q: w.q, tags: [], note: '' }); const o = W.get(wk);
+      o.tags = uqs(o.tags.concat(w.tags || [])); if (w.note) o.note = uqs(o.note.split(' · ').concat(w.note)).join(' · '); }));
+    const sts = uqs(xs.map(x => x.status)), last = xs.slice().sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')))[0];
+    const seenP = {}, seenE = {};
+    const g = Object.assign({}, last, { aid: k, aids: xs.map(x => x.aid), n: xs.length,
+      status: sts.length === 1 ? sts[0] : STATUS[1], when: xs.map(x => x.when).filter(Boolean).sort()[0] || '',
+      from: uqs(xs.flatMap(x => String(x.from || '').split(/\s*[,|]\s*/))).join(', '),
+      detail: [...W.values()], what: uqs(xs.map(x => x.what)).join('\n'),
+      cause: uqs(xs.flatMap(x => String(x.cause || '').split(/\s*,\s*/))).join(', '), suggest: uqs(xs.map(x => String(x.suggest || '').trim()).filter(s => s && s !== '-')).join(' · '),
+      photos: xs.flatMap(x => x.photos || []).filter(p => !seenP[p.id] && (seenP[p.id] = 1)),
+      evidence: xs.flatMap(x => x.evidence || []).filter(f => !seenE[f.id] && (seenE[f.id] = 1)) });
+    GMAP[k] = g; return g; });
+}
 function progTab() {
   if (A.locked) return `<div class="empty">Tiến độ cải thiện chỉ hiện cho bộ phận được giao: mở link trong mail gửi bộ phận bạn. FQS / Host / quản lý: đăng nhập để xem tất cả.<br><br><button class="btn" id="login">Đăng nhập</button></div>`;
-  const all = A.items, depts = [...new Set(all.map(x => x.who))].sort();
+  const allI = A.items, depts = [...new Set(allI.map(x => x.who))].sort(), all = groupsOf(allI);
   const pool = all.filter(x => !fDept || x.who === fDept), xs = pool.filter(x => fSt === 'all' || (fSt === 'late' ? late(x) : x.status === fSt));
   const n = s => pool.filter(x => x.status === s).length;
   return `${keyDept ? `<div class="note key"><span>Bộ phận <b>${esc(keyDept)}</b>: đây là các việc cần xử lý của bộ phận bạn. Cập nhật trạng thái, ghi kết quả cải tiến, đính kèm evidence rồi bấm Lưu.</span></div>` : ''}
@@ -513,12 +540,13 @@ function progSplit(xs) {
     return `<button class="ps ${x.aid === selAid ? 'on' : ''}" data-sel="${esc(x.aid)}">
       <span class="pth ${p ? (t ? '' : 'ld') : 'none'}" ${p ? `data-pid="${esc(p.id)}" data-t="${esc(t)}"` : ''}>${p ? `<img ${t ? `src="${t}"` : ''} alt="">` : '📦'}</span>
       <span class="pst"><b>${esc(x.sampleId)}</b><small>${esc(String(x.sku || '').split(' · ').slice(0, 2).join(' · '))}</small>
-        <em>${keyDept ? '' : esc(x.who) + ' · '}<i class="d s${STATUS.indexOf(st)}${late(x) ? ' lt' : ''}"></i>${esc(late(x) ? 'Quá hạn' : st)}${e ? ' · chưa lưu' : ''}</em></span></button>`; }).join('');
+        <em>${keyDept ? '' : esc(x.who)}${e ? (keyDept ? '' : ' · ') + 'chưa lưu' : ''}</em></span>
+      <span class="pstag ${late(x) ? 'lt' : 's' + STATUS.indexOf(st)}">${esc(late(x) ? 'Quá hạn' : st)}</span></button>`; }).join('');
   return `<div class="pl2"><aside class="pside"><div class="psh">${xs.length} việc · ${new Set(xs.map(x => x.sampleId)).size} mẫu</div>${side}</aside>
     <div class="pmain"><div class="pnav"><button class="btn gray sm2" data-go="${i - 1}" ${i ? '' : 'disabled'}>‹ Trước</button><span>${i + 1} / ${xs.length}</span><button class="btn gray sm2" data-go="${i + 1}" ${i < xs.length - 1 ? '' : 'disabled'}>Sau ›</button></div>
       ${progCard(it)}</div></div>`;
 }
-const progList = () => { const all = A.items, pool = all.filter(x => !fDept || x.who === fDept); return pool.filter(x => fSt === 'all' || (fSt === 'late' ? late(x) : x.status === fSt)); };
+const progList = () => { const pool = groupsOf(A.items).filter(x => !fDept || x.who === fDept); return pool.filter(x => fSt === 'all' || (fSt === 'late' ? late(x) : x.status === fSt)); };
 // RAW: mọi thông tin bộ phận đã điền (1 dòng / việc) để tự làm báo cáo
 async function progRaw() {
   const pool = A.items.filter(x => !fDept || x.who === fDept), txt = it => (it.detail || []).map(w => `${w.g}: ${w.q}${(w.tags || []).length ? ' [' + w.tags.join(', ') + ']' : ''}${w.note ? ' – ' + w.note : ''}`).join('\n') || it.what || '';
@@ -593,7 +621,7 @@ function render() {
   else if (!I) body = Ierr ? `<div class="empty">Không tải được danh sách: ${esc(Ierr)}<br><br><button class="btn" id="login">Đăng nhập lại</button></div>` : '<div class="empty">Đang tải…</div>';
   else body = stab === 'list' ? listTab() : confTab();
   const roBar = ro() ? '<div class="robar">👁 Chế độ chỉ xem · tài khoản này xem được danh sách và tiến độ cải thiện, không xác nhận, gửi mail hay sửa.</div>' : '';
-  document.body.classList.toggle('ro', ro()); document.body.classList.toggle('prog', stab === 'prog');
+  document.body.classList.toggle('ro', ro()); document.body.classList.toggle('prog', stab === 'prog'); document.body.classList.toggle('notabs', !showLists);
   $('#app').innerHTML = `${roBar}${showLists ? `<div class="filters">${PC.monthSelect(months, cycle)}</div>` : ''}${tabs}${body}`;
   if (ro()) document.querySelectorAll('#app textarea, #app input:not([type=file]), #app select:not(#month)').forEach(el => { el.readOnly = true; if (el.tagName === 'SELECT' || el.type === 'date') el.disabled = true; });
   bind();
@@ -647,9 +675,15 @@ PC.bar($('#pcbar'), 'Cải thiện'); load(); };
     if (e.status === STATUS[2] && !String(e.plan || '').trim()) return toast('Đã xử lý thì cần ghi hành động khắc phục đã làm.');
     b.disabled = true; b.textContent = e.files.length ? 'Đang tải evidence…' : 'Đang lưu…';
     try {
-      const r = await PC.post('actionUpdate', Object.assign({ cycle: A.cycle, aid, k: keyDept ? LINK.k : '' }, e));
-      if (!r.ok) throw new Error(r.error);
-      A.items = A.items.map(x => x.aid === aid ? r.item : x); delete edits[aid]; toast('Đã lưu kết quả cải tiến ' + aid); keep();
+      // nhóm (cùng mẫu + bộ phận): ghi cùng nội dung vào từng việc; file mới chỉ gắn vào việc đầu
+      const aids = GMAP[aid] ? GMAP[aid].aids : [aid];
+      for (let j = 0; j < aids.length; j++) {
+        if (aids.length > 1) b.textContent = `Đang lưu ${j + 1}/${aids.length}…`;
+        const r = await PC.post('actionUpdate', Object.assign({ cycle: A.cycle, k: keyDept ? LINK.k : '' }, e, { aid: aids[j], files: j ? [] : e.files }));
+        if (!r.ok) throw new Error(r.error);
+        A.items = A.items.map(x => x.aid === aids[j] ? r.item : x);
+      }
+      delete edits[aid]; toast('Đã lưu kết quả cải tiến' + (GMAP[aid] ? ' · ' + GMAP[aid].sampleId + ' · ' + GMAP[aid].who : '')); keep();
     } catch (x) { b.disabled = false; b.textContent = '💾 Lưu kết quả cải tiến'; toast('Chưa lưu được: ' + x.message); }
   });
 }
