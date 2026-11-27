@@ -201,6 +201,12 @@ body.prog .wrap { max-width: 1320px; }
 .pmain .pc-two { margin: 12px 0 0; }
 @media (max-width: 1000px) { .pl2 { grid-template-columns: 1fr; } .pside { position: static; max-height: none; display: flex; overflow-x: auto; gap: 4px; } .psh { display: none; } .ps { flex: none; width: 230px; } .pc-body { grid-template-columns: 1fr; } .pc-body .phrow a { width: 96px; } }
 body.notabs .pside { top: calc(var(--barh, 60px) + 12px); max-height: calc(100vh - var(--barh, 60px) - 24px); }
+/* 27/11: chia việc theo loại lỗi */
+.otag { color: #9a9a9a; font-size: 12.5px; }
+small.sup { display: block; color: #8a8a8a; font-size: 11.5px; margin-top: 2px; }
+.bycause { background: #fff8e6; color: #6b4e00; border-radius: 12px; padding: 8px 12px; font-size: 13px; margin: 0 0 10px; } .bycause.soft { background: #f6f6f6; color: #555; }
+.bench { display: inline-block; background: #eef4ff; color: #1f4fa3; font-weight: 600; font-size: 12.5px; border-radius: 999px; padding: 4px 11px; } .bench + small { display: block; color: #8a8a8a; font-size: 12px; margin-top: 4px; }
+.rule { display: block; color: #8a8a8a; font-size: 11.5px; margin-top: 6px; }
 /* PDF Tiến độ (cùng định dạng PDF Danh sách cải thiện bên Report) */
 #impPdfHost { position: fixed; left: -4000px; top: 0; z-index: -1; }
 .ipg { width: 297mm; height: 210mm; background: #fff; padding: 10mm 12mm 13mm; position: relative; overflow: hidden; font: 9pt/1.35 "Segoe UI", Arial, sans-serif; color: #111; margin-bottom: 10px; }
@@ -360,9 +366,10 @@ function listTab() {
     return `<tr><td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small>${nEv(x)}</td><td class="c-dep">${dtags(x)}</td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>
         ${descH(x)}${photoH(x)}${causeH(x)}</td>
-      <td class="c-own"><div class="ochips" data-own="${esc(x.key)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
-        ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.key)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div></td>
-      <td class="c-act"><button class="btn okc" data-conf="${esc(x.key)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button><button class="btn gray" data-rej="${esc(x.key)}">Không đồng ý</button></td></tr>`; };
+      <td class="c-own">${x.benchmark ? `<span class="bench">Đối thủ · chỉ so sánh</span><small>Không giao việc cho bộ phận nào</small>` : `<div class="ochips" data-own="${esc(x.key)}">${ow.map(o => `<span class="och">${esc(o)}<button data-rmo="${esc(o)}" title="Bỏ ${esc(o)}" aria-label="Bỏ ${esc(o)}">×</button></span>`).join('')}
+        ${I.owners.some(o => !ow.includes(o)) ? `<label class="oadd" title="Thêm bộ phận">+<select data-addo="${esc(x.key)}" aria-label="Thêm bộ phận xử lý"><option value="">Thêm bộ phận…</option>${I.owners.filter(o => !ow.includes(o)).map(o => `<option>${esc(o)}</option>`).join('')}</select></label>` : ''}</div>
+        <small class="rule">Gợi ý theo loại lỗi (FQS sửa được)</small>`}</td>
+      <td class="c-act">${x.benchmark ? `<button class="btn okc" data-bench="${esc(x.key)}">Ghi nhận so sánh</button>` : `<button class="btn okc" data-conf="${esc(x.key)}" ${ow.length ? '' : 'disabled'}>Đồng ý</button>`}<button class="btn gray" data-rej="${esc(x.key)}">Không đồng ý</button></td></tr>`; };
   return (xs.length ? `<div class="bar1"><span class="sp">${xs.length} mẫu có vấn đề chờ FQS duyệt (${I.candidates.length} lượt chấm, cùng mẫu đã gom 1 dòng). <b>Đồng ý</b> = chuyển sang "Đã xác nhận" (sửa bộ phận xử lý trước khi bấm) · <b>Không đồng ý</b> = loại khỏi danh sách.</span></div>
     <div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w5"></th></tr></thead><tbody>${xs.map(row).join('')}</tbody></table></div>`
     : `<div class="empty">Không còn vấn đề nào chờ duyệt ${PC.monthLabel(I.cycle).toLowerCase()}. Vấn đề hiện ở đây khi người chấm chọn "Có vấn đề" trong Đánh giá mẫu.</div>`)
@@ -371,15 +378,15 @@ function listTab() {
 }
 // ---------- Sub-tab 2: Đã xác nhận ----------
 function confTab() {
-  const xs = grp(I.confirmed, true), todo = I.confirmed.filter(x => !x.mailedAt).length;
+  const xs = grp(I.confirmed, true), todo = I.confirmed.filter(x => !x.mailedAt && (x.owners || []).length).length;
   // 11/11: bảng dòng như Danh sách cải thiện; cuối dòng nút × trả về tab 1 (khi chưa gửi mail)
   return mailPanel(todo) + `<div class="bar1"><span class="sp">${I.confirmed.length} lượt đã xác nhận (${xs.length} mẫu) · ${todo} chưa gửi mail.</span>
       <button class="btn gray" id="xls" ${xs.length ? '' : 'disabled'}>⬇ Tải danh sách (Excel)</button></div>` +
     (xs.length ? `<div class="tw2"><table class="rows"><thead><tr><th class="w1">Mẫu</th><th class="w2">Bộ phận đánh giá</th><th>Nội dung</th><th class="w4">Bộ phận xử lý</th><th class="w6">Trạng thái</th><th class="w7"></th></tr></thead><tbody>${xs.map(x => `<tr>
       <td class="c-day"><b>${esc(x.sampleId)}</b>${skuLines(x)}<small>${esc(fmtAt(x.at))}</small>${nEv(x)}</td><td class="c-dep">${dtags(x)}</td>
       <td class="c-txt"><b>${(x.what || []).length} vấn đề${sumG(x) ? ' · ' + esc(sumG(x)) : ''}</b>${descH(x)}${photoH(x)}${causeH(x)}</td>
-      <td class="c-own"><div class="ochips">${x.owners.map(o => `<span class="och">${esc(o)}</span>`).join('')}</div></td>
-      <td class="c-st">${x.mailedAt ? `<span class="pill sent">✓ Đã gửi mail</span><small>${esc(fmtAt(x.mailedAt))}</small>` : `<span class="pill">Chưa gửi mail</span>`}<small>Xác nhận: ${esc(x.by)}</small></td>
+      <td class="c-own">${x.owners.length ? `<div class="ochips">${x.owners.map(o => `<span class="och">${esc(o)}</span>`).join('')}</div>` : `<span class="bench">Đối thủ · chỉ so sánh</span>`}</td>
+      <td class="c-st">${!x.owners.length ? `<span class="pill">Không giao việc</span>` : x.mailedAt ? `<span class="pill sent">✓ Đã gửi mail</span><small>${esc(fmtAt(x.mailedAt))}</small>` : `<span class="pill">Chưa gửi mail</span>`}<small>Xác nhận: ${esc(x.by)}</small></td>
       <td class="c-x">${x.mailedAt ? '' : `<button class="x" data-unc="${esc(x.key)}" title="Trả về Danh sách cải thiện" aria-label="Trả về Danh sách cải thiện">×</button>`}</td></tr>`).join('')}</tbody></table></div>`
       : `<div class="empty">Chưa có vấn đề nào được xác nhận. Bấm "Đồng ý" ở "Danh sách cải thiện".</div>`);
 }
@@ -467,12 +474,21 @@ async function confXls() {
 // ---------- Sub-tab 3: Tiến độ cải thiện + form kết quả cải tiến ----------
 function touch(aid) { const it = GMAP[aid] || A.items.find(x => x.aid === aid); return edits[aid] = edits[aid] || { status: it.status, rootFix: it.rootFix, plan: it.plan, prevent: it.prevent, owner: it.owner, doneDate: it.doneDate, files: [], remove: [] }; }
 // 11/11: bảng vấn đề gộp theo nhóm (không tô tag) + nguyên nhân / giải pháp ở cuối bảng
-function issueTable(it) {
+// 27/11: mỗi bộ phận chỉ thấy dòng lỗi giao cho mình (w.own từ quy tắc chia việc); bộ phận nhận theo nguyên nhân (SCM / Sales / PUR) thấy cả mẫu
+function linesFor(it) {
+  const all = it.detail || [], mine = all.filter(w => !w.own || w.own.includes(it.who));
+  return mine.length ? { lines: mine, byCause: false } : { lines: all, byCause: true };
+}
+function issueTable(it0) {
+  const lf = linesFor(it0), it = Object.assign({}, it0, { detail: lf.lines });
   const G = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'], d = (it.detail || []).slice().sort((a, b) => (G.indexOf(a.g) < 0 ? 9 : G.indexOf(a.g)) - (G.indexOf(b.g) < 0 ? 9 : G.indexOf(b.g)));
   const rows = d.length ? d.map((w, i) => { const first = i === 0 || d[i - 1].g !== w.g, span = d.filter(x => x.g === w.g).length;
-    return `<tr class="${first && i ? 'gstart' : ''}">${first ? `<td class="tg0" rowspan="${span}">${esc(w.g)}</td>` : ''}<td class="q0">${esc(w.q)}</td><td>${esc((w.tags || []).join(', ') || '—')}</td><td class="nt0">${esc(w.note || '')}</td></tr>`; }).join('')
+    const sup = (w.sup || []).filter(s => s !== it.who);
+    return `<tr class="${first && i ? 'gstart' : ''}">${first ? `<td class="tg0" rowspan="${span}">${esc(w.g)}</td>` : ''}<td class="q0">${esc(w.q)}</td><td>${(w.tags || []).length ? w.tags.map(t => { const o = (w.tagOwn || {})[t]; return o && o !== it.who && !lf.byCause ? `<span class="otag" title="Bộ phận ${esc(o)} xử lý">${esc(t)} → ${esc(o)}</span>` : esc(t); }).join(', ') : '—'}${sup.length ? `<small class="sup">Phối hợp: ${esc(sup.join(', '))}</small>` : ''}</td><td class="nt0">${esc(w.note || '')}</td></tr>`; }).join('')
     : `<tr><td colspan="4" style="white-space:pre-wrap">${esc(it.what)}</td></tr>`;
-  return `<table class="itab"><thead><tr><th>Nhóm</th><th>Câu hỏi</th><th>Vấn đề</th><th>Ghi chú người chấm</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const note = lf.byCause ? `<div class="bycause">${esc(it.who)} nhận việc theo <b>nguyên nhân</b> người chấm chọn (vận chuyển / kho NPP / điểm bán / thị trường / nhà cung cấp): kiểm tra phần liên quan, không xử lý lỗi sản xuất.</div>`
+    : (it0.detail || []).length > lf.lines.length ? `<div class="bycause soft">Chỉ hiện ${lf.lines.length}/${(it0.detail || []).length} dòng lỗi giao cho ${esc(it.who)}. Các dòng khác do bộ phận khác xử lý.</div>` : '';
+  return `${note}<table class="itab"><thead><tr><th>Nhóm</th><th>Câu hỏi</th><th>Vấn đề</th><th>Ghi chú người chấm</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 function progCard(it) {
   const e = edits[it.aid], v = e || it, st = v.status, si = STATUS.indexOf(st), lt = late(it);
@@ -505,8 +521,9 @@ function groupsOf(list) {
   const m = new Map();
   list.forEach(x => { const k = 'G:' + x.sampleId + '|' + x.who; if (!m.has(k)) m.set(k, []); m.get(k).push(x); });
   return [...m].map(([k, xs]) => {
-    const W = new Map(); xs.forEach(x => (x.detail || []).forEach(w => { const wk = w.g + '|' + w.q; if (!W.has(wk)) W.set(wk, { g: w.g, q: w.q, tags: [], note: '' }); const o = W.get(wk);
-      o.tags = uqs(o.tags.concat(w.tags || [])); if (w.note) o.note = uqs(o.note.split(' · ').concat(w.note)).join(' · '); }));
+    // gộp theo câu hỏi + bộ phận chính của dòng (để lọc dòng của từng bộ phận vẫn đúng sau khi gộp)
+    const W = new Map(); xs.forEach(x => (x.detail || []).forEach(w => { const wk = w.g + '|' + w.q + '|' + (w.own || []).slice().sort().join(','); if (!W.has(wk)) W.set(wk, { g: w.g, q: w.q, tags: [], note: '', own: w.own, sup: [], tagOwn: {} }); const o = W.get(wk);
+      o.tags = uqs(o.tags.concat(w.tags || [])); o.sup = uqs(o.sup.concat(w.sup || [])); Object.assign(o.tagOwn, w.tagOwn || {}); if (w.note) o.note = uqs(o.note.split(' · ').concat(w.note)).join(' · '); }));
     const sts = uqs(xs.map(x => x.status)), last = xs.slice().sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')))[0];
     const seenP = {}, seenE = {};
     const g = Object.assign({}, last, { aid: k, aids: xs.map(x => x.aid), n: xs.length,
@@ -570,7 +587,7 @@ async function progPdf() {
     b.textContent = `Đang tải ảnh… ${++done}/${ids.length}`; } }));
   const imgs = (list, cls) => { const ps = (list || []).filter(p => PH[p.id]); return ps.length ? `<div class="pgrid c4 ${cls || ''}">${ps.map(p => `<img src="${PH[p.id]}" alt="">`).join('')}</div>` : ''; };
   const GO = ['Bao bì', 'In ấn', 'Ngoại quan', 'Cấu trúc', 'Hương vị'], gi = g => GO.indexOf(g) < 0 ? 9 : GO.indexOf(g);
-  const iss = it => { const d = (it.detail || []).map((w, k) => [w, k]).sort((a, b) => gi(a[0].g) - gi(b[0].g) || a[1] - b[1]).map(z => z[0]); let g0 = null; return d.length ? `<table class="iq2"><tbody>${d.map(w => { const gh = w.g !== g0 ? `<tr class="gh"><td colspan="3">${esc(w.g)}</td></tr>` : ''; g0 = w.g;
+  const iss = it => { const d = linesFor(it).lines.map((w, k) => [w, k]).sort((a, b) => gi(a[0].g) - gi(b[0].g) || a[1] - b[1]).map(z => z[0]); let g0 = null; return d.length ? `<table class="iq2"><tbody>${d.map(w => { const gh = w.g !== g0 ? `<tr class="gh"><td colspan="3">${esc(w.g)}</td></tr>` : ''; g0 = w.g;
     return `${gh}<tr><td class="q">${esc(String(w.q).replace(/\?$/, ''))}</td><td class="p">${esc((w.tags || []).join(', ') || '—')}</td><td class="n">${esc(w.note || '')}</td></tr>`; }).join('')}</tbody></table>` : `<p>${esc(it.what || '')}</p>`; };
   const kv = (k, v) => `<p class="kv2"><span class="lb2">${k}</span> ${v ? esc(v) : '<span class="mut">Chưa ghi</span>'}</p>`;
   const row = (it, i) => `<tr><td class="c">${i + 1}</td>
@@ -643,6 +660,9 @@ PC.bar($('#pcbar'), 'Cải thiện'); load(); };
     const k = b.dataset.conf; b.disabled = true; b.textContent = 'Đang xác nhận…';
     try { const r = await each(k, { api: 'issueConfirm', d: { owners: ownEdit[k] || GK[k].owners } }); I = r; delete ownEdit[k]; toast('Đã đồng ý · chuyển sang "Đã xác nhận"'); keep(); }
     catch (e) { toast('Chưa xác nhận được: ' + e.message); b.disabled = false; b.textContent = 'Đồng ý'; } });
+  document.querySelectorAll('[data-bench]').forEach(b => b.onclick = async () => { b.disabled = true; b.textContent = 'Đang lưu…';
+    try { const r = await each(b.dataset.bench, { api: 'issueConfirm', d: { benchmark: true } }); I = r; toast('Đã ghi nhận mẫu đối thủ để so sánh (không giao việc)'); keep(); }
+    catch (e) { toast('Chưa lưu được: ' + e.message); b.disabled = false; b.textContent = 'Ghi nhận so sánh'; } });
   document.querySelectorAll('[data-rej]').forEach(b => b.onclick = async () => { b.disabled = true; b.textContent = 'Đang lưu…';
     try { const r = await each(b.dataset.rej, { api: 'issueConfirm', d: { reject: true } }); I = r; toast('Đã ghi Không đồng ý'); keep(); }
     catch (e) { toast('Chưa lưu được: ' + e.message); b.disabled = false; b.textContent = 'Không đồng ý'; } });
